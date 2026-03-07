@@ -1,0 +1,10 @@
+<library path="lazy_coulomb_planner">
+  <class type="lazy_coulomb_planner::LazyCoulombPlanner"
+         base_class_type="nav2_core::GlobalPlanner">
+    <description>
+      Lazy Coulomb Planner: reactive path planning via electrostatic repulsion.
+      Starts with a straight line and iteratively pushes waypoints clear of
+      obstacles using Coulomb-like perpendicular repulsion forces.
+    </description>
+  </class>
+</library>
