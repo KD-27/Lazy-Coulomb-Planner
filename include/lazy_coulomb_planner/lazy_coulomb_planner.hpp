@@ -1,3 +1,17 @@
+// Copyright 2026 Kaveesha Dhananjaya
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #ifndef LAZY_COULOMB_PLANNER__LAZY_COULOMB_PLANNER_HPP_
 #define LAZY_COULOMB_PLANNER__LAZY_COULOMB_PLANNER_HPP_
 
@@ -28,10 +42,10 @@ namespace lazy_coulomb_planner
  */
 struct PathPoint
 {
-  double x;           // world frame x (meters)
-  double y;           // world frame y (meters)
-  bool is_locked;     // locked points won't be moved again
-  bool is_active;     // currently being pushed by repulsion
+  double x;  // world frame x (meters)
+  double y;  // world frame y (meters)
+  bool is_locked;  // locked points won't be moved again
+  bool is_active;  // currently being pushed by repulsion
 
   PathPoint(double x_, double y_, bool locked = false)
   : x(x_), y(y_), is_locked(locked), is_active(false) {}
@@ -61,7 +75,7 @@ public:
   LazyCoulombPlanner() = default;
   ~LazyCoulombPlanner() = default;
 
-  // ── Nav2 lifecycle interface ──────────────────────────────────────────────
+  // Nav2 lifecycle interface
 
   void configure(
     const rclcpp_lifecycle::LifecycleNode::WeakPtr & parent,
@@ -75,9 +89,9 @@ public:
 
   /**
    * @brief Core planning method called by Nav2 when a new goal is received.
-   * @param start  Current robot pose in map frame
-   * @param goal   Target pose in map frame
-   * @return       nav_msgs::msg::Path with waypoints from start to goal
+   * @param start Current robot pose in map frame
+   * @param goal Target pose in map frame
+   * @return nav_msgs::msg::Path with waypoints from start to goal
    * @throws nav2_core::PlannerException if no valid path found
    */
   nav_msgs::msg::Path createPlan(
@@ -85,7 +99,7 @@ public:
     const geometry_msgs::msg::PoseStamped & goal) override;
 
 private:
-  // ── Coordinate helpers ────────────────────────────────────────────────────
+  // Coordinate helpers
 
   /**
    * @brief Convert world (x,y) to costmap cell (mx, my).
@@ -96,7 +110,7 @@ private:
   /** @brief Convert costmap cell (mx, my) to world (x, y). */
   void mapToWorld(unsigned int mx, unsigned int my, double & wx, double & wy) const;
 
-  // ── Obstacle queries ──────────────────────────────────────────────────────
+  // Obstacle queries
 
   /**
    * @brief Check if a world-frame point is inside an obstacle or inflation zone.
@@ -112,14 +126,14 @@ private:
 
   /**
    * @brief Find the first world-frame point along (p1 -> p2) that enters an obstacle.
-   * @return true if an intersection was found; result written to `intersection`
+   * @return true if an intersection was found; result written to intersection
    */
   bool findSegmentObstacleEntry(
     const PathPoint & p1,
     const PathPoint & p2,
     PathPoint & intersection) const;
 
-  // ── Repulsion physics ─────────────────────────────────────────────────────
+  // Repulsion physics
 
   /**
    * @brief Compute the perpendicular-to-path repulsion force at a given point.
@@ -128,11 +142,11 @@ private:
    * side has clear space closer. Falls back to pushing directly away from the
    * nearest high-cost cell if neither perpendicular direction is clear.
    *
-   * @param point      Point currently inside an obstacle
-   * @param path_ref_prev  Reference point before (for path direction)
-   * @param path_ref_next  Reference point after  (for path direction)
-   * @param force_x    Output: x component of repulsion force
-   * @param force_y    Output: y component of repulsion force
+   * @param point Point currently inside an obstacle
+   * @param path_ref_prev Reference point before (for path direction)
+   * @param path_ref_next Reference point after (for path direction)
+   * @param force_x Output: x component of repulsion force
+   * @param force_y Output: y component of repulsion force
    */
   void calculateRepulsionForce(
     const PathPoint & point,
@@ -150,7 +164,7 @@ private:
     double & force_x,
     double & force_y) const;
 
-  // ── Path utilities ────────────────────────────────────────────────────────
+  // Path utilities
 
   /** @brief Build the initial straight-line path from start to goal. */
   std::vector<PathPoint> initializePath(
@@ -168,8 +182,7 @@ private:
     const std::vector<PathPoint> & points,
     const std_msgs::msg::Header & header) const;
 
-  // ── Members ───────────────────────────────────────────────────────────────
-
+  // Members
   rclcpp_lifecycle::LifecycleNode::WeakPtr node_;
   std::shared_ptr<tf2_ros::Buffer> tf_;
   std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap_ros_;
@@ -178,18 +191,18 @@ private:
   std::string global_frame_;
   rclcpp::Logger logger_{rclcpp::get_logger("LazyCoulombPlanner")};
 
-  // ── Tunable parameters (set via nav2_params.yaml) ─────────────────────────
-  int    max_iterations_;         // Hard cap on total algorithm iterations
-  int    max_push_iterations_;    // Max steps to push a single point clear
-  double step_size_;              // Integration step size when pushing (meters)
-  double repulsion_strength_;     // Base magnitude of repulsion force
-  double force_balance_threshold_;// Below this force magnitude, use fallback
+  // Tunable parameters (set via nav2_params.yaml)
+  int max_iterations_;  // Hard cap on total algorithm iterations
+  int max_push_iterations_;  // Max steps to push a single point clear
+  double step_size_;  // Integration step size when pushing (meters)
+  double repulsion_strength_;  // Base magnitude of repulsion force
+  double force_balance_threshold_;  // Below this force magnitude, use fallback
   double perturbation_strength_;  // Deterministic fallback nudge strength
-  int    initial_path_points_;    // Number of points in initial straight line
-  bool   enable_smoothing_;       // Apply Chaikin smoothing to final path
-  int    smoothing_iterations_;   // Number of Chaikin passes
+  int initial_path_points_;  // Number of points in initial straight line
+  bool enable_smoothing_;  // Apply Chaikin smoothing to final path
+  int smoothing_iterations_;  // Number of Chaikin passes
   double lethal_cost_threshold_;  // Costmap cost value considered obstacle
-  int    segment_check_steps_;    // Samples per unit length for segment checks
+  int segment_check_steps_;  // Samples per unit length for segment checks
 };
 
 }  // namespace lazy_coulomb_planner
