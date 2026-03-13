@@ -98,7 +98,19 @@ public:
     const geometry_msgs::msg::PoseStamped & start,
     const geometry_msgs::msg::PoseStamped & goal) override;
 
-private:
+  /**
+   * @brief Testing utility: inject a raw Costmap2D, bypassing Costmap2DROS.
+   *
+   * Call after configure() and before createPlan() in unit tests.
+   * The injected costmap must remain valid for the duration of the test.
+   * Do NOT use in production code.
+   */
+  void setTestCostmap(nav2_costmap_2d::Costmap2D * cm)
+  {
+    costmap_ = cm;
+  }
+
+protected:
   // Coordinate helpers
 
   /**

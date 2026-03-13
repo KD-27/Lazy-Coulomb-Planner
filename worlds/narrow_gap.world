@@ -1,0 +1,149 @@
+<?xml version="1.0" ?>
+<!--
+  narrow_gap.world
+  Two wall sections at x=5, with a 0.25 m gap at y=5.0.
+  TurtleBot3 Burger radius = 0.105 m; with Nav2 inflation (0.35 m) the
+  required clearance is ~0.455 m — wider than the gap.
+  Expected LCP behaviour: exhausts push iterations or routes around wall ends.
+  Used for Phase 3 Test: "Narrow gap — documented known limitation"
+-->
+<sdf version="1.6">
+  <world name="narrow_gap_world">
+
+    <physics name="default_physics" default="0" type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+
+    <plugin name="gazebo_ros_state" filename="libgazebo_ros_state.so"/>
+
+    <light name="sun" type="directional">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>1 1 1 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane><normal>0 0 1</normal><size>20 20</size></plane>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane><normal>0 0 1</normal><size>20 20</size></plane>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!--
+      Wall section 1: below the gap
+      Centre at (5.0, 3.1) — runs from y=1.0 to y=4.875 (length = 3.75 m)
+    -->
+    <model name="wall_lower">
+      <static>true</static>
+      <pose>5.0 2.9375 0.25 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 3.875 0.5</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 3.875 0.5</size></box>
+          </geometry>
+          <material>
+            <ambient>0.5 0.1 0.5 1</ambient>
+            <diffuse>0.5 0.1 0.5 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!--
+      Wall section 2: above the gap
+      Centre at (5.0, 7.0625) — runs from y=5.125 to y=9.0 (length = 3.875 m)
+    -->
+    <model name="wall_upper">
+      <static>true</static>
+      <pose>5.0 7.0625 0.25 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.2 3.875 0.5</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.2 3.875 0.5</size></box>
+          </geometry>
+          <material>
+            <ambient>0.5 0.1 0.5 1</ambient>
+            <diffuse>0.5 0.1 0.5 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Gap indicator (yellow): 0.25 m gap at y=4.875–5.125 -->
+    <model name="gap_marker">
+      <static>true</static>
+      <pose>5.0 5.0 0.01 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box><size>0.3 0.25 0.02</size></box>
+          </geometry>
+          <material>
+            <ambient>0.9 0.9 0.0 0.6</ambient>
+            <diffuse>0.9 0.9 0.0 0.6</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="start_marker">
+      <static>true</static>
+      <pose>1.0 5.0 0.01 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <cylinder><radius>0.15</radius><length>0.02</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.0 0.8 0.0 1</ambient>
+            <diffuse>0.0 0.8 0.0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="goal_marker">
+      <static>true</static>
+      <pose>9.0 5.0 0.01 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <cylinder><radius>0.15</radius><length>0.02</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.0 0.2 0.8 1</ambient>
+            <diffuse>0.0 0.2 0.8 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+  </world>
+</sdf>
