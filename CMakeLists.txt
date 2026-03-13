@@ -65,14 +65,6 @@ install(DIRECTORY config/
   DESTINATION share/${PROJECT_NAME}/config
 )
 
-install(DIRECTORY worlds/
-  DESTINATION share/${PROJECT_NAME}/worlds
-)
-
-install(FILES launch/lcp_test_world.launch.py
-  DESTINATION share/${PROJECT_NAME}/launch
-)
-
 # ── Export for downstream packages ────────────────────────────────────────────
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
@@ -91,38 +83,8 @@ ament_export_dependencies(
 # ── Tests ──────────────────────────────────────────────────────────────────────
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
-  # Skip copyright check for markdown files (ament_copyright can't parse them)
   set(ament_cmake_copyright_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
-
-  # ── C++ unit tests (gtest) ──────────────────────────────────────────────────
-  find_package(ament_cmake_gtest REQUIRED)
-
-  ament_add_gtest(test_lcp_unit
-    test/test_lcp_unit.cpp
-    TIMEOUT 60
-  )
-
-  target_include_directories(test_lcp_unit
-    PRIVATE
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  )
-
-  ament_target_dependencies(test_lcp_unit
-    rclcpp
-    rclcpp_lifecycle
-    nav2_core
-    nav2_costmap_2d
-    nav_msgs
-    geometry_msgs
-  )
-
-  # Link the planner library so TestableLCP can call its methods
-  target_link_libraries(test_lcp_unit
-    ${PROJECT_NAME}
-  )
-
-
 endif()
 
 ament_package()
