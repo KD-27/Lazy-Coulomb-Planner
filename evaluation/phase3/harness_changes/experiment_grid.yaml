@@ -1,0 +1,43 @@
+# Experiment grid for the LCP benchmark.
+#
+# Each combination of (planner, map) gets the same set of seeds.
+# Total runs = len(planners) * len(maps) * n_seeds
+#   = 4 * 4 * 30 = 480 runs.
+
+planners:
+  - name: NavFn
+    plugin: nav2_navfn_planner/NavfnPlanner
+    params_file: nav2_params_navfn.yaml
+  - name: SmacPlanner2D
+    plugin: nav2_smac_planner/SmacPlanner2D
+    params_file: nav2_params_smac.yaml
+  - name: ThetaStarPlanner
+    plugin: nav2_theta_star_planner/ThetaStarPlanner
+    params_file: nav2_params_theta.yaml
+  - name: LazyCoulomb
+    plugin: lazy_coulomb_planner::LazyCoulombPlanner
+    params_file: nav2_params_lazy_coulomb.yaml
+
+maps:
+  - name: empty
+    yaml: ${HOME}/lcp_paper_ws/maps/empty.yaml
+  - name: maze
+    yaml: ${HOME}/lcp_paper_ws/maps/maze.yaml
+  - name: house
+    yaml: ${HOME}/lcp_paper_ws/maps/house.yaml
+  - name: event_venue
+    yaml: ${HOME}/lcp_paper_ws/maps/event_venue.yaml
+
+n_seeds: 30
+seed_base: 42  # Different seed_base = different (start, goal) sets
+
+# Pose sampling parameters
+min_distance_m: 5.0
+max_distance_factor: 0.8  # max = map_diagonal * factor
+robot_radius_m: 0.18  # TurtleBot3 Burger
+
+# Planner timeouts
+plan_timeout_s: 30.0
+
+# Output
+output_dir: ${HOME}/lcp_paper_ws/results

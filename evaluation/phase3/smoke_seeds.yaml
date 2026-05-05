@@ -1,0 +1,19 @@
+pairs:
+- goal_x: 0.25
+  goal_y: 5.100000000000001
+  seed: 0
+  start_x: 7.75
+  start_y: -3.0
+  straight_line_dist: 11.039021695784461
+- goal_x: 7.699999999999999
+  goal_y: -2.25
+  seed: 1
+  start_x: -6.55
+  start_y: -0.4499999999999993
+  straight_line_dist: 14.363234315431884
+- goal_x: -0.6499999999999986
+  goal_y: -0.09999999999999964
+  seed: 2
+  start_x: -7.1
+  start_y: 10.5
+  straight_line_dist: 12.408162635942519

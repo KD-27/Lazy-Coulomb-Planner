@@ -10,22 +10,30 @@ This folder is only present on the `evaluation` branch. The planner source itsel
 evaluation/
 ├── phase1/                      # Phase 1: environment setup verification
 │   └── setup_verified.txt
-└── phase2/                      # Phase 2: benchmark maps
-    ├── configs/
-    │   └── slam_mapping.yaml    # slam_toolbox config used to build the maps
-    ├── empty_lcp.launch.py      # launch file: TB3 burger + a chosen world
-    ├── worlds/                  # Gazebo .world sources for each map
-    │   ├── empty.world          # Map 1 — 22x22 m, sparse obstacles
-    │   ├── maze.world           # Map 2 — 20x25 m, narrow corridors + dead ends
-    │   ├── house.world          # Map 3 — copy of AWS RoboMaker small_house.world
-    │   └── event_venue.world    # Map 4 — 20x20 m, dense booth grid
-    ├── maps/                    # SLAMmed Nav2 maps (.pgm + .yaml)
-    │   ├── empty.{pgm,yaml}
-    │   ├── maze.{pgm,yaml}
-    │   ├── house.{pgm,yaml}
-    │   └── event_venue.{pgm,yaml}
-    └── screenshots/
-        └── empty.png
+├── phase2/                      # Phase 2: benchmark maps
+│   ├── configs/
+│   │   └── slam_mapping.yaml    # slam_toolbox config used to build the maps
+│   ├── empty_lcp.launch.py      # launch file: TB3 burger + a chosen world
+│   ├── worlds/                  # Gazebo .world sources for each map
+│   │   ├── empty.world          # Map 1 — 22x22 m, sparse obstacles
+│   │   ├── maze.world           # Map 2 — 20x25 m, narrow corridors + dead ends
+│   │   ├── house.world          # Map 3 — copy of AWS RoboMaker small_house.world
+│   │   └── event_venue.world    # Map 4 — 20x20 m, dense booth grid
+│   ├── maps/                    # SLAMmed Nav2 maps (.pgm + .yaml)
+│   │   ├── empty.{pgm,yaml}
+│   │   ├── maze.{pgm,yaml}
+│   │   ├── house.{pgm,yaml}
+│   │   └── event_venue.{pgm,yaml}
+│   └── screenshots/
+│       └── empty.png
+└── phase3/                      # Phase 3: benchmark harness deployment + smoke tests
+    ├── README.md                # phase summary, results, reproducibility notes
+    ├── smoke_test_navfn.csv     # NavFn × empty × 3 seeds
+    ├── smoke_test_lcp.csv       # LazyCoulomb × empty × 3 seeds
+    ├── smoke_seeds.yaml         # the (start, goal) pairs used by both smoke tests
+    ├── smoke_path_check.png     # visual sanity check of paths over the empty map
+    ├── visual_check.py          # script that produced smoke_path_check.png
+    └── harness_changes/         # snapshot of files we created/edited in lcp_benchmark/
 ```
 
 ## Notes
