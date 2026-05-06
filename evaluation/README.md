@@ -34,6 +34,12 @@ evaluation/
     ├── smoke_path_check.png     # visual sanity check of paths over the empty map
     ├── visual_check.py          # script that produced smoke_path_check.png
     └── harness_changes/         # snapshot of files we created/edited in lcp_benchmark/
+└── phase4/                      # Phase 4: LCP parameter tuning sweep
+    ├── README.md                # phase summary, results, override rationale
+    ├── chosen_config.yaml       # post-tuning nav2_params_lazy_coulomb.yaml
+    ├── tuning_sweep.csv         # 270 runs x 24 columns
+    ├── sweep_configs/           # the 27 generated config YAMLs
+    └── tools/                   # generator, sweep driver, merge script
 ```
 
 ## Notes
