@@ -9,6 +9,23 @@ const ChargePathPlanner = () => {
   const PERTURBATION_STRENGTH = 1.5; // This is the strength given when the intersection has equal left and right force
   const FORCE_BALANCE_THRESHOLD = 0.3; // Consider forces balanced if below this
 
+  // --- Version 3: summed Coulomb force model ---------------------------------
+  // The force core below sums a true Coulomb repulsion over every "lethal" grid
+  // cell within R_n of the trapped point, projects it onto the path-perpendicular
+  // axis, and clamps the per-step displacement (M3). This mirrors the ROS2 / costmap
+  // model documented in the LaTeX. The grid cell size for rasterization is 1 unit
+  // (matching the GRID_SIZE integer lattice).
+  const STEP_SIZE = 0.5;          // Δs : Euler step (matches old 0.6 push scaling roughly)
+  const CLAMP_CELLS = 0.25;       // cap each step at this many cells (M3). Small value
+                                  // prevents overshoot/oscillation across curved boundaries;
+                                  // escapes lean on the saddle kick, which is fine for a viz.
+  const CELL_R = 1.0;             // rasterization cell width (grid is integer-spaced)
+  // R_n (neighborhood radius for the force sum) is tied to the inflation radius;
+  // it is read from the `inflationRadius` state at call time. F_max is derived:
+  //   F_max = (CLAMP_CELLS * CELL_R) / (STEP_SIZE * REPULSION_STRENGTH)
+  const F_MAX = (CLAMP_CELLS * CELL_R) / (STEP_SIZE * REPULSION_STRENGTH);
+  // ---------------------------------------------------------------------------
+
   const [obstacles, setObstacles] = useState([
     { type: 'rectangle', x1: 12, y1: 8, x2: 18, y2: 16 },
     { type: 'circle', cx: 25, cy: 22, radius: 4 },
@@ -339,71 +356,63 @@ const ChargePathPlanner = () => {
     pathDirX /= pathLength;
     pathDirY /= pathLength;
     
-    // Calculate perpendicular directions (left and right of path)
+    // Left unit normal (90 deg CCW). Right normal is its negation.
     const perpLeftX = -pathDirY;
     const perpLeftY = pathDirX;
-    const perpRightX = pathDirY;
-    const perpRightY = -pathDirX;
-    
-    // Find how far we need to go in each direction to be clear of ALL obstacles
-    let distLeftClear = -1;
-    let distRightClear = -1;
-    
-    // Check left direction
-    for (let d = 0.5; d < 25; d += 0.5) {
-      const testX = point.x + perpLeftX * d;
-      const testY = point.y + perpLeftY * d;
-      if (!isInsideAnyObstacle(testX, testY)) {
-        distLeftClear = d;
-        break;
+
+    // ----- Version 3: summed Coulomb force over lethal cells within R_n -----
+    // R_n is tied to the inflation radius (with a small floor so the sum always
+    // has a few cells to work with). We rasterize: scan integer grid cells in a
+    // square window of half-width R_n around the point, and for any cell whose
+    // center lies inside ANY obstacle (choice 1b: locality, not obstacle identity),
+    // add a Coulomb term (q - c)/|q - c|^3 pointing from the cell toward the point.
+    const Rn = Math.max(inflationRadius, 3.0);
+    const RnCells = Math.ceil(Rn / CELL_R);
+    const Rn2 = Rn * Rn;
+
+    let sumFx = 0;
+    let sumFy = 0;
+
+    const baseCx = Math.round(point.x);
+    const baseCy = Math.round(point.y);
+
+    for (let gy = baseCy - RnCells; gy <= baseCy + RnCells; gy++) {
+      for (let gx = baseCx - RnCells; gx <= baseCx + RnCells; gx++) {
+        // cell center in world units
+        const cx = gx;
+        const cy = gy;
+        const dx = point.x - cx;
+        const dy = point.y - cy;
+        const r2 = dx * dx + dy * dy;
+        if (r2 > Rn2) continue;          // outside neighborhood radius
+        if (isInsideAnyObstacle(cx, cy)) {
+          const r = Math.sqrt(r2) || 0.5;  // soften the singularity at r->0
+          const inv3 = 1 / (r * r * r);
+          sumFx += dx * inv3;
+          sumFy += dy * inv3;
+        }
       }
     }
-    
-    // Check right direction
-    for (let d = 0.5; d < 25; d += 0.5) {
-      const testX = point.x + perpRightX * d;
-      const testY = point.y + perpRightY * d;
-      if (!isInsideAnyObstacle(testX, testY)) {
-        distRightClear = d;
-        break;
-      }
-    }
-    
+
+    // Project the summed force onto the path-perpendicular (left normal).
+    let fPerp = sumFx * perpLeftX + sumFy * perpLeftY;
+
+    // M3: clamp the projected magnitude so a single Euler step is bounded.
+    if (fPerp > F_MAX) fPerp = F_MAX;
+    else if (fPerp < -F_MAX) fPerp = -F_MAX;
+
     let forceX, forceY;
-    
-    // Choose the direction that leads to clear space
-    if (distLeftClear > 0 && (distRightClear < 0 || distLeftClear <= distRightClear)) {
-      // Left is clear (or closer)
-      forceX = perpLeftX * REPULSION_STRENGTH * 2;
-      forceY = perpLeftY * REPULSION_STRENGTH * 2;
-    } else if (distRightClear > 0) {
-      // Right is clear
-      forceX = perpRightX * REPULSION_STRENGTH * 2;
-      forceY = perpRightY * REPULSION_STRENGTH * 2;
+
+    if (Math.abs(fPerp) < FORCE_BALANCE_THRESHOLD) {
+      // Saddle: perpendicular components cancel (symmetric obstacle). Apply a
+      // fixed symmetry-breaking kick along the left normal to escape.
+      forceX = perpLeftX * PERTURBATION_STRENGTH;
+      forceY = perpLeftY * PERTURBATION_STRENGTH;
     } else {
-      // Neither perpendicular direction is clear - push away from obstacle center
-      let centerX, centerY;
-      
-      if (obstacle.type === 'rectangle' || (!obstacle.type && obstacle.x1 !== undefined)) {
-        centerX = (obstacle.x1 + obstacle.x2) / 2;
-        centerY = (obstacle.y1 + obstacle.y2) / 2;
-      } else if (obstacle.type === 'circle') {
-        centerX = obstacle.cx;
-        centerY = obstacle.cy;
-      } else if (obstacle.type === 'triangle') {
-        centerX = (obstacle.points[0].x + obstacle.points[1].x + obstacle.points[2].x) / 3;
-        centerY = (obstacle.points[0].y + obstacle.points[1].y + obstacle.points[2].y) / 3;
-      } else {
-        centerX = point.x;
-        centerY = point.y;
-      }
-      
-      const dx = point.x - centerX;
-      const dy = point.y - centerY;
-      const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-      
-      forceX = (dx / dist) * REPULSION_STRENGTH * 1.5;
-      forceY = (dy / dist) * REPULSION_STRENGTH * 1.5;
+      // Physics decides side (sign of fPerp) and strength (its magnitude),
+      // scaled by REPULSION_STRENGTH. Motion stays purely perpendicular.
+      forceX = perpLeftX * fPerp * REPULSION_STRENGTH;
+      forceY = perpLeftY * fPerp * REPULSION_STRENGTH;
     }
     
     return { x: forceX, y: forceY };
