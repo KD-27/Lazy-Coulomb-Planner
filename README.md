@@ -1,6 +1,6 @@
 # Lazy Coulomb Planner — Nav2 Global Planner Plugin
 
-A Nav2 global planner plugin for ROS 2 Humble that implements reactive path
+A Nav2 global planner plugin for ROS 2 Jazzy that implements reactive path
 planning inspired by **electrostatic repulsion (Coulomb's law)**.
 
 **Developed by Kaveesha Dhananjaya**

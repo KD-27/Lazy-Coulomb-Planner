@@ -15,10 +15,11 @@
 #include "lazy_coulomb_planner/lazy_coulomb_planner.hpp"
 
 #include <algorithm>
+#include <functional>
 #include <stdexcept>
 #include <limits>
 
-#include "nav2_core/exceptions.hpp"
+#include "nav2_core/planner_exceptions.hpp"
 #include "nav2_costmap_2d/cost_values.hpp"
 #include "nav2_util/node_utils.hpp"
 #include "pluginlib/class_list_macros.hpp"
@@ -118,7 +119,8 @@ void LazyCoulombPlanner::deactivate()
 
 nav_msgs::msg::Path LazyCoulombPlanner::createPlan(
   const geometry_msgs::msg::PoseStamped & start_pose,
-  const geometry_msgs::msg::PoseStamped & goal_pose)
+  const geometry_msgs::msg::PoseStamped & goal_pose,
+  std::function<bool()> cancel_checker)
 {
   if (!costmap_) {
     throw nav2_core::PlannerException("LazyCoulombPlanner: Costmap not available");
@@ -130,10 +132,10 @@ nav_msgs::msg::Path LazyCoulombPlanner::createPlan(
   {
     unsigned int mx, my;
     if (!worldToMap(start.x, start.y, mx, my)) {
-      throw nav2_core::PlannerException("LazyCoulombPlanner: Start is outside costmap");
+      throw nav2_core::StartOutsideMapBounds("LazyCoulombPlanner: Start is outside costmap");
     }
     if (!worldToMap(goal.x, goal.y, mx, my)) {
-      throw nav2_core::PlannerException("LazyCoulombPlanner: Goal is outside costmap");
+      throw nav2_core::GoalOutsideMapBounds("LazyCoulombPlanner: Goal is outside costmap");
     }
   }
 
@@ -151,6 +153,10 @@ nav_msgs::msg::Path LazyCoulombPlanner::createPlan(
   int total_iterations = 0;
 
   while (total_iterations < max_iterations_) {
+    if (cancel_checker && cancel_checker()) {
+      throw nav2_core::PlannerCancelled("LazyCoulombPlanner: Planning was cancelled");
+    }
+
     int intersecting_seg = -1;
     PathPoint intersection_pt(0, 0);
 

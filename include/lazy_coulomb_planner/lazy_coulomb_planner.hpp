@@ -15,6 +15,7 @@
 #ifndef LAZY_COULOMB_PLANNER__LAZY_COULOMB_PLANNER_HPP_
 #define LAZY_COULOMB_PLANNER__LAZY_COULOMB_PLANNER_HPP_
 
+#include <functional>
 #include <string>
 #include <vector>
 #include <memory>
@@ -91,12 +92,14 @@ public:
    * @brief Core planning method called by Nav2 when a new goal is received.
    * @param start Current robot pose in map frame
    * @param goal Target pose in map frame
+   * @param cancel_checker Returns true if the planning request was cancelled
    * @return nav_msgs::msg::Path with waypoints from start to goal
    * @throws nav2_core::PlannerException if no valid path found
    */
   nav_msgs::msg::Path createPlan(
     const geometry_msgs::msg::PoseStamped & start,
-    const geometry_msgs::msg::PoseStamped & goal) override;
+    const geometry_msgs::msg::PoseStamped & goal,
+    std::function<bool()> cancel_checker) override;
 
   /**
    * @brief Testing utility: inject a raw Costmap2D, bypassing Costmap2DROS.
