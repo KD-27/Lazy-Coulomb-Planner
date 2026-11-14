@@ -1,0 +1,4 @@
+planner,leg,goal_x,goal_y,straight_m,planned_m,reached,sim_time_s,travelled_m,min_scan_range_m,recoveries
+lcp,0,1.725,-0.025,3.755,3.972,1,12.3,3.84,0.342,0
+lcp,1,0.325,-0.725,1.565,1.545,1,7.25,1.286,0.353,0
+lcp,2,-0.725,1.925,2.85,3.342,1,16.46,3.021,0.294,5

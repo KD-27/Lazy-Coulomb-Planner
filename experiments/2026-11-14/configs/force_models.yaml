@@ -1,0 +1,54 @@
+# Force-model comparison: NavFn as reference plus LCP variants on one shared costmap.
+planner_server:
+  ros__parameters:
+    expected_planner_frequency: 20.0
+    planner_plugins: ["Navfn", "LCP_probe", "LCP_r1", "LCP_r2", "LCP_r1c", "LCP_r2c"]
+    Navfn:
+      plugin: "nav2_navfn_planner::NavfnPlanner"
+    LCP_probe:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      charge_radius: 1.0
+      force_model: "probe"
+    LCP_r1:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      charge_radius: 1.0
+      force_model: "coulomb"
+      force_exponent: 1.0
+      commit_direction: false
+    LCP_r2:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      charge_radius: 1.0
+      force_model: "coulomb"
+      force_exponent: 2.0
+      commit_direction: false
+    LCP_r1c:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      charge_radius: 1.0
+      force_model: "coulomb"
+      force_exponent: 1.0
+      commit_direction: true
+    LCP_r2c:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      charge_radius: 1.0
+      force_model: "coulomb"
+      force_exponent: 2.0
+      commit_direction: true
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      update_frequency: 1.0
+      publish_frequency: 1.0
+      global_frame: map
+      robot_base_frame: base_link
+      robot_radius: 0.22
+      resolution: 0.05
+      track_unknown_space: true
+      always_send_full_costmap: true
+      plugins: ["static_layer", "inflation_layer"]
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: true
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.7
