@@ -77,6 +77,8 @@ void LazyCoulombPlanner::configure(
   retry_other_side_ = declare("retry_other_side", rclcpp::ParameterValue(true)).as_bool();
   retry_order_ = declare("retry_order", rclcpp::ParameterValue("shortest")).as_string();
   max_path_stretch_ = declare("max_path_stretch", rclcpp::ParameterValue(5.0)).as_double();
+  start_escape_radius_ =
+    declare("start_escape_radius", rclcpp::ParameterValue(0.5)).as_double();
   waypoint_margin_ = declare("waypoint_margin", rclcpp::ParameterValue(0.3)).as_double();
   simplify_path_ = declare("simplify_path", rclcpp::ParameterValue(true)).as_bool();
   enable_smoothing_ = declare("enable_smoothing", rclcpp::ParameterValue(true)).as_bool();
@@ -141,8 +143,15 @@ nav_msgs::msg::Path LazyCoulombPlanner::createPlan(
   if (!costmap_->worldToMap(goal.x, goal.y, mx, my)) {
     throw nav2_core::GoalOutsideMapBounds("LazyCoulombPlanner: Goal is outside costmap");
   }
-  if (isPointInObstacle(start.x, start.y)) {
-    throw nav2_core::StartOccupied("LazyCoulombPlanner: Start is inside an obstacle");
+  // A robot that stopped a little too close to an obstacle sits on a cell the
+  // costmap counts as occupied. Rather than refuse to plan, step out to the
+  // nearest free cell and plan from there; the real start is put back at the end.
+  const PathPoint robot = start;
+  const bool escaped = isPointInObstacle(start.x, start.y);
+  if (escaped && !nearestFreePoint(robot, start_escape_radius_, start)) {
+    throw nav2_core::StartOccupied(
+            "LazyCoulombPlanner: Start is inside an obstacle with no free space within " +
+            std::to_string(start_escape_radius_) + " m");
   }
   if (isPointInObstacle(goal.x, goal.y)) {
     throw nav2_core::GoalOccupied("LazyCoulombPlanner: Goal is inside an obstacle");
@@ -293,6 +302,10 @@ nav_msgs::msg::Path LazyCoulombPlanner::createPlan(
             "LazyCoulombPlanner: Final path failed its collision check");
   }
 
+  if (escaped) {
+    path.insert(path.begin(), robot);
+  }
+
   std_msgs::msg::Header header;
   header.stamp = clock_->now();
   header.frame_id = global_frame_;
@@ -378,6 +391,42 @@ bool LazyCoulombPlanner::segmentIntersectsObstacle(
 {
   PathPoint unused(0.0, 0.0);
   return findSegmentObstacleEntry(p1, p2, unused);
+}
+
+bool LazyCoulombPlanner::nearestFreePoint(
+  const PathPoint & pt, double radius, PathPoint & free_point) const
+{
+  unsigned int cx, cy;
+  if (radius <= 0.0 || !costmap_->worldToMap(pt.x, pt.y, cx, cy)) {
+    return false;
+  }
+  const double res = costmap_->getResolution();
+  const int reach = static_cast<int>(std::ceil(radius / res));
+  const int size_x = static_cast<int>(costmap_->getSizeInCellsX());
+  const int size_y = static_cast<int>(costmap_->getSizeInCellsY());
+
+  double best = radius * radius;
+  bool found = false;
+  for (int y = std::max(0, static_cast<int>(cy) - reach);
+    y <= std::min(size_y - 1, static_cast<int>(cy) + reach); ++y)
+  {
+    for (int x = std::max(0, static_cast<int>(cx) - reach);
+      x <= std::min(size_x - 1, static_cast<int>(cx) + reach); ++x)
+    {
+      if (static_cast<double>(costmap_->getCost(x, y)) >= lethal_cost_threshold_) {
+        continue;
+      }
+      double wx, wy;
+      costmap_->mapToWorld(x, y, wx, wy);
+      const double d2 = (wx - pt.x) * (wx - pt.x) + (wy - pt.y) * (wy - pt.y);
+      if (d2 <= best) {
+        best = d2;
+        free_point = PathPoint(wx, wy, true);
+        found = true;
+      }
+    }
+  }
+  return found;
 }
 
 bool LazyCoulombPlanner::isPathClear(const std::vector<PathPoint> & points) const

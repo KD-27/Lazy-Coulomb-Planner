@@ -137,6 +137,7 @@ ros2 launch nav2_bringup navigation_launch.py \
 | `repulsion_strength` | 1.0 | Cells moved per unit of normalised force |
 | `max_push_step` | 0.0 | Cap on one push step (m); 0 means one costmap cell |
 | `force_balance_threshold` | 0.05 | Below this force the push is a fixed kick |
+| `start_escape_radius` | 0.5 | If the robot sits on an occupied cell, plan from the nearest free cell within this range (m); 0 disables |
 | `waypoint_margin` | 0.3 | Extra push past the obstacle edge when free (m); gives corners room to be smoothed |
 | `retry_other_side` | true | Back up and try the other side when a branch dead-ends |
 | `retry_order` | `shortest` | Retry from the `shortest` partial path, or the most `recent` decision |

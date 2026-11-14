@@ -118,6 +118,9 @@ protected:
   bool findSegmentObstacleEntry(
     const PathPoint & p1, const PathPoint & p2, PathPoint & intersection) const;
 
+  /** @brief Centre of the nearest free cell within `radius` of `pt`, if there is one. */
+  bool nearestFreePoint(const PathPoint & pt, double radius, PathPoint & free_point) const;
+
   /** @brief True if every segment of the polyline is collision free. */
   bool isPathClear(const std::vector<PathPoint> & points) const;
 
@@ -188,6 +191,7 @@ protected:
   bool retry_other_side_;           // Back up and try the other side on a dead end
   std::string retry_order_;         // Which untried side to retry first: "recent" or "shortest"
   double max_path_stretch_;         // Abandon detours longer than this x straight line
+  double start_escape_radius_;      // Start on an occupied cell may step this far to free space (m)
   double waypoint_margin_;          // Extra push past the obstacle edge, if free (m)
   bool simplify_path_;              // Remove redundant waypoints after solving
   bool enable_smoothing_;           // Collision-safe Chaikin smoothing

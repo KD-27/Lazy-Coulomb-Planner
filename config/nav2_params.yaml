@@ -29,6 +29,10 @@ planner_server:
       max_iterations: 2000       # waypoint placement attempts, retries included
       max_push_iterations: 400   # steps to push a single waypoint clear
 
+      # A robot stopped slightly inside the inflated zone plans from the nearest
+      # free cell within this range (m). 0 = refuse to plan from an occupied cell.
+      start_escape_radius: 0.5
+
       # Extra push past the obstacle edge when the way is free (m). Gives the
       # smoother room to round the corner and reduces repeat corrections.
       waypoint_margin: 0.3
