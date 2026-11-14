@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Planner benchmark derived from Nav2's tools/planner_benchmarking/metrics.py.
+"""
+Planner benchmark derived from Nav2's tools/planner_benchmarking/metrics.py.
 
 Differences from upstream: failures are recorded instead of discarded, every
 returned path is audited against the costmap at a tenth-of-a-cell spacing, and the map
@@ -99,14 +100,15 @@ for pair in range(n_pairs):
         r, wall_ms = timed_plan(planner, s, g)
         pts = [(p.pose.position.x, p.pose.position.y) for p in r.path.poses]
         ok = r.error_code == 0 and len(pts) >= 2
-        length, worst, turn, sharpest = audit(pts) if ok else (float('nan'), -1, float('nan'), float('nan'))
-        rows.append(dict(
-            pair=pair, planner=planner, sx=s[0], sy=s[1], gx=g[0], gy=g[1],
-            straight=math.hypot(g[0] - s[0], g[1] - s[1]), error_code=r.error_code,
-            returned=int(ok), valid=int(ok and worst < OBSTACLE_COST),
-            time_ms=r.planning_time.sec * 1e3 + r.planning_time.nanosec / 1e6,
-            wall_ms=wall_ms, length=length, max_cost=worst, turn_rad=turn,
-            sharpest_deg=math.degrees(sharpest), poses=len(pts)))
+        nan = float('nan')
+        length, worst, turn, sharpest = audit(pts) if ok else (nan, -1, nan, nan)
+        rows.append({
+            'pair': pair, 'planner': planner, 'sx': s[0], 'sy': s[1], 'gx': g[0], 'gy': g[1],
+            'straight': math.hypot(g[0] - s[0], g[1] - s[1]), 'error_code': r.error_code,
+            'returned': int(ok), 'valid': int(ok and worst < OBSTACLE_COST),
+            'time_ms': r.planning_time.sec * 1e3 + r.planning_time.nanosec / 1e6,
+            'wall_ms': wall_ms, 'length': length, 'max_cost': worst, 'turn_rad': turn,
+            'sharpest_deg': math.degrees(sharpest), 'poses': len(pts)})
 
 with open(out_csv, 'w', newline='') as f:
     w = csv.DictWriter(f, fieldnames=list(rows[0]))
@@ -116,8 +118,16 @@ with open(out_csv, 'w', newline='') as f:
 ref = {r['pair']: r for r in rows if r['planner'] == planners[0]}
 solvable = {p for p, r in ref.items() if r['valid']}
 print(f'\n{n_pairs} pairs, {len(solvable)} with a route according to {planners[0]}')
-print(f"{'planner':>10} {'valid':>9} {'collide':>7} {'failed':>6} {'false+':>6} "
-      f"{'t_med':>7} {'t_p95':>7} {'t_max':>7} {'failwall':>8} {'len/ref':>7} {'turn':>6} {'corner':>6}")
+header = 'planner'
+columns = ['valid', 'collide', 'failed', 'false+', 't_med', 't_p95', 't_max', 'failwall',
+           'len/ref', 'turn', 'corner']
+print(f'{header:>12} ' + ' '.join(f'{c:>8}' for c in columns))
+
+
+def median(values):
+    return float(np.median(values)) if values else float('nan')
+
+
 for planner in planners:
     mine = [r for r in rows if r['planner'] == planner]
     on = [r for r in mine if r['pair'] in solvable]
@@ -125,13 +135,16 @@ for planner in planners:
     collide = sum(r['returned'] and not r['valid'] for r in on)
     failed = sum(not r['returned'] for r in on)
     false_pos = sum(r['returned'] for r in mine if r['pair'] not in solvable)
-    # planner_server reports no planning time for failed requests, so time covers returned paths only
+    # planner_server reports no planning time for failed requests, so the time
+    # columns cover returned paths only.
     t = np.array([r['time_ms'] for r in mine if r['returned']] or [float('nan')])
-    ratio = np.median([r['length'] / ref[r['pair']]['length'] for r in valid]) if valid else float('nan')
-    turn = np.median([r['turn_rad'] for r in valid]) if valid else float('nan')
-    corner = np.median([r['sharpest_deg'] for r in valid]) if valid else float('nan')
-    # round-trip time of failed requests (includes ~1 ms of ROS overhead)
-    fw = np.max([r['wall_ms'] for r in mine if not r['returned']] or [float('nan')])
-    print(f"{planner:>10} {len(valid):>4}/{len(on):<4} {collide:>7} {failed:>6} {false_pos:>6} "
-          f"{np.median(t):7.2f} {np.percentile(t, 95):7.2f} {t.max():7.2f} {fw:8.1f} {ratio:7.3f} {turn:6.2f} {corner:6.1f}")
+    ratio = median([r['length'] / ref[r['pair']]['length'] for r in valid])
+    turn = median([r['turn_rad'] for r in valid])
+    corner = median([r['sharpest_deg'] for r in valid])
+    # Slowest failed request, client round trip (includes ~1 ms of ROS overhead).
+    fail_wall = max([r['wall_ms'] for r in mine if not r['returned']] or [float('nan')])
+    cells = [f'{len(valid)}/{len(on)}', collide, failed, false_pos,
+             f'{np.median(t):.2f}', f'{np.percentile(t, 95):.2f}', f'{t.max():.2f}',
+             f'{fail_wall:.1f}', f'{ratio:.3f}', f'{turn:.2f}', f'{corner:.1f}']
+    print(f'{planner:>12} ' + ' '.join(f'{c:>8}' for c in cells))
 rclpy.shutdown()

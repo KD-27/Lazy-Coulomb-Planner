@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Drive the simulated robot through a fixed sequence of goals and record how it went.
+"""
+Drive the simulated robot through a fixed sequence of goals and record how it went.
 
 Goals are sampled with a fixed seed from the static map (cells at least
 CLEARANCE metres from any obstacle), so every planner gets the same sequence.
@@ -104,12 +105,12 @@ for i, g in enumerate(goals):
     result = nav.getResult()
     sim_s = (nav.get_clock().now() - t0).nanoseconds / 1e9
     reached = result == TaskResult.SUCCEEDED
-    rows_out.append(dict(
-        planner=label, leg=i, goal_x=round(g[0], 3), goal_y=round(g[1], 3),
-        straight_m=round(math.hypot(g[0] - here[0], g[1] - here[1]), 3),
-        planned_m=round(planned, 3), reached=int(reached), sim_time_s=round(sim_s, 2),
-        travelled_m=round(state['travelled'], 3), min_scan_range_m=round(state['min_range'], 3),
-        recoveries=recoveries))
+    rows_out.append({
+        'planner': label, 'leg': i, 'goal_x': round(g[0], 3), 'goal_y': round(g[1], 3),
+        'straight_m': round(math.hypot(g[0] - here[0], g[1] - here[1]), 3),
+        'planned_m': round(planned, 3), 'reached': int(reached), 'sim_time_s': round(sim_s, 2),
+        'travelled_m': round(state['travelled'], 3),
+        'min_scan_range_m': round(state['min_range'], 3), 'recoveries': recoveries})
     print(rows_out[-1], flush=True)
     here = g if reached else (state['odom'] or here)
 
@@ -118,10 +119,12 @@ with open(out_csv, 'w', newline='') as f:
     w.writeheader()
     w.writerows(rows_out)
 
-ok = [r for r in rows_out if r['reached']]
-print(f"\n{label}: reached {len(ok)}/{len(rows_out)} goals, "
-      f"sim time {sum(r['sim_time_s'] for r in rows_out):.1f} s, "
-      f"travelled {sum(r['travelled_m'] for r in rows_out):.2f} m, "
-      f"closest obstacle {min(r['min_scan_range_m'] for r in rows_out):.3f} m, "
-      f"recoveries {sum(r['recoveries'] for r in rows_out)}")
+reached_count = sum(r['reached'] for r in rows_out)
+sim_time = sum(r['sim_time_s'] for r in rows_out)
+travelled = sum(r['travelled_m'] for r in rows_out)
+closest = min(r['min_scan_range_m'] for r in rows_out)
+recovery_count = sum(r['recoveries'] for r in rows_out)
+print(f'\n{label}: reached {reached_count}/{len(rows_out)} goals, sim time {sim_time:.1f} s, '
+      f'travelled {travelled:.2f} m, closest obstacle {closest:.3f} m, '
+      f'recoveries {recovery_count}')
 rclpy.shutdown()

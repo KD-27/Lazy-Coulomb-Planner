@@ -12,8 +12,8 @@ respected.
 
 | File | Purpose |
 |---|---|
-| `Dockerfile` | ROS 2 Jazzy + Nav2 image (`docker build -t lcp-jazzy benchmark/`) |
-| `run_all.sh` | Host script: all six maps, inside the image |
+| `Dockerfile` | ROS 2 Jazzy + full Nav2 image, for machines without a native install |
+| `run_all.sh` | All six maps |
 | `bench.sh` | One map; run where Nav2 and this workspace are available |
 | `lcp_bench.py` | Samples start/goal pairs, calls the planners, writes a CSV and a summary |
 | `config/planners.yaml` | Planner plugins and the costmap (0.22 m robot radius, 0.7 m inflation) |
@@ -23,11 +23,14 @@ respected.
 ## Running
 
 ```bash
-docker build -t lcp-jazzy benchmark/
-docker run --rm -u $(id -u):$(id -g) -e HOME=/tmp -v <workspace>:/ws lcp-jazzy \
-  bash -c 'source /opt/ros/jazzy/setup.bash && cd /ws && colcon build'
+colcon build --packages-select lazy_coulomb_planner      # from the workspace root
 benchmark/run_all.sh final 100 Navfn Smac2d ThetaStar LCP
 ```
+
+This needs Nav2 Jazzy (planner, map server, lifecycle manager, simple commander
+and the three grid planners). Without a native install, build the image with
+`docker build -t lcp-jazzy benchmark/`, mount the workspace at the same path it
+has on the host, and run the same two commands inside it.
 
 Pairs are drawn with a fixed seed from cells with cost below 210, at least 3 m
 apart. The first planner named is the reference: a pair counts as having a
