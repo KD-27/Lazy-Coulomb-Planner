@@ -1,7 +1,7 @@
 #!/bin/bash
-# Headless Gazebo + full Nav2 with a TurtleBot3, global planner swapped for the
-# one named. Run where Nav2 Jazzy, nav2_bringup and this workspace are available
-# (for example the image from benchmark/Dockerfile).
+# Headless Gazebo + the Nav2 stack with a TurtleBot3, with the global planner
+# swapped for the one named. Needs Nav2 Jazzy, nav2_minimal_tb3_sim, ros_gz and
+# this workspace built; nav2_bringup is not required.
 # usage: run_sim.sh <lcp|navfn> <goals> [out_dir]
 here=$(cd "$(dirname "$0")" && pwd)
 ws=$(cd "$here/../../.." && pwd)
@@ -14,28 +14,33 @@ export ROS_DOMAIN_ID=${LCP_ROS_DOMAIN_ID:-87}
 # several simulations on one network cannot see each other.
 export GZ_PARTITION=lcp_sim_${ROS_DOMAIN_ID}
 planner=$1; goals=$2; out=${3:-$here/results}
-bringup=$(ros2 pkg prefix nav2_bringup)/share/nav2_bringup
-
 case $planner in
   lcp)   plugin="lazy_coulomb_planner::LazyCoulombPlanner" ;;
   navfn) plugin="nav2_navfn_planner::NavfnPlanner" ;;
   *) echo "planner must be lcp or navfn"; exit 2 ;;
 esac
 
-# Stock Nav2 parameters with only the global planner plugin replaced.
-params=/tmp/nav2_params_$planner.yaml
-sed "s|plugin: \"nav2_navfn_planner::NavfnPlanner\"|plugin: \"$plugin\"|" \
-  "$bringup/params/nav2_params.yaml" > "$params"
+# The test parameters with only the global planner plugin replaced.
+mkdir -p "$out"
+params=$(mktemp --suffix=.yaml)
+sed "s|plugin: .*nav2_navfn_planner::NavfnPlanner.*|plugin: \"$plugin\"|" \
+  "$here/config/nav2_sim_params.yaml" > "$params"
 grep -q "$plugin" "$params" || { echo "failed to set planner plugin"; exit 1; }
 
-setsid ros2 launch nav2_bringup tb3_simulation_launch.py headless:=True use_rviz:=False \
-  params_file:="$params" > "$out/$planner.launch.log" 2>&1 &
+setsid ros2 launch "$here/launch/tb3_sim.launch.py" params_file:="$params" \
+  map:="$here/maps/tb3_sandbox.yaml" > "$out/$planner.launch.log" 2>&1 &
 launch_pid=$!
+# Stop every simulation and navigation process on any exit, including Ctrl-C or a timeout.
+cleanup() {
+  kill -INT -- "-$launch_pid" 2>/dev/null
+  sleep 3
+  kill -KILL -- "-$launch_pid" 2>/dev/null
+  rm -f "$params"
+}
+trap cleanup EXIT
+trap 'exit 1' INT TERM
 sleep 25
 # The robot spawns at (-2.0, -0.5) in the tb3_sandbox world.
-python3 "$here/drive.py" "$bringup/maps/tb3_sandbox.yaml" "$out/$planner.csv" "$planner" \
+python3 "$here/drive.py" "$here/maps/tb3_sandbox.yaml" "$out/$planner.csv" "$planner" \
   "$goals" -2.0 -0.5 2>&1 | grep -v "^\[INFO\]"
-kill -INT -- "-$launch_pid" 2>/dev/null
-sleep 3
-kill -KILL -- "-$launch_pid" 2>/dev/null
 exit 0
