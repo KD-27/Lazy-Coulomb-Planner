@@ -65,8 +65,9 @@ def timed_plan(planner, s, g):
 
 
 def audit(pts):
-    """Path length, highest cost touched, total and sharpest heading change (rad)."""
+    """Path length, highest and mean cost touched, total and sharpest heading change (rad)."""
     length, worst, turn, sharpest, prev = 0.0, 0, 0.0, 0.0, None
+    cost_sum, cost_n = 0.0, 0
     for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
         d = math.hypot(x1 - x0, y1 - y0)
         if d < 1e-9:
@@ -84,8 +85,11 @@ def audit(pts):
         inside = (r >= 0) & (r < grid.shape[0]) & (c >= 0) & (c < grid.shape[1])
         if not inside.all():
             worst = 255
-        worst = max(worst, int(grid[r[inside], c[inside]].max()))
-    return length, worst, turn, sharpest
+        costs = grid[r[inside], c[inside]]
+        worst = max(worst, int(costs.max()))
+        cost_sum += float(costs.sum())
+        cost_n += len(costs)
+    return length, worst, turn, sharpest, cost_sum / max(cost_n, 1)
 
 
 random.seed(33)
@@ -101,13 +105,14 @@ for pair in range(n_pairs):
         pts = [(p.pose.position.x, p.pose.position.y) for p in r.path.poses]
         ok = r.error_code == 0 and len(pts) >= 2
         nan = float('nan')
-        length, worst, turn, sharpest = audit(pts) if ok else (nan, -1, nan, nan)
+        length, worst, turn, sharpest, mean_cost = audit(pts) if ok else (nan, -1, nan, nan, nan)
         rows.append({
             'pair': pair, 'planner': planner, 'sx': s[0], 'sy': s[1], 'gx': g[0], 'gy': g[1],
             'straight': math.hypot(g[0] - s[0], g[1] - s[1]), 'error_code': r.error_code,
             'returned': int(ok), 'valid': int(ok and worst < OBSTACLE_COST),
             'time_ms': r.planning_time.sec * 1e3 + r.planning_time.nanosec / 1e6,
-            'wall_ms': wall_ms, 'length': length, 'max_cost': worst, 'turn_rad': turn,
+            'wall_ms': wall_ms, 'length': length, 'max_cost': worst, 'mean_cost': mean_cost,
+            'turn_rad': turn,
             'sharpest_deg': math.degrees(sharpest), 'poses': len(pts)})
 
 with open(out_csv, 'w', newline='') as f:
@@ -120,7 +125,7 @@ solvable = {p for p, r in ref.items() if r['valid']}
 print(f'\n{n_pairs} pairs, {len(solvable)} with a route according to {planners[0]}')
 header = 'planner'
 columns = ['valid', 'collide', 'failed', 'false+', 't_med', 't_p95', 't_max', 'failwall',
-           'len/ref', 'turn', 'corner']
+           'len/ref', 'turn', 'corner', 'maxcost', 'meancost']
 print(f'{header:>12} ' + ' '.join(f'{c:>8}' for c in columns))
 
 
@@ -145,6 +150,8 @@ for planner in planners:
     fail_wall = max([r['wall_ms'] for r in mine if not r['returned']] or [float('nan')])
     cells = [f'{len(valid)}/{len(on)}', collide, failed, false_pos,
              f'{np.median(t):.2f}', f'{np.percentile(t, 95):.2f}', f'{t.max():.2f}',
-             f'{fail_wall:.1f}', f'{ratio:.3f}', f'{turn:.2f}', f'{corner:.1f}']
+             f'{fail_wall:.1f}', f'{ratio:.3f}', f'{turn:.2f}', f'{corner:.1f}',
+             f'{median([r["max_cost"] for r in valid]):.0f}',
+             f'{median([r["mean_cost"] for r in valid]):.1f}']
     print(f'{planner:>12} ' + ' '.join(f'{c:>8}' for c in cells))
 rclpy.shutdown()

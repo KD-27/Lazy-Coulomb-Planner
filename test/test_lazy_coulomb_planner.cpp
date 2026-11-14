@@ -101,6 +101,53 @@ protected:
     }
   }
 
+  /// Surround lethal cells with an exponentially decaying cost, like Nav2's inflation layer.
+  void inflate(double radius, double scaling)
+  {
+    std::vector<std::pair<int, int>> lethal_cells;
+    for (unsigned int my = 0; my < kCells; ++my) {
+      for (unsigned int mx = 0; mx < kCells; ++mx) {
+        if (costmap_->getCost(mx, my) == LETHAL_OBSTACLE) {
+          lethal_cells.emplace_back(mx, my);
+        }
+      }
+    }
+    for (int my = 0; my < static_cast<int>(kCells); ++my) {
+      for (int mx = 0; mx < static_cast<int>(kCells); ++mx) {
+        if (costmap_->getCost(mx, my) == LETHAL_OBSTACLE) {
+          continue;
+        }
+        double nearest = radius + 1.0;
+        for (const auto & c : lethal_cells) {
+          nearest = std::min(nearest, kRes * std::hypot(mx - c.first, my - c.second));
+        }
+        if (nearest <= radius) {
+          costmap_->setCost(mx, my,
+              static_cast<unsigned char>(252.0 * std::exp(-scaling * nearest)));
+        }
+      }
+    }
+  }
+
+  /// Highest cost touched by the path, sampled at a tenth of a cell.
+  int maxCost(const nav_msgs::msg::Path & path) const
+  {
+    int worst = 0;
+    for (size_t i = 0; i + 1 < path.poses.size(); ++i) {
+      const auto & a = path.poses[i].pose.position;
+      const auto & b = path.poses[i + 1].pose.position;
+      const int n = std::max(1, static_cast<int>(std::hypot(b.x - a.x, b.y - a.y) / (kRes / 10)));
+      for (int k = 0; k <= n; ++k) {
+        const double t = static_cast<double>(k) / n;
+        unsigned int mx, my;
+        if (costmap_->worldToMap(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, mx, my)) {
+          worst = std::max(worst, static_cast<int>(costmap_->getCost(mx, my)));
+        }
+      }
+    }
+    return worst;
+  }
+
   bool lethal(double wx, double wy) const
   {
     unsigned int mx, my;
@@ -335,6 +382,29 @@ TEST_F(LcpTest, SmoothingRoundsCornersWithoutColliding)
   EXPECT_LE(length(smooth_path), length(sharp_path) + 1e-9);
 }
 
+TEST_F(LcpTest, KeepsDistanceFromObstaclesItDoesNotCross)
+{
+  // The straight line passes just above the box without touching it, through
+  // the high-cost band around it.
+  addBox(4.0, 2.0, 6.0, 4.8);
+  inflate(0.7, 3.0);
+  const auto start = pose(1.0, 5.0), goal = pose(9.0, 5.0);
+
+  auto grazing = makePlanner({rclcpp::Parameter("comfort_cost", 253.0)});
+  auto comfortable = makePlanner();
+  const auto grazing_path = grazing->createPlan(start, goal, never);
+  const auto comfortable_path = comfortable->createPlan(start, goal, never);
+
+  EXPECT_FALSE(collides(grazing_path));
+  EXPECT_FALSE(collides(comfortable_path));
+  EXPECT_GT(maxCost(grazing_path), 110);
+  // The default comfort_cost is 100: the whole path ends up at or below it.
+  EXPECT_LE(maxCost(comfortable_path), 100);
+  // The detour is gentle: no hairpin, and hardly any extra length.
+  EXPECT_LT(sharpestCorner(comfortable_path), 0.35);
+  EXPECT_LT(length(comfortable_path), 1.05 * 8.0);
+}
+
 TEST_F(LcpTest, NeverReturnsACollidingPathInRandomClutter)
 {
   // Property test: whatever the planner returns must be collision free, for
@@ -345,9 +415,11 @@ TEST_F(LcpTest, NeverReturnsACollidingPathInRandomClutter)
     const double x = pos(rng), y = pos(rng), w = size(rng), h = size(rng);
     addBox(x, y, x + w, y + h);
   }
+  inflate(0.4, 3.0);  // so the clearance pass and clearance-aware smoothing run too
 
   const std::vector<std::vector<rclcpp::Parameter>> variants = {
     {},
+    {rclcpp::Parameter("comfort_cost", 253.0)},
     {rclcpp::Parameter("force_exponent", 1.0)},
     {rclcpp::Parameter("force_model", "probe")},
     {rclcpp::Parameter("waypoint_margin", 0.0)},

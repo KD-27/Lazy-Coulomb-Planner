@@ -118,6 +118,22 @@ protected:
   bool findSegmentObstacleEntry(
     const PathPoint & p1, const PathPoint & p2, PathPoint & intersection) const;
 
+  /**
+   * @brief Visit every costmap cell the segment (p1 -> p2) touches, in order.
+   *        visit(cost, t_enter, t_exit) returns true to stop early.
+   */
+  template<typename Visitor>
+  void traverseCells(const PathPoint & p1, const PathPoint & p2, Visitor && visit) const;
+
+  /** @brief Highest cost of any cell touched by (p1 -> p2), and where along it that occurs. */
+  double segmentMaxCost(const PathPoint & p1, const PathPoint & p2, PathPoint & where) const;
+
+  /** @brief Cost above comfort_cost, integrated along (p1 -> p2) (cost units x metres). */
+  double segmentExposure(const PathPoint & p1, const PathPoint & p2) const;
+
+  /** @brief Costmap cost at a world point; NO_INFORMATION (255) outside the map. */
+  double costAt(double wx, double wy) const;
+
   /** @brief Centre of the nearest free cell within `radius` of `pt`, if there is one. */
   bool nearestFreePoint(const PathPoint & pt, double radius, PathPoint & free_point) const;
 
@@ -150,6 +166,12 @@ protected:
    *        reaches free space sooner along the normal; 0 if neither does.
    */
   int probeNearestClearSide(const PathPoint & pt, double nx, double ny) const;
+
+  /**
+   * @brief Add waypoints that pull stretches passing close to an obstacle
+   *        (cost above comfort_cost) away from it. Never introduces a collision.
+   */
+  std::vector<PathPoint> improveClearance(const std::vector<PathPoint> & points) const;
 
   /** @brief Drop waypoints whose neighbours can be joined directly. */
   std::vector<PathPoint> removeRedundant(const std::vector<PathPoint> & points) const;
@@ -192,6 +214,9 @@ protected:
   std::string retry_order_;         // Which untried side to retry first: "recent" or "shortest"
   double max_path_stretch_;         // Abandon detours longer than this x straight line
   double start_escape_radius_;      // Start on an occupied cell may step this far to free space (m)
+  double comfort_cost_;             // Costs above this are avoided where possible
+  double smoothing_cost_slack_;     // Cost a smoothing cut may add above comfort_cost
+  double max_clearance_push_;       // Furthest a waypoint moves to gain clearance (m)
   double waypoint_margin_;          // Extra push past the obstacle edge, if free (m)
   bool simplify_path_;              // Remove redundant waypoints after solving
   bool enable_smoothing_;           // Collision-safe Chaikin smoothing

@@ -29,6 +29,11 @@ planner_server:
       max_iterations: 2000       # waypoint placement attempts, retries included
       max_push_iterations: 400   # steps to push a single waypoint clear
 
+      # ── Keeping distance (needs an inflation layer in the global costmap) ─
+      comfort_cost: 100.0        # avoid costs above this where possible; 253 = off
+      max_clearance_push: 1.0    # furthest a waypoint moves to gain clearance (m)
+      smoothing_cost_slack: 40.0 # cost a smoothing cut may add above comfort_cost
+
       # A robot stopped slightly inside the inflated zone plans from the nearest
       # free cell within this range (m). 0 = refuse to plan from an occupied cell.
       start_escape_radius: 0.5

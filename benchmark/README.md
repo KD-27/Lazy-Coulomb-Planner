@@ -49,3 +49,4 @@ route if that planner returns a collision-free path.
 | `len/ref` | Median path length relative to the reference planner |
 | `turn` | Median total heading change (rad) |
 | `corner` | Median sharpest single heading change (degrees) |
+| `maxcost`, `meancost` | Median of the highest / average costmap cost along the path (lower = further from obstacles) |

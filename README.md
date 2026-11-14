@@ -52,6 +52,26 @@ against the costmap; if it touches an obstacle the cut is retried closer to
 the corner (1/4, 1/8, 1/16 of the segment) and if none fits the corner is
 kept. The smoothed path is therefore collision free by construction.
 
+### Keeping distance
+
+A collision-free path can still pass closer to obstacles than is comfortable to
+drive. Two mechanisms use the costmap's inflation costs to back off:
+
+- A waypoint that has just cleared its obstacle keeps moving while the cost
+  keeps falling towards `comfort_cost`, and stops when the cost starts to rise
+  again (another obstacle is getting closer, so it ends up near the middle of
+  a gap).
+- After a path is found, each stretch is checked for where it comes closest to
+  an obstacle. If the cost there is above `comfort_cost`, a waypoint is placed
+  at that spot and the Coulomb force from the nearby obstacles pushes it away.
+  It is kept only if the path stays collision free and ends up further away.
+
+Sideways moves are limited to a fraction of the distance to the neighbouring
+waypoints, so gaining clearance never makes the path double back. Smoothing may
+give back up to `smoothing_cost_slack` of the gained clearance to round a
+corner. Both mechanisms need an inflation layer in the costmap; with
+`comfort_cost: 253` they are off.
+
 ### Failure instead of a bad path
 
 The planner never returns a path it knows to be in collision. Segments are
@@ -138,6 +158,9 @@ ros2 launch nav2_bringup navigation_launch.py \
 | `max_push_step` | 0.0 | Cap on one push step (m); 0 means one costmap cell |
 | `force_balance_threshold` | 0.05 | Below this force the push is a fixed kick |
 | `start_escape_radius` | 0.5 | If the robot sits on an occupied cell, plan from the nearest free cell within this range (m); 0 disables |
+| `comfort_cost` | 100.0 | Costmap costs above this are avoided where possible; 253 disables |
+| `max_clearance_push` | 1.0 | Furthest a waypoint moves to gain clearance (m) |
+| `smoothing_cost_slack` | 40.0 | Cost a smoothing cut may add above `comfort_cost` |
 | `waypoint_margin` | 0.3 | Extra push past the obstacle edge when free (m); gives corners room to be smoothed |
 | `retry_other_side` | true | Back up and try the other side when a branch dead-ends |
 | `retry_order` | `shortest` | Retry from the `shortest` partial path, or the most `recent` decision |
@@ -166,6 +189,10 @@ grows with the square of the radius.
 → Raise `waypoint_margin` so waypoints sit further from the obstacle edge, and
 `smoothing_iterations`. A corner stays sharp only where every cut would touch
 an obstacle.
+
+### Robot gets stuck or drives too close to obstacles
+→ Lower `comfort_cost` (and make sure the global costmap has an inflation layer
+with a radius well beyond the robot radius).
 
 ### Fails in narrow corridors or mazes
 → Expected: a single sideways push cannot route around dead ends. Catch the

@@ -34,6 +34,14 @@ PLUGINLIB_EXPORT_CLASS(
 namespace lazy_coulomb_planner
 {
 
+// Clearance waypoints move sideways by at most this fraction of the distance to
+// their nearer neighbour (0.35 keeps the turn at the neighbour under about 20 deg).
+static const double kMaxOffsetRatio = 0.35;
+
+// While descending the cost gradient, this many consecutive steps without a
+// change in cost are tolerated before the descent is considered finished.
+static const int kMaxFlatSteps = 2;
+
 // =============================================================================
 //  Nav2 Lifecycle Interface
 // =============================================================================
@@ -79,6 +87,11 @@ void LazyCoulombPlanner::configure(
   max_path_stretch_ = declare("max_path_stretch", rclcpp::ParameterValue(5.0)).as_double();
   start_escape_radius_ =
     declare("start_escape_radius", rclcpp::ParameterValue(0.5)).as_double();
+  comfort_cost_ = declare("comfort_cost", rclcpp::ParameterValue(100.0)).as_double();
+  smoothing_cost_slack_ =
+    declare("smoothing_cost_slack", rclcpp::ParameterValue(40.0)).as_double();
+  max_clearance_push_ =
+    declare("max_clearance_push", rclcpp::ParameterValue(1.0)).as_double();
   waypoint_margin_ = declare("waypoint_margin", rclcpp::ParameterValue(0.3)).as_double();
   simplify_path_ = declare("simplify_path", rclcpp::ParameterValue(true)).as_bool();
   enable_smoothing_ = declare("enable_smoothing", rclcpp::ParameterValue(true)).as_bool();
@@ -191,18 +204,47 @@ nav_msgs::msg::Path LazyCoulombPlanner::createPlan(
       if (!pushClear(waypoint, a, b, side, forced)) {
         return false;
       }
-      // Keep going a little past the obstacle edge, while the way is free, so the
-      // corner at this waypoint has room to be rounded off by the smoother.
+      // Keep going past the obstacle edge: at least waypoint_margin, so the corner
+      // has room to be rounded off, and then for as long as the costmap cost keeps
+      // falling towards comfort_cost. Stop as soon as the cost rises again, which
+      // means another obstacle is getting closer (the middle of a gap).
       const double pushed = std::hypot(waypoint.x - entry_point.x, waypoint.y - entry_point.y);
-      if (waypoint_margin_ > 0.0 && pushed > 1e-9) {
+      if (pushed > 1e-9) {
         const double ux = (waypoint.x - entry_point.x) / pushed;
         const double uy = (waypoint.y - entry_point.y) / pushed;
-        for (double d = res; d <= waypoint_margin_ + 1e-9; d += res) {
-          if (isPointInObstacle(waypoint.x + ux * res, waypoint.y + uy * res)) {
+        double cost = costAt(waypoint.x, waypoint.y);
+        // Extra clearance must not turn the detour into a hairpin: the sideways
+        // offset stays well below the distance to either neighbour.
+        const double gentle = kMaxOffsetRatio * std::min(
+          std::hypot(entry_point.x - a.x, entry_point.y - a.y),
+          std::hypot(entry_point.x - b.x, entry_point.y - b.y));
+        PathPoint probe = waypoint;
+        int flat_steps = 0;
+        for (double d = res; d <= max_clearance_push_ + 1e-9; d += res) {
+          probe.x += ux * res;
+          probe.y += uy * res;
+          const double next_cost = costAt(probe.x, probe.y);
+          if (next_cost >= lethal_cost_threshold_ || next_cost > cost) {
             break;
           }
-          waypoint.x += ux * res;
-          waypoint.y += uy * res;
+          if (d <= waypoint_margin_ + 1e-9) {
+            waypoint = probe;
+            cost = next_cost;
+            continue;
+          }
+          if (cost <= comfort_cost_ || pushed + d > gentle) {
+            break;
+          }
+          if (next_cost == cost) {
+            // A flat step (same cell again, or equal costs) is not the bottom yet.
+            if (++flat_steps > kMaxFlatSteps) {
+              break;
+            }
+            continue;
+          }
+          waypoint = probe;
+          cost = next_cost;
+          flat_steps = 0;
         }
       }
       if (std::hypot(waypoint.x - a.x, waypoint.y - a.y) < 0.5 * res ||
@@ -286,6 +328,8 @@ nav_msgs::msg::Path LazyCoulombPlanner::createPlan(
     path = removeRedundant(path);
   }
 
+  path = improveClearance(path);
+
   if (enable_smoothing_) {
     for (int i = 0; i < smoothing_iterations_ && path.size() >= 3; ++i) {
       path = chaikinSmooth(path);
@@ -329,11 +373,15 @@ bool LazyCoulombPlanner::isPointInObstacle(double wx, double wy) const
   return static_cast<double>(costmap_->getCost(mx, my)) >= lethal_cost_threshold_;
 }
 
-bool LazyCoulombPlanner::findSegmentObstacleEntry(
-  const PathPoint & p1, const PathPoint & p2, PathPoint & intersection) const
+template<typename Visitor>
+void LazyCoulombPlanner::traverseCells(
+  const PathPoint & p1, const PathPoint & p2, Visitor && visit) const
 {
   // Exact grid traversal (Amanatides & Woo): visits every cell the segment
   // touches, so a corner clipped by a short chord cannot be skipped.
+  // visit(cost, t_enter, t_exit) gets the cell's cost (255 outside the map) and
+  // the stretch of the segment, as a fraction in [0, 1], that lies inside it.
+  // Returning true stops the traversal.
   const double res = costmap_->getResolution();
   const int size_x = static_cast<int>(costmap_->getSizeInCellsX());
   const int size_y = static_cast<int>(costmap_->getSizeInCellsY());
@@ -352,7 +400,7 @@ bool LazyCoulombPlanner::findSegmentObstacleEntry(
   const int step_x = dx > 0.0 ? 1 : -1;
   const int step_y = dy > 0.0 ? 1 : -1;
   const double inf = std::numeric_limits<double>::infinity();
-  // Segment parameter t in [0, 1] at which the next vertical / horizontal cell edge is crossed.
+  // Segment parameter at which the next vertical / horizontal cell edge is crossed.
   const double dt_x = dx != 0.0 ? std::abs(1.0 / dx) : inf;
   const double dt_y = dy != 0.0 ? std::abs(1.0 / dy) : inf;
   double t_next_x = dx != 0.0 ? ((dx > 0.0 ? cx + 1 - x0 : x0 - cx) * dt_x) : inf;
@@ -363,16 +411,10 @@ bool LazyCoulombPlanner::findSegmentObstacleEntry(
   for (int n = 0; n < max_cells; ++n) {
     const double t_exit = std::min({t_next_x, t_next_y, 1.0});
     const bool outside = cx < 0 || cy < 0 || cx >= size_x || cy >= size_y;
-    if (outside ||
-      static_cast<double>(cells[static_cast<size_t>(cy) * size_x + cx]) >= lethal_cost_threshold_)
-    {
-      // Middle of the chord through the offending cell: guaranteed to lie inside it.
-      const double t = 0.5 * (t_enter + t_exit);
-      intersection = PathPoint(p1.x + (p2.x - p1.x) * t, p1.y + (p2.y - p1.y) * t);
-      return true;
-    }
-    if (t_exit >= 1.0) {
-      break;
+    const unsigned char cost = outside ?
+      nav2_costmap_2d::NO_INFORMATION : cells[static_cast<size_t>(cy) * size_x + cx];
+    if (visit(cost, t_enter, t_exit) || t_exit >= 1.0) {
+      return;
     }
     if (t_next_x < t_next_y) {
       cx += step_x;
@@ -383,7 +425,68 @@ bool LazyCoulombPlanner::findSegmentObstacleEntry(
     }
     t_enter = t_exit;
   }
-  return false;
+}
+
+bool LazyCoulombPlanner::findSegmentObstacleEntry(
+  const PathPoint & p1, const PathPoint & p2, PathPoint & intersection) const
+{
+  bool found = false;
+  traverseCells(
+    p1, p2, [&](unsigned char cost, double t_enter, double t_exit) {
+      if (static_cast<double>(cost) < lethal_cost_threshold_) {
+        return false;
+      }
+      // Middle of the chord through the offending cell: guaranteed to lie inside it.
+      const double t = 0.5 * (t_enter + t_exit);
+      intersection = PathPoint(p1.x + (p2.x - p1.x) * t, p1.y + (p2.y - p1.y) * t);
+      found = true;
+      return true;
+    });
+  return found;
+}
+
+double LazyCoulombPlanner::segmentMaxCost(
+  const PathPoint & p1, const PathPoint & p2, PathPoint & where) const
+{
+  // `where` is the middle of the stretch between the first and last cell that
+  // have the highest cost, so along a wall it lands mid-way, not at one end.
+  double worst = -1.0, t_first = 0.0, t_last = 0.0;
+  traverseCells(
+    p1, p2, [&](unsigned char cost, double t_enter, double t_exit) {
+      if (static_cast<double>(cost) > worst) {
+        worst = cost;
+        t_first = t_enter;
+      }
+      if (static_cast<double>(cost) == worst) {
+        t_last = t_exit;
+      }
+      return false;
+    });
+  const double t = 0.5 * (t_first + t_last);
+  where = PathPoint(p1.x + (p2.x - p1.x) * t, p1.y + (p2.y - p1.y) * t);
+  return worst;
+}
+
+double LazyCoulombPlanner::segmentExposure(const PathPoint & p1, const PathPoint & p2) const
+{
+  double fraction = 0.0;
+  traverseCells(
+    p1, p2, [&](unsigned char cost, double t_enter, double t_exit) {
+      if (static_cast<double>(cost) > comfort_cost_) {
+        fraction += (t_exit - t_enter) * (cost - comfort_cost_);
+      }
+      return false;
+    });
+  return fraction * std::hypot(p2.x - p1.x, p2.y - p1.y);
+}
+
+double LazyCoulombPlanner::costAt(double wx, double wy) const
+{
+  unsigned int mx, my;
+  if (!costmap_->worldToMap(wx, wy, mx, my)) {
+    return nav2_costmap_2d::NO_INFORMATION;
+  }
+  return costmap_->getCost(mx, my);
 }
 
 bool LazyCoulombPlanner::segmentIntersectsObstacle(
@@ -594,6 +697,91 @@ std::vector<PathPoint> LazyCoulombPlanner::removeRedundant(
   return out;
 }
 
+std::vector<PathPoint> LazyCoulombPlanner::improveClearance(
+  const std::vector<PathPoint> & pts) const
+{
+  if (comfort_cost_ >= lethal_cost_threshold_ || pts.size() < 2) {
+    return pts;
+  }
+
+  // The path is collision free, but a straight stretch can still graze an
+  // obstacle. Same idea as the main loop, applied to closeness instead of
+  // collision: find where a segment gets closest (highest cost), put a waypoint
+  // there and let the Coulomb force from the nearby obstacles push it away,
+  // down the cost gradient. A waypoint is kept only if the path stays collision
+  // free, gets no closer anywhere, and lowers the path's exposure (cost above
+  // comfort_cost, summed along its length) by at least 5 %. Along a wall one
+  // waypoint only lifts the middle, so the two halves are then treated in turn.
+  const double res = costmap_->getResolution();
+  std::vector<PathPoint> path = pts;
+  int budget = 200;
+
+  for (size_t i = 0; i + 1 < path.size() && budget > 0; ) {
+    const PathPoint a = path[i];
+    const PathPoint b = path[i + 1];
+    const double seg_len = std::hypot(b.x - a.x, b.y - a.y);
+    PathPoint worst_point(0.0, 0.0);
+    const double worst = segmentMaxCost(a, b, worst_point);
+    if (seg_len < 4.0 * res || worst <= comfort_cost_) {
+      ++i;
+      continue;
+    }
+
+    const double nx = -(b.y - a.y) / seg_len;
+    const double ny = (b.x - a.x) / seg_len;
+    const double force = coulombForceAlong(worst_point, nx, ny);
+    bool improved = false;
+    if (std::abs(force) >= force_balance_threshold_) {
+      const double side = force > 0.0 ? 1.0 : -1.0;
+      PathPoint q = worst_point;
+      double cost = costAt(q.x, q.y);
+      bool moved = false;
+      // Keep the detour gentle: a large sideways offset on a short stretch would
+      // make the path double back on itself.
+      const double reach = std::min(
+        max_clearance_push_,
+        kMaxOffsetRatio * std::min(
+          std::hypot(worst_point.x - a.x, worst_point.y - a.y),
+          std::hypot(worst_point.x - b.x, worst_point.y - b.y)));
+      PathPoint probe = q;
+      int flat_steps = 0;
+      for (double d = res; d <= reach + 1e-9 && cost > comfort_cost_; d += res) {
+        probe.x += side * nx * res;
+        probe.y += side * ny * res;
+        const double next_cost = costAt(probe.x, probe.y);
+        if (next_cost > cost) {
+          break;
+        }
+        if (next_cost == cost) {
+          // A flat step (same cell again, or equal costs) is not the bottom yet.
+          if (++flat_steps > kMaxFlatSteps) {
+            break;
+          }
+          continue;
+        }
+        q = probe;
+        cost = next_cost;
+        flat_steps = 0;
+        moved = true;
+      }
+      PathPoint unused(0.0, 0.0);
+      if (moved &&
+        segmentMaxCost(a, q, unused) <= worst && segmentMaxCost(q, b, unused) <= worst &&
+        segmentExposure(a, q) + segmentExposure(q, b) < 0.95 * segmentExposure(a, b))
+      {
+        q.is_locked = true;
+        path.insert(path.begin() + i + 1, q);
+        improved = true;
+        --budget;
+      }
+    }
+    if (!improved) {
+      ++i;  // nothing better here; otherwise re-examine (a -> q) next
+    }
+  }
+  return path;
+}
+
 std::vector<PathPoint> LazyCoulombPlanner::chaikinSmooth(
   const std::vector<PathPoint> & pts) const
 {
@@ -602,9 +790,9 @@ std::vector<PathPoint> LazyCoulombPlanner::chaikinSmooth(
   // Chaikin replaces each corner P by two points, Q on the incoming segment and
   // R on the outgoing one, a quarter of the way from P. Q and R lie on segments
   // already known to be clear, so the only new piece is the chord Q -> R. If the
-  // chord touches an obstacle the cut is retried closer to P, and if no cut fits
-  // the corner is kept. The smoothed path is therefore collision free by
-  // construction.
+  // chord touches an obstacle, or comes closer to one than allowed, the cut is
+  // retried closer to P, and if no cut fits the corner is kept. The smoothed
+  // path is therefore collision free by construction.
   static const double kCuts[] = {0.25, 0.125, 0.0625};
 
   std::vector<PathPoint> out;
@@ -616,11 +804,18 @@ std::vector<PathPoint> LazyCoulombPlanner::chaikinSmooth(
     const PathPoint & corner = pts[i];
     const PathPoint & next = pts[i + 1];
 
+    // Rounding a corner moves the path towards the obstacle it goes around. A
+    // cut may give back part of the clearance (smoothing_cost_slack), but never
+    // reach an obstacle cell.
+    const double allowed = std::min(
+      lethal_cost_threshold_ - 1.0,
+      std::max(comfort_cost_, costAt(corner.x, corner.y)) + smoothing_cost_slack_);
     bool cut = false;
     for (const double f : kCuts) {
       const PathPoint q(corner.x + f * (prev.x - corner.x), corner.y + f * (prev.y - corner.y));
       const PathPoint r(corner.x + f * (next.x - corner.x), corner.y + f * (next.y - corner.y));
-      if (!segmentIntersectsObstacle(q, r)) {
+      PathPoint unused(0.0, 0.0);
+      if (segmentMaxCost(q, r, unused) <= allowed) {
         out.push_back(q);
         out.push_back(r);
         cut = true;
