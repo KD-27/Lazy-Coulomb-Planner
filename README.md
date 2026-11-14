@@ -19,7 +19,8 @@ start to goal — and only does work when that line is blocked.
 4. Push it perpendicular to the segment until clear (Coulomb force, below)
 5. Lock it (it won't move again)
 6. Repeat from step 2
-7. Remove redundant waypoints, smooth, resample
+7. If a waypoint cannot be placed, back up and try the other side
+8. Remove redundant waypoints, smooth, resample
 ```
 
 ### Coulomb push
@@ -32,11 +33,30 @@ length, capped at `max_push_step`. With `commit_direction: true` the side
 chosen on the first step is kept, which stops the waypoint oscillating between
 two obstacles.
 
+### Retrying the other side
+
+Each waypoint could have left its obstacle on either side. The side not taken
+is remembered together with the path as it was. When a branch dead-ends (a
+waypoint cannot be cleared, makes no progress, or the detour exceeds
+`max_path_stretch` times the straight-line distance) the planner resumes from
+the remembered alternative with the shortest partial path. `max_iterations`
+bounds the total number of placement attempts, so it is the knob that trades
+success in cluttered maps against the time spent before giving up.
+
+### Collision-safe smoothing
+
+Chaikin corner cutting replaces each corner P with a point Q on the incoming
+segment and a point R on the outgoing one. Q and R lie on segments that are
+already clear, so the only new piece is the chord Q -> R. The chord is checked
+against the costmap; if it touches an obstacle the cut is retried closer to
+the corner (1/4, 1/8, 1/16 of the segment) and if none fits the corner is
+kept. The smoothed path is therefore collision free by construction.
+
 ### Failure instead of a bad path
 
 The planner never returns a path it knows to be in collision. Segments are
-checked with an exact grid traversal, smoothing passes are kept only if they
-stay collision free, and if a waypoint cannot be cleared or the correction
+checked with an exact grid traversal, the finished path gets a final collision
+check, and if no side choice works or the correction
 budget runs out the planner throws `nav2_core::NoValidPathCouldBeFound`, so a
 fallback planner can take over.
 
@@ -117,12 +137,16 @@ ros2 launch nav2_bringup navigation_launch.py \
 | `repulsion_strength` | 1.0 | Cells moved per unit of normalised force |
 | `max_push_step` | 0.0 | Cap on one push step (m); 0 means one costmap cell |
 | `force_balance_threshold` | 0.05 | Below this force the push is a fixed kick |
-| `max_iterations` | 500 | Max waypoints inserted before reporting failure |
+| `waypoint_margin` | 0.3 | Extra push past the obstacle edge when free (m); gives corners room to be smoothed |
+| `retry_other_side` | true | Back up and try the other side when a branch dead-ends |
+| `retry_order` | `shortest` | Retry from the `shortest` partial path, or the most `recent` decision |
+| `max_path_stretch` | 5.0 | Abandon detours longer than this × the straight-line distance |
+| `max_iterations` | 2000 | Max waypoint placement attempts before reporting failure |
 | `max_push_iterations` | 400 | Max steps to push one waypoint clear |
 | `lethal_cost_threshold` | 253.0 | Cost at or above this is an obstacle |
 | `simplify_path` | true | Remove waypoints whose neighbours join directly |
-| `enable_smoothing` | true | Chaikin smoothing, kept only if collision free |
-| `smoothing_iterations` | 3 | Chaikin passes |
+| `enable_smoothing` | true | Collision-safe Chaikin smoothing |
+| `smoothing_iterations` | 5 | Chaikin passes; each roughly halves the corner angles |
 | `output_spacing` | 0.1 | Max distance between output poses (m); 0 disables |
 
 ---
@@ -130,16 +154,17 @@ ros2 launch nav2_bringup navigation_launch.py \
 ## Tuning Guide
 
 ### Fails in cluttered or indoor maps
-→ Raise `charge_radius` (2–4 m). The waypoint then "sees" more of the obstacle
+→ Raise `max_iterations` so more side combinations are tried, or raise `charge_radius` (2–4 m). The waypoint then "sees" more of the obstacle
 and picks the better side more often, at the cost of planning time, which
 grows with the square of the radius.
 
-### Planner is too slow
-→ Lower `charge_radius`.
+### Planner is too slow, or takes too long to report failure
+→ Lower `max_iterations` (time to give up) or `charge_radius` (time per push).
 
 ### Path has sharp corners
-→ Raise `smoothing_iterations`. Passes that would cut into an obstacle are
-dropped automatically.
+→ Raise `waypoint_margin` so waypoints sit further from the obstacle edge, and
+`smoothing_iterations`. A corner stays sharp only where every cut would touch
+an obstacle.
 
 ### Fails in narrow corridors or mazes
 → Expected: a single sideways push cannot route around dead ends. Catch the

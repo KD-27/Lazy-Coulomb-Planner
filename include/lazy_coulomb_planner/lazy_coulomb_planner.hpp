@@ -122,10 +122,18 @@ protected:
   bool isPathClear(const std::vector<PathPoint> & points) const;
 
   /**
+   * @brief Side (+1 left, -1 right of a -> b) the force model wants a waypoint to leave on.
+   */
+  int preferredSide(const PathPoint & pt, const PathPoint & a, const PathPoint & b) const;
+
+  /**
    * @brief Push a waypoint sideways, perpendicular to (a -> b), until it is clear.
+   * @param side Starting side: +1 left, -1 right
+   * @param forced Never let the force reverse the side (used when retrying the other side)
    * @return false if it could not be cleared within max_push_iterations
    */
-  bool pushClear(PathPoint & pt, const PathPoint & a, const PathPoint & b) const;
+  bool pushClear(
+    PathPoint & pt, const PathPoint & a, const PathPoint & b, int side, bool forced) const;
 
   /**
    * @brief Summed Coulomb force on a point from all obstacle cells within
@@ -143,7 +151,10 @@ protected:
   /** @brief Drop waypoints whose neighbours can be joined directly. */
   std::vector<PathPoint> removeRedundant(const std::vector<PathPoint> & points) const;
 
-  /** @brief One round of Chaikin corner-cutting. Keeps start and goal fixed. */
+  /**
+   * @brief One round of Chaikin corner-cutting that cannot introduce a collision:
+   *        each corner is cut only as far as the cut stays clear of obstacles.
+   */
   std::vector<PathPoint> chaikinSmooth(const std::vector<PathPoint> & points) const;
 
   /** @brief Resample the polyline so consecutive poses are at most `spacing` apart. */
@@ -174,8 +185,12 @@ protected:
   double max_push_step_;            // Cap on a single push step (m); <= 0 means one cell
   double force_balance_threshold_;  // Below this |force| the push is a fixed kick
   bool commit_direction_;           // Keep the side chosen on the first step
+  bool retry_other_side_;           // Back up and try the other side on a dead end
+  std::string retry_order_;         // Which untried side to retry first: "recent" or "shortest"
+  double max_path_stretch_;         // Abandon detours longer than this x straight line
+  double waypoint_margin_;          // Extra push past the obstacle edge, if free (m)
   bool simplify_path_;              // Remove redundant waypoints after solving
-  bool enable_smoothing_;           // Chaikin smoothing, kept only if collision free
+  bool enable_smoothing_;           // Collision-safe Chaikin smoothing
   int smoothing_iterations_;        // Number of Chaikin passes
   double output_spacing_;           // Max distance between output poses (m); <= 0 disables
   double lethal_cost_threshold_;    // Cost at or above this is an obstacle

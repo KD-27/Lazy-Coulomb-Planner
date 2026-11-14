@@ -64,7 +64,7 @@ void LazyCoulombPlanner::configure(
       return node->get_parameter(name_ + "." + key);
     };
 
-  max_iterations_ = declare("max_iterations", rclcpp::ParameterValue(500)).as_int();
+  max_iterations_ = declare("max_iterations", rclcpp::ParameterValue(2000)).as_int();
   max_push_iterations_ = declare("max_push_iterations", rclcpp::ParameterValue(400)).as_int();
   force_model_ = declare("force_model", rclcpp::ParameterValue("coulomb")).as_string();
   force_exponent_ = declare("force_exponent", rclcpp::ParameterValue(2.0)).as_double();
@@ -74,13 +74,22 @@ void LazyCoulombPlanner::configure(
   force_balance_threshold_ =
     declare("force_balance_threshold", rclcpp::ParameterValue(0.05)).as_double();
   commit_direction_ = declare("commit_direction", rclcpp::ParameterValue(true)).as_bool();
+  retry_other_side_ = declare("retry_other_side", rclcpp::ParameterValue(true)).as_bool();
+  retry_order_ = declare("retry_order", rclcpp::ParameterValue("shortest")).as_string();
+  max_path_stretch_ = declare("max_path_stretch", rclcpp::ParameterValue(5.0)).as_double();
+  waypoint_margin_ = declare("waypoint_margin", rclcpp::ParameterValue(0.3)).as_double();
   simplify_path_ = declare("simplify_path", rclcpp::ParameterValue(true)).as_bool();
   enable_smoothing_ = declare("enable_smoothing", rclcpp::ParameterValue(true)).as_bool();
-  smoothing_iterations_ = declare("smoothing_iterations", rclcpp::ParameterValue(3)).as_int();
+  smoothing_iterations_ = declare("smoothing_iterations", rclcpp::ParameterValue(5)).as_int();
   output_spacing_ = declare("output_spacing", rclcpp::ParameterValue(0.1)).as_double();
   lethal_cost_threshold_ =
     declare("lethal_cost_threshold", rclcpp::ParameterValue(253.0)).as_double();
 
+  if (retry_order_ != "shortest" && retry_order_ != "recent") {
+    throw std::runtime_error(
+            "LazyCoulombPlanner: retry_order must be 'shortest' or 'recent', got '" +
+            retry_order_ + "'");
+  }
   if (force_model_ != "coulomb" && force_model_ != "probe") {
     throw std::runtime_error(
             "LazyCoulombPlanner: force_model must be 'coulomb' or 'probe', got '" +
@@ -141,51 +150,147 @@ nav_msgs::msg::Path LazyCoulombPlanner::createPlan(
 
   // Lazy start: the straight line. Segments before `seg` are verified clear.
   std::vector<PathPoint> path{start, goal};
-  int corrections = 0;
   size_t seg = 0;
+  int corrections = 0;
+
+  // Every waypoint could have left its obstacle on either side. The side not
+  // taken is remembered here, together with the path as it was, so a branch
+  // that dead-ends can be undone and retried the other way.
+  struct Alternative
+  {
+    std::vector<PathPoint> path;
+    size_t seg;
+    PathPoint entry;
+    int side;
+    double length;  // length of `path`, used to order retries
+  };
+  std::vector<Alternative> alternatives;
+
+  const double res = costmap_->getResolution();
+  const double max_length =
+    max_path_stretch_ * std::hypot(goal.x - start.x, goal.y - start.y) + 20.0 * res;
+
+  // Push `waypoint` out on `side` and splice it into `base` after index `at`.
+  // Fails if it cannot be cleared, makes no progress, or the detour gets absurdly long.
+  auto tryInsert = [&](
+    const std::vector<PathPoint> & base, size_t at, PathPoint waypoint, int side,
+    bool forced) -> bool
+    {
+      const PathPoint & a = base[at];
+      const PathPoint & b = base[at + 1];
+      const PathPoint entry_point = waypoint;
+      if (!pushClear(waypoint, a, b, side, forced)) {
+        return false;
+      }
+      // Keep going a little past the obstacle edge, while the way is free, so the
+      // corner at this waypoint has room to be rounded off by the smoother.
+      const double pushed = std::hypot(waypoint.x - entry_point.x, waypoint.y - entry_point.y);
+      if (waypoint_margin_ > 0.0 && pushed > 1e-9) {
+        const double ux = (waypoint.x - entry_point.x) / pushed;
+        const double uy = (waypoint.y - entry_point.y) / pushed;
+        for (double d = res; d <= waypoint_margin_ + 1e-9; d += res) {
+          if (isPointInObstacle(waypoint.x + ux * res, waypoint.y + uy * res)) {
+            break;
+          }
+          waypoint.x += ux * res;
+          waypoint.y += uy * res;
+        }
+      }
+      if (std::hypot(waypoint.x - a.x, waypoint.y - a.y) < 0.5 * res ||
+        std::hypot(waypoint.x - b.x, waypoint.y - b.y) < 0.5 * res)
+      {
+        return false;  // landed on a neighbour: the same correction would repeat forever
+      }
+      double length = 0.0;
+      for (size_t i = 0; i + 1 < base.size(); ++i) {
+        if (i == at) {
+          length += std::hypot(waypoint.x - a.x, waypoint.y - a.y) +
+            std::hypot(b.x - waypoint.x, b.y - waypoint.y);
+        } else {
+          length += std::hypot(base[i + 1].x - base[i].x, base[i + 1].y - base[i].y);
+        }
+      }
+      if (length > max_length) {
+        return false;
+      }
+      waypoint.is_locked = true;
+      std::vector<PathPoint> next = base;
+      next.insert(next.begin() + at + 1, waypoint);
+      path = std::move(next);
+      seg = at;  // the new segment (path[at] -> waypoint) is checked next
+      return true;
+    };
 
   while (seg + 1 < path.size()) {
-    PathPoint waypoint(0.0, 0.0);
-    if (!findSegmentObstacleEntry(path[seg], path[seg + 1], waypoint)) {
+    PathPoint entry(0.0, 0.0);
+    if (!findSegmentObstacleEntry(path[seg], path[seg + 1], entry)) {
       ++seg;
       continue;
     }
 
-    if (cancel_checker && cancel_checker()) {
-      throw nav2_core::PlannerCancelled("LazyCoulombPlanner: Planning was cancelled");
+    const int side = preferredSide(entry, path[seg], path[seg + 1]);
+    if (retry_other_side_) {
+      double length = 0.0;
+      for (size_t i = 0; i + 1 < path.size(); ++i) {
+        length += std::hypot(path[i + 1].x - path[i].x, path[i + 1].y - path[i].y);
+      }
+      alternatives.push_back({path, seg, entry, -side, length});
     }
-    if (++corrections > max_iterations_) {
-      throw nav2_core::NoValidPathCouldBeFound(
-              "LazyCoulombPlanner: Correction budget (" + std::to_string(max_iterations_) +
-              ") exhausted");
+    bool placed = false;
+    bool first_attempt = true;
+    while (!placed) {
+      if (cancel_checker && cancel_checker()) {
+        throw nav2_core::PlannerCancelled("LazyCoulombPlanner: Planning was cancelled");
+      }
+      if (++corrections > max_iterations_) {
+        throw nav2_core::NoValidPathCouldBeFound(
+                "LazyCoulombPlanner: Correction budget (" + std::to_string(max_iterations_) +
+                ") exhausted");
+      }
+      if (first_attempt) {
+        first_attempt = false;
+        placed = tryInsert(path, seg, entry, side, false);
+        continue;
+      }
+      if (alternatives.empty()) {
+        throw nav2_core::NoValidPathCouldBeFound(
+                "LazyCoulombPlanner: No side of the blocking obstacles leads to a clear path");
+      }
+      // Dead end: undo back to a waypoint with an untried side.
+      // "recent" undoes the latest decision; "shortest" resumes from the shortest
+      // partial path, which revisits early decisions sooner.
+      size_t pick = alternatives.size() - 1;
+      if (retry_order_ == "shortest") {
+        for (size_t i = 0; i < alternatives.size(); ++i) {
+          if (alternatives[i].length < alternatives[pick].length) {
+            pick = i;
+          }
+        }
+      }
+      const Alternative alt = std::move(alternatives[pick]);
+      alternatives.erase(alternatives.begin() + pick);
+      placed = tryInsert(alt.path, alt.seg, alt.entry, alt.side, true);
     }
-    if (!pushClear(waypoint, path[seg], path[seg + 1])) {
-      throw nav2_core::NoValidPathCouldBeFound(
-              "LazyCoulombPlanner: A waypoint could not be pushed clear of obstacles");
-    }
-
-    waypoint.is_locked = true;
-    path.insert(path.begin() + seg + 1, waypoint);
-    // Stay on `seg`: the new segment (path[seg] -> waypoint) is checked next.
   }
 
   if (simplify_path_) {
     path = removeRedundant(path);
   }
 
-  if (enable_smoothing_ && path.size() >= 3) {
-    // Chaikin cuts corners, so each pass is kept only if it is still collision free.
-    for (int i = 0; i < smoothing_iterations_; ++i) {
-      std::vector<PathPoint> smoothed = chaikinSmooth(path);
-      if (!isPathClear(smoothed)) {
-        break;
-      }
-      path = std::move(smoothed);
+  if (enable_smoothing_) {
+    for (int i = 0; i < smoothing_iterations_ && path.size() >= 3; ++i) {
+      path = chaikinSmooth(path);
     }
   }
 
   if (output_spacing_ > 0.0) {
     path = densify(path, output_spacing_);
+  }
+
+  // Safety net: nothing leaves the planner without a final collision check.
+  if (!isPathClear(path)) {
+    throw nav2_core::NoValidPathCouldBeFound(
+            "LazyCoulombPlanner: Final path failed its collision check");
   }
 
   std_msgs::msg::Header header;
@@ -359,8 +464,26 @@ int LazyCoulombPlanner::probeNearestClearSide(
   return 0;
 }
 
+int LazyCoulombPlanner::preferredSide(
+  const PathPoint & pt, const PathPoint & a, const PathPoint & b) const
+{
+  const double seg_len = std::hypot(b.x - a.x, b.y - a.y);
+  if (seg_len < 1e-9) {
+    return 1;
+  }
+  const double nx = -(b.y - a.y) / seg_len;
+  const double ny = (b.x - a.x) / seg_len;
+
+  if (force_model_ == "probe") {
+    return probeNearestClearSide(pt, nx, ny) < 0 ? -1 : 1;
+  }
+  const double force = coulombForceAlong(pt, nx, ny);
+  // At a saddle (forces cancel) break the symmetry to the left.
+  return (std::abs(force) >= force_balance_threshold_ && force < 0.0) ? -1 : 1;
+}
+
 bool LazyCoulombPlanner::pushClear(
-  PathPoint & pt, const PathPoint & a, const PathPoint & b) const
+  PathPoint & pt, const PathPoint & a, const PathPoint & b, int side, bool forced) const
 {
   const double seg_len = std::hypot(b.x - a.x, b.y - a.y);
   if (seg_len < 1e-9) {
@@ -373,14 +496,8 @@ bool LazyCoulombPlanner::pushClear(
   const double res = costmap_->getResolution();
   const double max_step = max_push_step_ > 0.0 ? max_push_step_ : res;
   const double min_step = 0.25 * res;
-
-  int side = 0;  // +1 left, -1 right, 0 undecided
-  if (force_model_ == "probe") {
-    side = probeNearestClearSide(pt, nx, ny);
-    if (side == 0) {
-      return false;
-    }
-  }
+  const bool use_force = force_model_ == "coulomb";
+  const bool keep_side = forced || commit_direction_ || !use_force;
 
   for (int i = 0; i < max_push_iterations_; ++i) {
     if (!isPointInObstacle(pt.x, pt.y)) {
@@ -388,18 +505,12 @@ bool LazyCoulombPlanner::pushClear(
     }
 
     double step = max_step;
-    if (force_model_ == "coulomb") {
+    if (use_force) {
       const double force = coulombForceAlong(pt, nx, ny);
       const bool balanced = std::abs(force) < force_balance_threshold_;
       const int force_side = force > 0.0 ? 1 : -1;
-
-      if (side == 0 || !commit_direction_) {
-        // Physics picks the side. At a saddle keep the previous side, else kick left.
-        if (!balanced) {
-          side = force_side;
-        } else if (side == 0) {
-          side = 1;
-        }
+      if (!keep_side && !balanced) {
+        side = force_side;  // pure physics: the force may reverse the waypoint
       }
       if (!balanced && force_side == side) {
         step = std::clamp(repulsion_strength_ * std::abs(force) * res, min_step, max_step);
@@ -439,17 +550,37 @@ std::vector<PathPoint> LazyCoulombPlanner::chaikinSmooth(
 {
   if (pts.size() < 3) {return pts;}
 
+  // Chaikin replaces each corner P by two points, Q on the incoming segment and
+  // R on the outgoing one, a quarter of the way from P. Q and R lie on segments
+  // already known to be clear, so the only new piece is the chord Q -> R. If the
+  // chord touches an obstacle the cut is retried closer to P, and if no cut fits
+  // the corner is kept. The smoothed path is therefore collision free by
+  // construction.
+  static const double kCuts[] = {0.25, 0.125, 0.0625};
+
   std::vector<PathPoint> out;
   out.reserve(pts.size() * 2);
   out.push_back(pts.front());
 
-  for (size_t i = 0; i < pts.size() - 1; ++i) {
-    const PathPoint & p0 = pts[i];
-    const PathPoint & p1 = pts[i + 1];
-    PathPoint q(p0.x * 0.75 + p1.x * 0.25, p0.y * 0.75 + p1.y * 0.25);
-    PathPoint r(p0.x * 0.25 + p1.x * 0.75, p0.y * 0.25 + p1.y * 0.75);
-    if (i > 0) {out.push_back(q);}
-    if (i < pts.size() - 2) {out.push_back(r);}
+  for (size_t i = 1; i + 1 < pts.size(); ++i) {
+    const PathPoint & prev = pts[i - 1];
+    const PathPoint & corner = pts[i];
+    const PathPoint & next = pts[i + 1];
+
+    bool cut = false;
+    for (const double f : kCuts) {
+      const PathPoint q(corner.x + f * (prev.x - corner.x), corner.y + f * (prev.y - corner.y));
+      const PathPoint r(corner.x + f * (next.x - corner.x), corner.y + f * (next.y - corner.y));
+      if (!segmentIntersectsObstacle(q, r)) {
+        out.push_back(q);
+        out.push_back(r);
+        cut = true;
+        break;
+      }
+    }
+    if (!cut) {
+      out.push_back(corner);
+    }
   }
 
   out.push_back(pts.back());
