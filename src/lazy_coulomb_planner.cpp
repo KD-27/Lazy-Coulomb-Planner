@@ -42,6 +42,10 @@ static const double kMaxOffsetRatio = 0.35;
 // change in cost are tolerated before the descent is considered finished.
 static const int kMaxFlatSteps = 2;
 
+// When continuing the previous path, join it at least this far ahead of the
+// robot (m), so the connecting piece runs forwards.
+static const double kRejoinAhead = 0.3;
+
 // The early reachability check visits at most this many cells. That is enough
 // to exhaust a sealed-in pocket without flooding a large open map.
 static const size_t kPocketCheckCells = 20000;
@@ -90,6 +94,10 @@ void LazyCoulombPlanner::configure(
   grid_fallback_ = declare("grid_fallback", rclcpp::ParameterValue(true)).as_bool();
   reachability_check_after_ =
     declare("reachability_check_after", rclcpp::ParameterValue(50)).as_int();
+  path_reuse_distance_ =
+    declare("path_reuse_distance", rclcpp::ParameterValue(0.5)).as_double();
+  path_reuse_min_saving_ =
+    declare("path_reuse_min_saving", rclcpp::ParameterValue(0.15)).as_double();
   retry_order_ = declare("retry_order", rclcpp::ParameterValue("shortest")).as_string();
   max_path_stretch_ = declare("max_path_stretch", rclcpp::ParameterValue(5.0)).as_double();
   goal_tolerance_ = declare("goal_tolerance", rclcpp::ParameterValue(0.5)).as_double();
@@ -128,6 +136,7 @@ void LazyCoulombPlanner::configure(
 void LazyCoulombPlanner::cleanup()
 {
   RCLCPP_INFO(logger_, "LazyCoulombPlanner cleaning up");
+  last_path_.clear();
   costmap_ = nullptr;
 }
 
@@ -186,214 +195,249 @@ nav_msgs::msg::Path LazyCoulombPlanner::createPlan(
     }
   }
 
-  // Lazy start: the straight line. Segments before `seg` are verified clear.
-  std::vector<PathPoint> path{start, goal};
-  size_t seg = 0;
+  // The plan from scratch, as a path of points `output_spacing` apart. Throws if
+  // no path exists.
   int corrections = 0;
+  auto plan_fresh = [&]() -> std::vector<PathPoint> {
+    // Lazy start: the straight line. Segments before `seg` are verified clear.
+      std::vector<PathPoint> path{start, goal};
+      size_t seg = 0;
 
-  // Every waypoint could have left its obstacle on either side. The side not
-  // taken is remembered here, together with the path as it was, so a branch
-  // that dead-ends can be undone and retried the other way.
-  struct Alternative
-  {
-    std::vector<PathPoint> path;
-    size_t seg;
-    PathPoint entry;
-    int side;
-    double length;  // length of `path`, used to order retries
-  };
-  std::vector<Alternative> alternatives;
-
-  const double res = costmap_->getResolution();
-  const double max_length =
-    max_path_stretch_ * std::hypot(goal.x - start.x, goal.y - start.y) + 20.0 * res;
-
-  // Push `waypoint` out on `side` and splice it into `base` after index `at`.
-  // Fails if it cannot be cleared, makes no progress, or the detour gets absurdly long.
-  auto tryInsert = [&](
-    const std::vector<PathPoint> & base, size_t at, PathPoint waypoint, int side,
-    bool forced) -> bool
-    {
-      const PathPoint & a = base[at];
-      const PathPoint & b = base[at + 1];
-      const PathPoint entry_point = waypoint;
-      if (!pushClear(waypoint, a, b, side, forced)) {
-        return false;
-      }
-      // Keep going past the obstacle edge: at least waypoint_margin, so the corner
-      // has room to be rounded off, and then for as long as the costmap cost keeps
-      // falling towards comfort_cost. Stop as soon as the cost rises again, which
-      // means another obstacle is getting closer (the middle of a gap).
-      const double pushed = std::hypot(waypoint.x - entry_point.x, waypoint.y - entry_point.y);
-      if (pushed > 1e-9) {
-        const double ux = (waypoint.x - entry_point.x) / pushed;
-        const double uy = (waypoint.y - entry_point.y) / pushed;
-        double cost = costAt(waypoint.x, waypoint.y);
-        // Extra clearance must not turn the detour into a hairpin: the sideways
-        // offset stays well below the distance to either neighbour.
-        const double gentle = kMaxOffsetRatio * std::min(
-          std::hypot(entry_point.x - a.x, entry_point.y - a.y),
-          std::hypot(entry_point.x - b.x, entry_point.y - b.y));
-        PathPoint probe = waypoint;
-        int flat_steps = 0;
-        for (double d = res; d <= max_clearance_push_ + 1e-9; d += res) {
-          probe.x += ux * res;
-          probe.y += uy * res;
-          const double next_cost = costAt(probe.x, probe.y);
-          if (next_cost >= lethal_cost_threshold_ || next_cost > cost) {
-            break;
-          }
-          if (d <= waypoint_margin_ + 1e-9) {
-            waypoint = probe;
-            cost = next_cost;
-            continue;
-          }
-          if (cost <= comfort_cost_ || pushed + d > gentle) {
-            break;
-          }
-          if (next_cost == cost) {
-            // A flat step (same cell again, or equal costs) is not the bottom yet.
-            if (++flat_steps > kMaxFlatSteps) {
-              break;
-            }
-            continue;
-          }
-          waypoint = probe;
-          cost = next_cost;
-          flat_steps = 0;
-        }
-      }
-      if (std::hypot(waypoint.x - a.x, waypoint.y - a.y) < 0.5 * res ||
-        std::hypot(waypoint.x - b.x, waypoint.y - b.y) < 0.5 * res)
+    // Every waypoint could have left its obstacle on either side. The side not
+    // taken is remembered here, together with the path as it was, so a branch
+    // that dead-ends can be undone and retried the other way.
+      struct Alternative
       {
-        return false;  // landed on a neighbour: the same correction would repeat forever
-      }
-      double length = 0.0;
-      for (size_t i = 0; i + 1 < base.size(); ++i) {
-        if (i == at) {
-          length += std::hypot(waypoint.x - a.x, waypoint.y - a.y) +
-            std::hypot(b.x - waypoint.x, b.y - waypoint.y);
-        } else {
-          length += std::hypot(base[i + 1].x - base[i].x, base[i + 1].y - base[i].y);
+        std::vector<PathPoint> path;
+        size_t seg;
+        PathPoint entry;
+        int side;
+        double length;  // length of `path`, used to order retries
+      };
+      std::vector<Alternative> alternatives;
+
+      const double res = costmap_->getResolution();
+      const double max_length =
+        max_path_stretch_ * std::hypot(goal.x - start.x, goal.y - start.y) + 20.0 * res;
+
+    // Push `waypoint` out on `side` and splice it into `base` after index `at`.
+    // Fails if it cannot be cleared, makes no progress, or the detour gets absurdly long.
+      auto tryInsert = [&](
+        const std::vector<PathPoint> & base, size_t at, PathPoint waypoint, int side,
+        bool forced) -> bool
+        {
+          const PathPoint & a = base[at];
+          const PathPoint & b = base[at + 1];
+          const PathPoint entry_point = waypoint;
+          if (!pushClear(waypoint, a, b, side, forced)) {
+            return false;
+          }
+        // Keep going past the obstacle edge: at least waypoint_margin, so the corner
+        // has room to be rounded off, and then for as long as the costmap cost keeps
+        // falling towards comfort_cost. Stop as soon as the cost rises again, which
+        // means another obstacle is getting closer (the middle of a gap).
+          const double pushed = std::hypot(waypoint.x - entry_point.x, waypoint.y - entry_point.y);
+          if (pushed > 1e-9) {
+            const double ux = (waypoint.x - entry_point.x) / pushed;
+            const double uy = (waypoint.y - entry_point.y) / pushed;
+            double cost = costAt(waypoint.x, waypoint.y);
+          // Extra clearance must not turn the detour into a hairpin: the sideways
+          // offset stays well below the distance to either neighbour.
+            const double gentle = kMaxOffsetRatio * std::min(
+            std::hypot(entry_point.x - a.x, entry_point.y - a.y),
+            std::hypot(entry_point.x - b.x, entry_point.y - b.y));
+            PathPoint probe = waypoint;
+            int flat_steps = 0;
+            for (double d = res; d <= max_clearance_push_ + 1e-9; d += res) {
+              probe.x += ux * res;
+              probe.y += uy * res;
+              const double next_cost = costAt(probe.x, probe.y);
+              if (next_cost >= lethal_cost_threshold_ || next_cost > cost) {
+                break;
+              }
+              if (d <= waypoint_margin_ + 1e-9) {
+                waypoint = probe;
+                cost = next_cost;
+                continue;
+              }
+              if (cost <= comfort_cost_ || pushed + d > gentle) {
+                break;
+              }
+              if (next_cost == cost) {
+              // A flat step (same cell again, or equal costs) is not the bottom yet.
+                if (++flat_steps > kMaxFlatSteps) {
+                  break;
+                }
+                continue;
+              }
+              waypoint = probe;
+              cost = next_cost;
+              flat_steps = 0;
+            }
+          }
+          if (std::hypot(waypoint.x - a.x, waypoint.y - a.y) < 0.5 * res ||
+            std::hypot(waypoint.x - b.x, waypoint.y - b.y) < 0.5 * res)
+          {
+            return false;  // landed on a neighbour: the same correction would repeat forever
+          }
+          double length = 0.0;
+          for (size_t i = 0; i + 1 < base.size(); ++i) {
+            if (i == at) {
+              length += std::hypot(waypoint.x - a.x, waypoint.y - a.y) +
+                std::hypot(b.x - waypoint.x, b.y - waypoint.y);
+            } else {
+              length += std::hypot(base[i + 1].x - base[i].x, base[i + 1].y - base[i].y);
+            }
+          }
+          if (length > max_length) {
+            return false;
+          }
+          waypoint.is_locked = true;
+          std::vector<PathPoint> next = base;
+          next.insert(next.begin() + at + 1, waypoint);
+          path = std::move(next);
+          seg = at;  // the new segment (path[at] -> waypoint) is checked next
+          return true;
+        };
+
+      std::string lazy_failure;          // why the lazy search gave up, if it did
+      std::vector<PathPoint> grid_path;  // route found by the grid search, if it ran
+      bool grid_searched = false;
+
+      while (seg + 1 < path.size()) {
+        PathPoint entry(0.0, 0.0);
+        if (!findSegmentObstacleEntry(path[seg], path[seg + 1], entry)) {
+          ++seg;
+          continue;
+        }
+
+        const int side = preferredSide(entry, path[seg], path[seg + 1]);
+        if (retry_other_side_) {
+          double length = 0.0;
+          for (size_t i = 0; i + 1 < path.size(); ++i) {
+            length += std::hypot(path[i + 1].x - path[i].x, path[i + 1].y - path[i].y);
+          }
+          alternatives.push_back({path, seg, entry, -side, length});
+        }
+        bool placed = false;
+        bool first_attempt = true;
+        while (!placed && lazy_failure.empty()) {
+          if (cancel_checker && cancel_checker()) {
+            throw nav2_core::PlannerCancelled("LazyCoulombPlanner: Planning was cancelled");
+          }
+          if (++corrections > max_iterations_) {
+            lazy_failure = "correction budget (" + std::to_string(max_iterations_) + ") exhausted";
+            break;
+          }
+        // The lazy search is struggling: check, cheaply, whether the start or the
+        // goal is sealed inside a small pocket, so that an unreachable goal is
+        // reported now and not after the whole budget has been spent.
+          if (corrections == reachability_check_after_) {
+            const Reachability found = gridSearch(start, goal, grid_path, kPocketCheckCells);
+            if (found == Reachability::kUnreachable) {
+              throw nav2_core::NoValidPathCouldBeFound(
+                    "LazyCoulombPlanner: Goal is not reachable from the start");
+            }
+            grid_searched = found == Reachability::kReachable;
+          }
+          if (first_attempt) {
+            first_attempt = false;
+            placed = tryInsert(path, seg, entry, side, false);
+            continue;
+          }
+          if (alternatives.empty()) {
+            lazy_failure = "no side of the blocking obstacles leads to a clear path";
+            break;
+          }
+        // Dead end: undo back to a waypoint with an untried side.
+        // "recent" undoes the latest decision; "shortest" resumes from the shortest
+        // partial path, which revisits early decisions sooner.
+          size_t pick = alternatives.size() - 1;
+          if (retry_order_ == "shortest") {
+            for (size_t i = 0; i < alternatives.size(); ++i) {
+              if (alternatives[i].length < alternatives[pick].length) {
+                pick = i;
+              }
+            }
+          }
+          const Alternative alt = std::move(alternatives[pick]);
+          alternatives.erase(alternatives.begin() + pick);
+          placed = tryInsert(alt.path, alt.seg, alt.entry, alt.side, true);
+        }
+        if (!lazy_failure.empty()) {
+          break;
         }
       }
-      if (length > max_length) {
-        return false;
+
+      if (!lazy_failure.empty()) {
+      // The lazy search gave up. A route may still exist: settle it with the grid
+      // search, and use its path if allowed.
+        if (!grid_searched &&
+          gridSearch(start, goal, grid_path, 0) != Reachability::kReachable)
+        {
+          throw nav2_core::NoValidPathCouldBeFound(
+                "LazyCoulombPlanner: Goal is not reachable from the start");
+        }
+        if (!grid_fallback_) {
+          throw nav2_core::NoValidPathCouldBeFound("LazyCoulombPlanner: " + lazy_failure);
+        }
+        RCLCPP_DEBUG(logger_, "LCP: %s, using the grid fallback", lazy_failure.c_str());
+        path = shortcut(grid_path);
       }
-      waypoint.is_locked = true;
-      std::vector<PathPoint> next = base;
-      next.insert(next.begin() + at + 1, waypoint);
-      path = std::move(next);
-      seg = at;  // the new segment (path[at] -> waypoint) is checked next
-      return true;
+
+      if (simplify_path_) {
+        path = removeRedundant(path);
+      }
+
+      path = improveClearance(path);
+
+      if (enable_smoothing_) {
+        for (int i = 0; i < smoothing_iterations_ && path.size() >= 3; ++i) {
+          path = chaikinSmooth(path);
+        }
+      }
+
+      if (output_spacing_ > 0.0) {
+        path = densify(path, output_spacing_);
+      }
+
+    // Safety net: nothing leaves the planner without a final collision check.
+      if (!isPathClear(path)) {
+        throw nav2_core::NoValidPathCouldBeFound(
+              "LazyCoulombPlanner: Final path failed its collision check");
+      }
+      return path;
     };
 
-  std::string lazy_failure;            // why the lazy search gave up, if it did
-  std::vector<PathPoint> grid_path;    // route found by the grid search, if it ran
-  bool grid_searched = false;
-
-  while (seg + 1 < path.size()) {
-    PathPoint entry(0.0, 0.0);
-    if (!findSegmentObstacleEntry(path[seg], path[seg + 1], entry)) {
-      ++seg;
-      continue;
-    }
-
-    const int side = preferredSide(entry, path[seg], path[seg + 1]);
-    if (retry_other_side_) {
-      double length = 0.0;
-      for (size_t i = 0; i + 1 < path.size(); ++i) {
-        length += std::hypot(path[i + 1].x - path[i].x, path[i + 1].y - path[i].y);
+  // Nav2 replans about once a second while the robot drives. A fresh plan from a
+  // start that moved a few centimetres can pick the other side of an obstacle,
+  // and a path that jumps like that sends the path follower towards the
+  // obstacle. So keep to the previous path for as long as it is still clear,
+  // and switch only when the fresh plan is clearly shorter.
+  std::vector<PathPoint> path;
+  std::vector<PathPoint> kept;
+  const bool same_goal = !last_path_.empty() &&
+    std::hypot(last_goal_.x - goal.x, last_goal_.y - goal.y) < 0.5 * costmap_->getResolution();
+  if (same_goal && path_reuse_distance_ > 0.0) {
+    kept = continuePreviousPath(start);
+  }
+  if (kept.empty()) {
+    path = plan_fresh();
+  } else {
+    path = kept;
+    try {
+      std::vector<PathPoint> fresh = plan_fresh();
+      if (pathLength(fresh) < (1.0 - path_reuse_min_saving_) * pathLength(kept)) {
+        path = std::move(fresh);
       }
-      alternatives.push_back({path, seg, entry, -side, length});
-    }
-    bool placed = false;
-    bool first_attempt = true;
-    while (!placed && lazy_failure.empty()) {
-      if (cancel_checker && cancel_checker()) {
-        throw nav2_core::PlannerCancelled("LazyCoulombPlanner: Planning was cancelled");
-      }
-      if (++corrections > max_iterations_) {
-        lazy_failure = "correction budget (" + std::to_string(max_iterations_) + ") exhausted";
-        break;
-      }
-      // The lazy search is struggling: check, cheaply, whether the start or the
-      // goal is sealed inside a small pocket, so that an unreachable goal is
-      // reported now and not after the whole budget has been spent.
-      if (corrections == reachability_check_after_) {
-        const Reachability found = gridSearch(start, goal, grid_path, kPocketCheckCells);
-        if (found == Reachability::kUnreachable) {
-          throw nav2_core::NoValidPathCouldBeFound(
-                  "LazyCoulombPlanner: Goal is not reachable from the start");
-        }
-        grid_searched = found == Reachability::kReachable;
-      }
-      if (first_attempt) {
-        first_attempt = false;
-        placed = tryInsert(path, seg, entry, side, false);
-        continue;
-      }
-      if (alternatives.empty()) {
-        lazy_failure = "no side of the blocking obstacles leads to a clear path";
-        break;
-      }
-      // Dead end: undo back to a waypoint with an untried side.
-      // "recent" undoes the latest decision; "shortest" resumes from the shortest
-      // partial path, which revisits early decisions sooner.
-      size_t pick = alternatives.size() - 1;
-      if (retry_order_ == "shortest") {
-        for (size_t i = 0; i < alternatives.size(); ++i) {
-          if (alternatives[i].length < alternatives[pick].length) {
-            pick = i;
-          }
-        }
-      }
-      const Alternative alt = std::move(alternatives[pick]);
-      alternatives.erase(alternatives.begin() + pick);
-      placed = tryInsert(alt.path, alt.seg, alt.entry, alt.side, true);
-    }
-    if (!lazy_failure.empty()) {
-      break;
+    } catch (const nav2_core::PlannerCancelled &) {
+      throw;
+    } catch (const nav2_core::PlannerException &) {
+      // No fresh plan, but the previous path is still good.
     }
   }
-
-  if (!lazy_failure.empty()) {
-    // The lazy search gave up. A route may still exist: settle it with the grid
-    // search, and use its path if allowed.
-    if (!grid_searched &&
-      gridSearch(start, goal, grid_path, 0) != Reachability::kReachable)
-    {
-      throw nav2_core::NoValidPathCouldBeFound(
-              "LazyCoulombPlanner: Goal is not reachable from the start");
-    }
-    if (!grid_fallback_) {
-      throw nav2_core::NoValidPathCouldBeFound("LazyCoulombPlanner: " + lazy_failure);
-    }
-    RCLCPP_DEBUG(logger_, "LCP: %s, using the grid fallback", lazy_failure.c_str());
-    path = shortcut(grid_path);
-  }
-
-  if (simplify_path_) {
-    path = removeRedundant(path);
-  }
-
-  path = improveClearance(path);
-
-  if (enable_smoothing_) {
-    for (int i = 0; i < smoothing_iterations_ && path.size() >= 3; ++i) {
-      path = chaikinSmooth(path);
-    }
-  }
-
-  if (output_spacing_ > 0.0) {
-    path = densify(path, output_spacing_);
-  }
-
-  // Safety net: nothing leaves the planner without a final collision check.
-  if (!isPathClear(path)) {
-    throw nav2_core::NoValidPathCouldBeFound(
-            "LazyCoulombPlanner: Final path failed its collision check");
-  }
+  last_path_ = path;
+  last_goal_ = goal;
 
   if (escaped) {
     path.insert(path.begin(), robot);
@@ -878,6 +922,48 @@ std::vector<PathPoint> LazyCoulombPlanner::shortcut(const std::vector<PathPoint>
   return out;
 }
 
+double LazyCoulombPlanner::pathLength(const std::vector<PathPoint> & pts)
+{
+  double length = 0.0;
+  for (size_t i = 0; i + 1 < pts.size(); ++i) {
+    length += std::hypot(pts[i + 1].x - pts[i].x, pts[i + 1].y - pts[i].y);
+  }
+  return length;
+}
+
+std::vector<PathPoint> LazyCoulombPlanner::continuePreviousPath(const PathPoint & start) const
+{
+  // Nearest point of the previous path to where the robot is now.
+  size_t nearest = 0;
+  double best = std::numeric_limits<double>::max();
+  for (size_t i = 0; i < last_path_.size(); ++i) {
+    const double d = std::hypot(last_path_[i].x - start.x, last_path_[i].y - start.y);
+    if (d < best) {
+      best = d;
+      nearest = i;
+    }
+  }
+  if (best > path_reuse_distance_) {
+    return {};  // the robot has left the previous path
+  }
+
+  // Rejoin a little further along, so the connection does not double back.
+  size_t join = nearest;
+  double ahead = 0.0;
+  while (join + 1 < last_path_.size() && ahead < std::max(kRejoinAhead, 2.0 * best)) {
+    ahead += std::hypot(
+      last_path_[join + 1].x - last_path_[join].x, last_path_[join + 1].y - last_path_[join].y);
+    ++join;
+  }
+
+  std::vector<PathPoint> kept{start};
+  kept.insert(kept.end(), last_path_.begin() + join, last_path_.end());
+  if (kept.size() < 2 || !isPathClear(kept)) {
+    return {};  // the map changed: something now blocks the previous path
+  }
+  return output_spacing_ > 0.0 ? densify(kept, output_spacing_) : kept;
+}
+
 std::vector<PathPoint> LazyCoulombPlanner::removeRedundant(
   const std::vector<PathPoint> & pts) const
 {
@@ -1045,7 +1131,7 @@ std::vector<PathPoint> LazyCoulombPlanner::chaikinSmooth(
   // chord touches an obstacle, or comes closer to one than allowed, the cut is
   // retried closer to P, and if no cut fits the corner is kept. The smoothed
   // path is therefore collision free by construction.
-  static const double kCuts[] = {0.25, 0.125, 0.0625};
+  static const double kCuts[] = {0.4, 0.25, 0.125, 0.0625};
 
   std::vector<PathPoint> out;
   out.reserve(pts.size() * 2);
@@ -1057,11 +1143,16 @@ std::vector<PathPoint> LazyCoulombPlanner::chaikinSmooth(
     const PathPoint & next = pts[i + 1];
 
     // Rounding a corner moves the path towards the obstacle it goes around. A
-    // cut may give back part of the clearance (smoothing_cost_slack), but never
-    // reach an obstacle cell.
+    // cut may give back part of the clearance (smoothing_cost_slack above
+    // comfort_cost), and it may always come as close as the two stretches that
+    // meet at the corner already do: refusing that would leave a sharp corner
+    // between two stretches that are themselves closer to obstacles than the
+    // rounded corner would be. It never reaches an obstacle cell.
+    PathPoint unused_point(0.0, 0.0);
+    const double neighbourhood = std::max(
+      segmentMaxCost(prev, corner, unused_point), segmentMaxCost(corner, next, unused_point));
     const double allowed = std::min(
-      lethal_cost_threshold_ - 1.0,
-      std::max(comfort_cost_, costAt(corner.x, corner.y)) + smoothing_cost_slack_);
+      lethal_cost_threshold_ - 1.0, std::max(comfort_cost_ + smoothing_cost_slack_, neighbourhood));
     bool cut = false;
     for (const double f : kCuts) {
       const PathPoint q(corner.x + f * (prev.x - corner.x), corner.y + f * (prev.y - corner.y));

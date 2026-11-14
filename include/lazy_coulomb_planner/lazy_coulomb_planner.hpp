@@ -187,6 +187,16 @@ protected:
   /** @brief Replace a cell-by-cell route by the longest collision-free straight segments. */
   std::vector<PathPoint> shortcut(const std::vector<PathPoint> & points) const;
 
+  /** @brief Length of a polyline (m). */
+  static double pathLength(const std::vector<PathPoint> & points);
+
+  /**
+   * @brief The previous path, continued from where the robot is now.
+   * @return Empty if the robot is further than path_reuse_distance from the
+   *         previous path, or if that path is no longer collision free
+   */
+  std::vector<PathPoint> continuePreviousPath(const PathPoint & start) const;
+
   /** @brief Drop waypoints whose neighbours can be joined directly. */
   std::vector<PathPoint> removeRedundant(const std::vector<PathPoint> & points) const;
 
@@ -226,6 +236,10 @@ protected:
   bool commit_direction_;           // Keep the side chosen on the first step
   bool grid_fallback_;              // Use the grid search's route when the lazy search fails
   int reachability_check_after_;    // Attempts before checking that a route exists at all
+  double path_reuse_distance_;      // Keep the previous path while the robot is this near it (m)
+  double path_reuse_min_saving_;    // ... unless a fresh plan is shorter by this fraction
+  std::vector<PathPoint> last_path_;  // Path returned by the previous request
+  PathPoint last_goal_{0.0, 0.0};     // Goal of the previous request
   bool retry_other_side_;           // Back up and try the other side on a dead end
   std::string retry_order_;         // Which untried side to retry first: "recent" or "shortest"
   double max_path_stretch_;         // Abandon detours longer than this x straight line

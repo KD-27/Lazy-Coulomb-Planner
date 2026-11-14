@@ -77,6 +77,17 @@ give back up to `smoothing_cost_slack` of the gained clearance to round a
 corner. Both mechanisms need an inflation layer in the costmap; with
 `comfort_cost: 253` they are off.
 
+### Consistent paths while driving
+
+Nav2 replans about once a second as the robot moves. A fresh plan from a start
+that has shifted a few centimetres can choose the other side of an obstacle, and
+a path that jumps like that steers the path follower towards the obstacle. So
+when a request has the same goal as the previous one and the robot is within
+`path_reuse_distance` of the previous path, the planner keeps that path
+(rejoining it a little ahead of the robot) for as long as it is still collision
+free. A fresh plan is computed as well and replaces it only if it is shorter by
+at least `path_reuse_min_saving`.
+
 ### When the lazy search struggles
 
 Two things happen once waypoint placement stops going smoothly:
@@ -178,6 +189,8 @@ ros2 launch nav2_bringup navigation_launch.py \
 | `repulsion_strength` | 1.0 | Cells moved per unit of normalised force |
 | `max_push_step` | 0.0 | Cap on one push step (m); 0 means one costmap cell |
 | `force_balance_threshold` | 0.05 | Below this force the push is a fixed kick |
+| `path_reuse_distance` | 0.5 | Keep the previous path while the robot is within this distance of it (m); 0 always plans afresh |
+| `path_reuse_min_saving` | 0.15 | Switch to a fresh plan only if it is shorter by this fraction |
 | `goal_tolerance` | 0.5 | If the goal is on an occupied cell, end the path at the nearest free cell within this range (m); 0 disables |
 | `start_escape_radius` | 0.5 | If the robot sits on an occupied cell, plan from the nearest free cell within this range (m); 0 disables |
 | `comfort_cost` | 30.0 | Costmap costs above this are avoided where possible; 253 disables |

@@ -2,7 +2,7 @@
 # Headless Gazebo + the Nav2 stack with a TurtleBot3, with the global planner
 # swapped for the one named. Needs Nav2 Jazzy, nav2_minimal_tb3_sim, ros_gz and
 # this workspace built; nav2_bringup is not required.
-# usage: run_sim.sh <lcp|navfn> <goals> [out_dir]
+# usage: run_sim.sh <lcp|navfn|smac2d|theta> <goals> [out_dir]
 here=$(cd "$(dirname "$0")" && pwd)
 ws=$(cd "$here/../../.." && pwd)
 source /opt/ros/jazzy/setup.bash
@@ -17,8 +17,24 @@ planner=$1; goals=$2; out=${3:-$here/results}
 case $planner in
   lcp)   plugin="lazy_coulomb_planner::LazyCoulombPlanner" ;;
   navfn) plugin="nav2_navfn_planner::NavfnPlanner" ;;
-  *) echo "planner must be lcp or navfn"; exit 2 ;;
+  smac2d) plugin="nav2_smac_planner::SmacPlanner2D" ;;
+  theta) plugin="nav2_theta_star_planner::ThetaStarPlanner" ;;
+  *) echo "planner must be lcp, navfn, smac2d or theta"; exit 2 ;;
 esac
+
+# Anything already running on this ROS domain (a previous run that was not shut
+# down, a benchmark, a stray transform publisher) would corrupt the test.
+# Nodes of a run that has just ended take a few seconds to disappear, so wait a little.
+for _ in 1 2 3 4 5 6; do
+  others=$(ros2 node list --no-daemon 2>/dev/null | grep -v "^/_ros2cli")
+  [ -z "$others" ] && break
+  sleep 5
+done
+if [ -n "$others" ]; then
+  echo "$planner: ROS domain $ROS_DOMAIN_ID is not empty, refusing to start. Nodes found:"
+  echo "$others"
+  exit 1
+fi
 
 # The test parameters with only the global planner plugin replaced.
 mkdir -p "$out"
@@ -39,7 +55,16 @@ cleanup() {
 }
 trap cleanup EXIT
 trap 'exit 1' INT TERM
-sleep 25
+# Localisation must come up; if it has not within 90 s the start-up has failed.
+for _ in $(seq 1 18); do
+  grep -q "lifecycle_manager_localization.*Managed nodes are active" "$out/$planner.launch.log" && break
+  sleep 5
+done
+if ! grep -q "lifecycle_manager_localization.*Managed nodes are active" "$out/$planner.launch.log"; then
+  echo "$planner: localisation did not start, see $out/$planner.launch.log"
+  exit 1
+fi
+sleep 10
 if grep -q "gz-.*process has died" "$out/$planner.launch.log"; then
   echo "$planner: the simulator did not start, see $out/$planner.launch.log"
   exit 1

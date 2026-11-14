@@ -48,6 +48,10 @@ planner_server:
       # smoother room to round the corner and reduces repeat corrections.
       waypoint_margin: 0.3
 
+      # ── Consistency between replans while driving ────────────────────────
+      path_reuse_distance: 0.5   # keep the previous path while the robot is this near it (m)
+      path_reuse_min_saving: 0.15  # ... unless a fresh plan is shorter by this fraction
+
       # ── Retry: on a dead end, back up and try the other side ──────────────
       retry_other_side: true
       retry_order: "shortest"    # resume from the shortest partial path ("recent" = latest)

@@ -450,6 +450,53 @@ TEST_F(LcpTest, KeepsDistanceFromObstaclesItDoesNotCross)
   EXPECT_LT(length(comfortable_path), 1.05 * 8.0);
 }
 
+TEST_F(LcpTest, ReplanningWhileDrivingKeepsThePreviousPath)
+{
+  // A wall centred on the straight line: going over or under is equally good,
+  // so a fresh plan from a slightly different start could pick either side.
+  addBox(4.8, 3.0, 5.2, 7.0);
+  auto planner = makePlanner();
+  const auto goal = pose(9.0, 5.0);
+  const auto first = planner->createPlan(pose(1.0, 5.0), goal, never);
+  ASSERT_FALSE(collides(first));
+
+  // Replan from points along the path, each nudged 5 cm to alternating sides.
+  auto distance_to_first = [&](double x, double y) {
+      double best = 1e9;
+      for (const auto & p : first.poses) {
+        best = std::min(best, std::hypot(p.pose.position.x - x, p.pose.position.y - y));
+      }
+      return best;
+    };
+  for (size_t i = 5; i + 15 < first.poses.size(); i += 5) {
+    const auto & at = first.poses[i].pose.position;
+    const double nudge = (i / 5) % 2 ? 0.05 : -0.05;
+    const auto again = planner->createPlan(pose(at.x, at.y + nudge), goal, never);
+    EXPECT_FALSE(collides(again));
+    for (const auto & p : again.poses) {
+      EXPECT_LT(distance_to_first(p.pose.position.x, p.pose.position.y), 0.15);
+    }
+  }
+}
+
+TEST_F(LcpTest, PreviousPathIsDroppedWhenSomethingBlocksIt)
+{
+  addBox(4.8, 3.0, 5.2, 7.0);
+  auto planner = makePlanner();
+  const auto start = pose(1.0, 5.0), goal = pose(9.0, 5.0);
+  const auto first = planner->createPlan(start, goal, never);
+
+  // A new obstacle lands on the path that was just returned.
+  const auto & mid = first.poses[first.poses.size() / 2].pose.position;
+  addBox(mid.x - 0.3, mid.y - 0.3, mid.x + 0.3, mid.y + 0.3);
+  ASSERT_TRUE(collides(first));
+
+  const auto & near = first.poses[3].pose.position;
+  const auto again = planner->createPlan(pose(near.x, near.y), goal, never);
+  expectEndpoints(again, pose(near.x, near.y), goal);
+  EXPECT_FALSE(collides(again));
+}
+
 TEST_F(LcpTest, NeverReturnsACollidingPathInRandomClutter)
 {
   // Property test: whatever the planner returns must be collision free, for

@@ -11,6 +11,7 @@ planner-only benchmark in `benchmark/` cannot show.
 colcon build --packages-select lazy_coulomb_planner      # from the workspace root
 sim/run_sim.sh lcp 15       # 15 goals with the Lazy Coulomb Planner
 sim/run_sim.sh navfn 15     # the same goals with NavFn
+sim/run_sim.sh smac2d 15    # ... or Smac 2D, or theta for Theta*
 ```
 
 Needs Nav2 Jazzy (controller, planner, behaviours, BT navigator, AMCL, map
@@ -41,6 +42,14 @@ The controller is Regulated Pure Pursuit because it follows the global path
 closely and stops when the path ahead is too close to an obstacle, so the result
 depends on the quality of the planned path. Results vary from run to run; compare
 planners over several runs, not one.
+
+Next to each CSV the run writes a trace, `<planner>.trace.jsonl`: the robot's
+pose five times a second, every path the planner publishes, the velocity
+commands and the controller's warnings, each with a wall-clock time. It shows
+what the robot and the path looked like at the moment of a stop.
+
+The script refuses to start if other nodes are already running on its ROS
+domain, and gives up if the simulator or localisation fails to start.
 
 ## CSV columns
 

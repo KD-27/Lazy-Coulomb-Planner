@@ -64,13 +64,37 @@ little.
 
 | `native_rpp_sequential_rerun` | Native, one run at a time on an idle machine, after the Gazebo start-up race was fixed. `old` = commit 671e2c3; `new` = waypoint sliding, comfort 30 and goal tolerance; plus NavFn | new: 15, 15, 14 of 15 goals, 234, 203, 201 s, 40, 20, 33 recoveries. old: 13, 14, 15 goals, 209, 243, 189 s, 36, 51, 22 recoveries. NavFn: 15 and 15 goals, 172 and 184 s, 1 and 9 recoveries. New and old do not differ beyond noise in recoveries; new reaches more goals (44 against 42 of 45) because the goal tolerance removes the "goal is inside an obstacle" failures. LCP triggers several times more recoveries than NavFn with this controller, always on the same legs (2, 6, 7, 9 to 11, 13). |
 
+| `native_rpp_rounded_corners` | Native, sequential. LCP with the smoothing rule that lets a corner be rounded as close as the adjoining stretches already are, and deeper cuts | 14 and 13 of 15 goals, 208 and 243 s, 33 and 53 recoveries. No improvement: tight corners were not the cause of the stops. A third run did not start (the empty-domain check fired too early, since fixed). Two earlier runs of this batch were discarded: stray transform publishers left by the path analysis were on the same ROS domain. |
+| `native_rpp_path_reuse` | Native, sequential. As above plus keeping the previous path between replans | 13 and 14 of 15 goals, 258 and 202 s, 76 and 27 recoveries. No improvement either. A third run hung at start-up (map server stuck configuring) and was discarded. |
+| `native_rpp_traced` | Native, one run each of LCP, NavFn, Smac 2D and Theta*, with the new trace (`*.trace.jsonl`: robot pose, every published plan, velocity commands, controller warnings) | LCP 13/15 goals, 53 recoveries, 432 "collision ahead" warnings. NavFn 15/15, 0 recoveries, 0 warnings. Smac 2D 5/15, 21 recoveries, 153 warnings. Theta* 12/15, 47 recoveries, 352 warnings. |
+
 Earlier Docker runs with the MPPI controller are only in the git history of
 `sim/results/`: LCP before the start-cell fix reached 10/15 goals; after it,
 15/15 in 316 s with 11 recoveries; NavFn 15/15 in 254 s with 5 recoveries.
 
-Conclusion at the end of the day: with the Regulated Pure Pursuit controller the
-robot stops for "collision ahead" far more often on LCP paths than on NavFn
-paths, and on the same legs every run, so the cause is the shape of those
-paths and not noise. The clearance changes lowered path costs in the planner
-benchmark but did not measurably reduce these stops. With the MPPI controller
-(Docker runs) the same planner drove with 0 to 1 recoveries.
+Conclusion: with the Regulated Pure Pursuit controller in this pillar world the
+robot stops for "collision ahead" on the paths of every planner except NavFn.
+The trace shows why: the stops happen when the robot itself is about 0.30 m from
+an obstacle (its radius is 0.22 m), and the robot spends 18 % of the run that
+close on LCP paths against 4 % on NavFn paths, whose cost-following route keeps
+to the middle of the corridors (median clearance 0.45 m against 0.35 m). Smac 2D
+and Theta*, which also take short routes, do no better than LCP. Tight corners
+and path jumps between replans were both tested as causes and ruled out as the
+main one. With the MPPI controller (Docker runs) LCP drove with 0 to 1
+recoveries. So this test is harsh on every planner that does not centre itself
+in corridors; it does not single out LCP.
+
+## Path analysis (`analysis/`)
+
+Planner-only measurements on the sandbox map, over the 15 legs of the driving
+test. `leg_paths.py` plans each leg and reports length, clearance and the
+tightest turn; `replan_stability.py` replans from points along a path, nudged
+5 cm sideways, and reports how far the new path moves.
+
+| File | What it shows |
+|---|---|
+| `leg_paths.csv`, `.png` | Before corner rounding: LCP paths are boxy, tightest turn 0.09 to 0.21 m on most legs against 0.26 to 0.36 m for NavFn. |
+| `leg_paths_rounded.*`, `leg_paths_deeper_cuts.*` | After the smoothing rule change, then with deeper cuts: tightest turn 0.20 to 0.56 m on all legs but one; total length 45.6 m against 45.9 m for NavFn. |
+| `leg_paths_with_reuse.*` | Final code, three planners. Length closer than 0.33 m to an obstacle: LCP 2.1 m, NavFn 0.9 m, Smac 2D 9.9 m. Median clearance: 0.40, 0.45, 0.40 m. |
+| `replan_stability_before_reuse.csv` | LCP: 6 of 133 replans move the path by more than 0.3 m (legs 6, 7, 9, 12, 13). NavFn: 0 of 141. |
+| `replan_stability_with_reuse.csv` | With path reuse LCP has 0 jumps, and its paths move less between replans than NavFn's (90th percentile 0.056 m against 0.076 m). |
