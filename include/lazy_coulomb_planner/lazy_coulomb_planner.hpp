@@ -55,28 +55,25 @@ struct PathPoint
 /**
  * @brief Lazy Coulomb Planner - Nav2 Global Planner Plugin
  *
- * Implements a reactive path planning algorithm inspired by electrostatic
- * repulsion (Coulomb's law). Starting from the laziest assumption - a
- * straight line from start to goal - it iteratively detects obstacle
- * intersections and pushes waypoints clear using perpendicular repulsion
- * forces, then locks them in place.
+ * Starts from the laziest assumption - a straight line from start to goal -
+ * and only does work where that line crosses an obstacle. Each crossing gets a
+ * waypoint, which is pushed sideways (perpendicular to the segment it sits on)
+ * until it is clear, then locked.
  *
- * Algorithm steps:
- *   1. Initialize path as straight line S -> G
- *   2. Find first segment that crosses an obstacle (via costmap)
- *   3. Insert a new point at the intersection
- *   4. Push it perpendicularly until outside all obstacles
- *   5. Lock it and continue scanning from the start
- *   6. Repeat until no segment intersects any obstacle
- *   7. Apply optional Chaikin smoothing to final path
+ * The push is driven by a summed Coulomb force: every obstacle cell within
+ * `charge_radius` of the waypoint repels it with magnitude 1 / r^force_exponent
+ * (r in cells). The component of that force perpendicular to the path decides
+ * which side the waypoint leaves on and how fast it moves.
+ *
+ * The planner never returns a path it knows to be in collision: if a waypoint
+ * cannot be cleared, or the correction budget runs out, it throws
+ * nav2_core::NoValidPathCouldBeFound so a fallback planner can take over.
  */
 class LazyCoulombPlanner : public nav2_core::GlobalPlanner
 {
 public:
   LazyCoulombPlanner() = default;
   ~LazyCoulombPlanner() = default;
-
-  // Nav2 lifecycle interface
 
   void configure(
     const rclcpp_lifecycle::LifecycleNode::WeakPtr & parent,
@@ -94,7 +91,7 @@ public:
    * @param goal Target pose in map frame
    * @param cancel_checker Returns true if the planning request was cancelled
    * @return nav_msgs::msg::Path with waypoints from start to goal
-   * @throws nav2_core::PlannerException if no valid path found
+   * @throws nav2_core::PlannerException (or a subclass) if no valid path found
    */
   nav_msgs::msg::Path createPlan(
     const geometry_msgs::msg::PoseStamped & start,
@@ -103,10 +100,7 @@ public:
 
   /**
    * @brief Testing utility: inject a raw Costmap2D, bypassing Costmap2DROS.
-   *
-   * Call after configure() and before createPlan() in unit tests.
-   * The injected costmap must remain valid for the duration of the test.
-   * Do NOT use in production code.
+   *        Call after configure() and before createPlan(). Not for production.
    */
   void setTestCostmap(nav2_costmap_2d::Costmap2D * cm)
   {
@@ -114,110 +108,77 @@ public:
   }
 
 protected:
-  // Coordinate helpers
-
-  /**
-   * @brief Convert world (x,y) to costmap cell (mx, my).
-   * @return true if conversion succeeded (point is within map bounds)
-   */
-  bool worldToMap(double wx, double wy, unsigned int & mx, unsigned int & my) const;
-
-  /** @brief Convert costmap cell (mx, my) to world (x, y). */
-  void mapToWorld(unsigned int mx, unsigned int my, double & wx, double & wy) const;
-
-  // Obstacle queries
-
-  /**
-   * @brief Check if a world-frame point is inside an obstacle or inflation zone.
-   *        Uses lethal + inscribed cost threshold from the costmap.
-   */
+  /** @brief True if the world point is outside the map or on an obstacle cell. */
   bool isPointInObstacle(double wx, double wy) const;
 
-  /**
-   * @brief Check if any point along segment (p1 -> p2) hits an obstacle.
-   *        Samples the segment at sub-cell resolution.
-   */
+  /** @brief True if any cell touched by the segment (p1 -> p2) is an obstacle. */
   bool segmentIntersectsObstacle(const PathPoint & p1, const PathPoint & p2) const;
 
-  /**
-   * @brief Find the first world-frame point along (p1 -> p2) that enters an obstacle.
-   * @return true if an intersection was found; result written to intersection
-   */
+  /** @brief A point inside the first obstacle cell touched by (p1 -> p2), if any. */
   bool findSegmentObstacleEntry(
-    const PathPoint & p1,
-    const PathPoint & p2,
-    PathPoint & intersection) const;
+    const PathPoint & p1, const PathPoint & p2, PathPoint & intersection) const;
 
-  // Repulsion physics
-
-  /**
-   * @brief Compute the perpendicular-to-path repulsion force at a given point.
-   *
-   * Samples left and right of the path direction in the costmap to find which
-   * side has clear space closer. Falls back to pushing directly away from the
-   * nearest high-cost cell if neither perpendicular direction is clear.
-   *
-   * @param point Point currently inside an obstacle
-   * @param path_ref_prev Reference point before (for path direction)
-   * @param path_ref_next Reference point after (for path direction)
-   * @param force_x Output: x component of repulsion force
-   * @param force_y Output: y component of repulsion force
-   */
-  void calculateRepulsionForce(
-    const PathPoint & point,
-    const PathPoint & path_ref_prev,
-    const PathPoint & path_ref_next,
-    double & force_x,
-    double & force_y) const;
+  /** @brief True if every segment of the polyline is collision free. */
+  bool isPathClear(const std::vector<PathPoint> & points) const;
 
   /**
-   * @brief Find the nearest obstacle cell and return a push-away direction.
-   *        Used as deterministic fallback when perpendicular push is blocked.
+   * @brief Push a waypoint sideways, perpendicular to (a -> b), until it is clear.
+   * @return false if it could not be cleared within max_push_iterations
    */
-  void pushAwayFromNearestObstacle(
-    const PathPoint & point,
-    double & force_x,
-    double & force_y) const;
-
-  // Path utilities
-
-  /** @brief Build the initial straight-line path from start to goal. */
-  std::vector<PathPoint> initializePath(
-    const PathPoint & start,
-    const PathPoint & goal) const;
+  bool pushClear(PathPoint & pt, const PathPoint & a, const PathPoint & b) const;
 
   /**
-   * @brief Apply one round of Chaikin corner-cutting to smooth the path.
-   *        Keeps start and goal fixed.
+   * @brief Summed Coulomb force on a point from all obstacle cells within
+   *        charge_radius, projected onto the unit vector (nx, ny).
+   *        Distances are in cells; magnitude per cell is 1 / r^force_exponent.
    */
+  double coulombForceAlong(const PathPoint & pt, double nx, double ny) const;
+
+  /**
+   * @brief Legacy direction rule: +1 (left) or -1 (right), whichever side
+   *        reaches free space sooner along the normal; 0 if neither does.
+   */
+  int probeNearestClearSide(const PathPoint & pt, double nx, double ny) const;
+
+  /** @brief Drop waypoints whose neighbours can be joined directly. */
+  std::vector<PathPoint> removeRedundant(const std::vector<PathPoint> & points) const;
+
+  /** @brief One round of Chaikin corner-cutting. Keeps start and goal fixed. */
   std::vector<PathPoint> chaikinSmooth(const std::vector<PathPoint> & points) const;
 
-  /** @brief Convert internal PathPoint vector to nav_msgs::msg::Path. */
+  /** @brief Resample the polyline so consecutive poses are at most `spacing` apart. */
+  std::vector<PathPoint> densify(const std::vector<PathPoint> & points, double spacing) const;
+
+  /** @brief Convert to nav_msgs::msg::Path with headings along the path. */
   nav_msgs::msg::Path toNavPath(
     const std::vector<PathPoint> & points,
-    const std_msgs::msg::Header & header) const;
+    const std_msgs::msg::Header & header,
+    const geometry_msgs::msg::Quaternion & goal_orientation) const;
 
-  // Members
   rclcpp_lifecycle::LifecycleNode::WeakPtr node_;
   std::shared_ptr<tf2_ros::Buffer> tf_;
   std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap_ros_;
   nav2_costmap_2d::Costmap2D * costmap_{nullptr};
+  rclcpp::Clock::SharedPtr clock_;
   std::string name_;
   std::string global_frame_;
   rclcpp::Logger logger_{rclcpp::get_logger("LazyCoulombPlanner")};
 
-  // Tunable parameters (set via nav2_params.yaml)
-  int max_iterations_;  // Hard cap on total algorithm iterations
-  int max_push_iterations_;  // Max steps to push a single point clear
-  double step_size_;  // Integration step size when pushing (meters)
-  double repulsion_strength_;  // Base magnitude of repulsion force
-  double force_balance_threshold_;  // Below this force magnitude, use fallback
-  double perturbation_strength_;  // Deterministic fallback nudge strength
-  int initial_path_points_;  // Number of points in initial straight line
-  bool enable_smoothing_;  // Apply Chaikin smoothing to final path
-  int smoothing_iterations_;  // Number of Chaikin passes
-  double lethal_cost_threshold_;  // Costmap cost value considered obstacle
-  int segment_check_steps_;  // Samples per unit length for segment checks
+  // Tunable parameters
+  int max_iterations_;              // Max waypoints inserted before giving up
+  int max_push_iterations_;         // Max steps to push a single waypoint clear
+  std::string force_model_;         // "coulomb" or "probe" (legacy nearest-clear-side rule)
+  double force_exponent_;           // n in 1 / r^n  (1.0 or 2.0)
+  double charge_radius_;            // Obstacle cells within this range repel (m)
+  double repulsion_strength_;       // Cells moved per unit of normalised force
+  double max_push_step_;            // Cap on a single push step (m); <= 0 means one cell
+  double force_balance_threshold_;  // Below this |force| the push is a fixed kick
+  bool commit_direction_;           // Keep the side chosen on the first step
+  bool simplify_path_;              // Remove redundant waypoints after solving
+  bool enable_smoothing_;           // Chaikin smoothing, kept only if collision free
+  int smoothing_iterations_;        // Number of Chaikin passes
+  double output_spacing_;           // Max distance between output poses (m); <= 0 disables
+  double lethal_cost_threshold_;    // Cost at or above this is an obstacle
 };
 
 }  // namespace lazy_coulomb_planner

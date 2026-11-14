@@ -14,51 +14,30 @@ planner_server:
     GridBased:
       plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
 
-      # ── Iteration budget ──────────────────────────────────────────────────
-      # Total steps the algorithm may take before giving up.
-      # Increase for very cluttered environments.
-      max_iterations: 1000
+      # ── Coulomb push ──────────────────────────────────────────────────────
+      # "coulomb" sums a 1/r^n repulsion over nearby obstacle cells.
+      # "probe" is the legacy rule: push toward the nearer clear side.
+      force_model: "coulomb"
+      force_exponent: 2.0        # n in 1/r^n (1.0 or 2.0)
+      charge_radius: 1.0         # obstacle cells within this range repel (m)
+      commit_direction: true     # keep the side chosen on the first push step
+      repulsion_strength: 1.0    # cells moved per unit of normalised force
+      max_push_step: 0.0         # cap on one push step (m); 0 = one costmap cell
+      force_balance_threshold: 0.05
 
-      # Maximum steps to push a single waypoint clear of an obstacle.
-      max_push_iterations: 300
+      # ── Budgets: exceeding either makes the planner report failure ────────
+      max_iterations: 500        # waypoints inserted
+      max_push_iterations: 400   # steps to push a single waypoint clear
 
-      # ── Physics parameters ────────────────────────────────────────────────
-      # Integration step size when moving a waypoint (meters).
-      # Smaller = more precise but slower; larger = faster but may overshoot.
-      step_size: 0.05
-
-      # Base magnitude of the repulsion force (meters per step).
-      repulsion_strength: 0.35
-
-      # If the computed force magnitude falls below this value the planner
-      # uses the deterministic perpendicular-left fallback instead.
-      force_balance_threshold: 0.01
-
-      # Magnitude of the deterministic fallback nudge (meters).
-      perturbation_strength: 0.1
-
-      # ── Initial path ──────────────────────────────────────────────────────
-      # Number of evenly-spaced waypoints in the initial straight line.
-      # More points = finer initial sampling but more work per iteration.
-      initial_path_points: 25
-
-      # ── Costmap thresholds ────────────────────────────────────────────────
-      # Costmap cells with cost >= this value are treated as obstacles.
-      # 253 = INSCRIBED_INFLATED_OBSTACLE (includes inflation layer)
-      # 254 = LETHAL_OBSTACLE only
+      # ── Costmap threshold ─────────────────────────────────────────────────
+      # 253 = INSCRIBED_INFLATED_OBSTACLE (includes inflation), 254 = LETHAL only
       lethal_cost_threshold: 253.0
 
-      # Samples taken per unit length when checking segment intersections.
-      # Higher = more accurate but slower for long segments.
-      segment_check_steps: 20
-
-      # ── Path smoothing ────────────────────────────────────────────────────
-      # Apply Chaikin corner-cutting to the final waypoint list.
-      enable_smoothing: true
-
-      # Number of Chaikin passes. 1–3 is usually sufficient.
-      # More passes = smoother curve but may cut corners closer to obstacles.
+      # ── Post-processing ───────────────────────────────────────────────────
+      simplify_path: true        # drop waypoints whose neighbours join directly
+      enable_smoothing: true     # Chaikin passes, kept only if collision free
       smoothing_iterations: 3
+      output_spacing: 0.1        # max distance between output poses (m)
 
 # ── Costmap configuration (global) ─────────────────────────────────────────
 global_costmap:

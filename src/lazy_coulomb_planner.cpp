@@ -16,8 +16,11 @@
 
 #include <algorithm>
 #include <functional>
-#include <stdexcept>
 #include <limits>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <vector>
 
 #include "nav2_core/planner_exceptions.hpp"
 #include "nav2_costmap_2d/cost_values.hpp"
@@ -54,47 +57,40 @@ void LazyCoulombPlanner::configure(
   }
 
   logger_ = node->get_logger();
+  clock_ = node->get_clock();
 
-  nav2_util::declare_parameter_if_not_declared(
-    node, name_ + ".max_iterations", rclcpp::ParameterValue(1000));
-  nav2_util::declare_parameter_if_not_declared(
-    node, name_ + ".max_push_iterations", rclcpp::ParameterValue(300));
-  nav2_util::declare_parameter_if_not_declared(
-    node, name_ + ".step_size", rclcpp::ParameterValue(0.05));
-  nav2_util::declare_parameter_if_not_declared(
-    node, name_ + ".repulsion_strength", rclcpp::ParameterValue(0.15));
-  nav2_util::declare_parameter_if_not_declared(
-    node, name_ + ".force_balance_threshold", rclcpp::ParameterValue(0.01));
-  nav2_util::declare_parameter_if_not_declared(
-    node, name_ + ".perturbation_strength", rclcpp::ParameterValue(0.08));
-  nav2_util::declare_parameter_if_not_declared(
-    node, name_ + ".initial_path_points", rclcpp::ParameterValue(20));
-  nav2_util::declare_parameter_if_not_declared(
-    node, name_ + ".enable_smoothing", rclcpp::ParameterValue(true));
-  nav2_util::declare_parameter_if_not_declared(
-    node, name_ + ".smoothing_iterations", rclcpp::ParameterValue(3));
-  nav2_util::declare_parameter_if_not_declared(
-    node, name_ + ".lethal_cost_threshold", rclcpp::ParameterValue(253.0));
-  nav2_util::declare_parameter_if_not_declared(
-    node, name_ + ".segment_check_steps", rclcpp::ParameterValue(20));
+  auto declare = [&](const std::string & key, const rclcpp::ParameterValue & value) {
+      nav2_util::declare_parameter_if_not_declared(node, name_ + "." + key, value);
+      return node->get_parameter(name_ + "." + key);
+    };
 
-  max_iterations_ = node->get_parameter(name_ + ".max_iterations").as_int();
-  max_push_iterations_ = node->get_parameter(name_ + ".max_push_iterations").as_int();
-  step_size_ = node->get_parameter(name_ + ".step_size").as_double();
-  repulsion_strength_ = node->get_parameter(name_ + ".repulsion_strength").as_double();
+  max_iterations_ = declare("max_iterations", rclcpp::ParameterValue(500)).as_int();
+  max_push_iterations_ = declare("max_push_iterations", rclcpp::ParameterValue(400)).as_int();
+  force_model_ = declare("force_model", rclcpp::ParameterValue("coulomb")).as_string();
+  force_exponent_ = declare("force_exponent", rclcpp::ParameterValue(2.0)).as_double();
+  charge_radius_ = declare("charge_radius", rclcpp::ParameterValue(1.0)).as_double();
+  repulsion_strength_ = declare("repulsion_strength", rclcpp::ParameterValue(1.0)).as_double();
+  max_push_step_ = declare("max_push_step", rclcpp::ParameterValue(0.0)).as_double();
   force_balance_threshold_ =
-    node->get_parameter(name_ + ".force_balance_threshold").as_double();
-  perturbation_strength_ = node->get_parameter(name_ + ".perturbation_strength").as_double();
-  initial_path_points_ = node->get_parameter(name_ + ".initial_path_points").as_int();
-  enable_smoothing_ = node->get_parameter(name_ + ".enable_smoothing").as_bool();
-  smoothing_iterations_ = node->get_parameter(name_ + ".smoothing_iterations").as_int();
-  lethal_cost_threshold_ = node->get_parameter(name_ + ".lethal_cost_threshold").as_double();
-  segment_check_steps_ = node->get_parameter(name_ + ".segment_check_steps").as_int();
+    declare("force_balance_threshold", rclcpp::ParameterValue(0.05)).as_double();
+  commit_direction_ = declare("commit_direction", rclcpp::ParameterValue(true)).as_bool();
+  simplify_path_ = declare("simplify_path", rclcpp::ParameterValue(true)).as_bool();
+  enable_smoothing_ = declare("enable_smoothing", rclcpp::ParameterValue(true)).as_bool();
+  smoothing_iterations_ = declare("smoothing_iterations", rclcpp::ParameterValue(3)).as_int();
+  output_spacing_ = declare("output_spacing", rclcpp::ParameterValue(0.1)).as_double();
+  lethal_cost_threshold_ =
+    declare("lethal_cost_threshold", rclcpp::ParameterValue(253.0)).as_double();
+
+  if (force_model_ != "coulomb" && force_model_ != "probe") {
+    throw std::runtime_error(
+            "LazyCoulombPlanner: force_model must be 'coulomb' or 'probe', got '" +
+            force_model_ + "'");
+  }
 
   RCLCPP_INFO(
     logger_,
-    "LazyCoulombPlanner configured: max_iter=%d, step=%.3f, repulsion=%.3f",
-    max_iterations_, step_size_, repulsion_strength_);
+    "LazyCoulombPlanner configured: force_model=%s, exponent=%.1f, charge_radius=%.2f m",
+    force_model_.c_str(), force_exponent_, charge_radius_);
 }
 
 void LazyCoulombPlanner::cleanup()
@@ -129,182 +125,77 @@ nav_msgs::msg::Path LazyCoulombPlanner::createPlan(
   PathPoint start(start_pose.pose.position.x, start_pose.pose.position.y, true);
   PathPoint goal(goal_pose.pose.position.x, goal_pose.pose.position.y, true);
 
-  {
-    unsigned int mx, my;
-    if (!worldToMap(start.x, start.y, mx, my)) {
-      throw nav2_core::StartOutsideMapBounds("LazyCoulombPlanner: Start is outside costmap");
-    }
-    if (!worldToMap(goal.x, goal.y, mx, my)) {
-      throw nav2_core::GoalOutsideMapBounds("LazyCoulombPlanner: Goal is outside costmap");
-    }
+  unsigned int mx, my;
+  if (!costmap_->worldToMap(start.x, start.y, mx, my)) {
+    throw nav2_core::StartOutsideMapBounds("LazyCoulombPlanner: Start is outside costmap");
+  }
+  if (!costmap_->worldToMap(goal.x, goal.y, mx, my)) {
+    throw nav2_core::GoalOutsideMapBounds("LazyCoulombPlanner: Goal is outside costmap");
+  }
+  if (isPointInObstacle(start.x, start.y)) {
+    throw nav2_core::StartOccupied("LazyCoulombPlanner: Start is inside an obstacle");
+  }
+  if (isPointInObstacle(goal.x, goal.y)) {
+    throw nav2_core::GoalOccupied("LazyCoulombPlanner: Goal is inside an obstacle");
   }
 
-  RCLCPP_DEBUG(
-    logger_,
-    "Planning from (%.2f, %.2f) to (%.2f, %.2f)",
-    start.x, start.y, goal.x, goal.y);
+  // Lazy start: the straight line. Segments before `seg` are verified clear.
+  std::vector<PathPoint> path{start, goal};
+  int corrections = 0;
+  size_t seg = 0;
 
-  std::vector<PathPoint> path = initializePath(start, goal);
+  while (seg + 1 < path.size()) {
+    PathPoint waypoint(0.0, 0.0);
+    if (!findSegmentObstacleEntry(path[seg], path[seg + 1], waypoint)) {
+      ++seg;
+      continue;
+    }
 
-  std::vector<bool> locked(path.size(), false);
-  locked.front() = true;
-  locked.back() = true;
-
-  int total_iterations = 0;
-
-  while (total_iterations < max_iterations_) {
     if (cancel_checker && cancel_checker()) {
       throw nav2_core::PlannerCancelled("LazyCoulombPlanner: Planning was cancelled");
     }
-
-    int intersecting_seg = -1;
-    PathPoint intersection_pt(0, 0);
-
-    for (int i = 0; i < static_cast<int>(path.size()) - 1; ++i) {
-      if (findSegmentObstacleEntry(path[i], path[i + 1], intersection_pt)) {
-        intersecting_seg = i;
-        break;
-      }
+    if (++corrections > max_iterations_) {
+      throw nav2_core::NoValidPathCouldBeFound(
+              "LazyCoulombPlanner: Correction budget (" + std::to_string(max_iterations_) +
+              ") exhausted");
+    }
+    if (!pushClear(waypoint, path[seg], path[seg + 1])) {
+      throw nav2_core::NoValidPathCouldBeFound(
+              "LazyCoulombPlanner: A waypoint could not be pushed clear of obstacles");
     }
 
-    if (intersecting_seg < 0) {
-      RCLCPP_DEBUG(
-        logger_,
-        "LCP solved in %d iterations, path has %zu points",
-        total_iterations, path.size());
-      break;
-    }
-
-    int insert_idx = intersecting_seg + 1;
-    intersection_pt.is_locked = false;
-    intersection_pt.is_active = true;
-
-    path.insert(path.begin() + insert_idx, intersection_pt);
-    locked.insert(locked.begin() + insert_idx, false);
-
-    total_iterations++;
-
-    int prev_locked = 0;
-    int next_locked = static_cast<int>(path.size()) - 1;
-
-    for (int i = insert_idx - 1; i >= 0; --i) {
-      if (locked[i]) {prev_locked = i; break;}
-    }
-    for (int i = insert_idx + 1; i < static_cast<int>(path.size()); ++i) {
-      if (locked[i]) {next_locked = i; break;}
-    }
-
-    int push_iters = 0;
-
-    while (push_iters < max_push_iterations_ && total_iterations < max_iterations_) {
-      PathPoint & pt = path[insert_idx];
-
-      if (!isPointInObstacle(pt.x, pt.y)) {
-        break;
-      }
-
-      double fx, fy;
-      calculateRepulsionForce(pt, path[prev_locked], path[next_locked], fx, fy);
-
-      double mag = std::hypot(fx, fy);
-      if (mag < force_balance_threshold_) {
-        double pdx = path[next_locked].x - path[prev_locked].x;
-        double pdy = path[next_locked].y - path[prev_locked].y;
-        double plen = std::hypot(pdx, pdy);
-        if (plen > 1e-6) {
-          pdx /= plen;
-          pdy /= plen;
-        }
-        fx = (-pdy) * perturbation_strength_;
-        fy = (pdx) * perturbation_strength_;
-      } else {
-        fx = (fx / mag) * repulsion_strength_;
-        fy = (fy / mag) * repulsion_strength_;
-      }
-
-      pt.x += fx * step_size_;
-      pt.y += fy * step_size_;
-
-      double ox = costmap_->getOriginX();
-      double oy = costmap_->getOriginY();
-      double w = costmap_->getSizeInMetersX();
-      double h = costmap_->getSizeInMetersY();
-      pt.x = std::clamp(pt.x, ox, ox + w);
-      pt.y = std::clamp(pt.y, oy, oy + h);
-
-      push_iters++;
-      total_iterations++;
-    }
-
-    locked[insert_idx] = true;
-    path[insert_idx].is_locked = true;
-    path[insert_idx].is_active = false;
-
-    if (isPointInObstacle(path[insert_idx].x, path[insert_idx].y)) {
-      RCLCPP_WARN(
-        logger_,
-        "LCP: Point %d could not be pushed fully clear after %d push iterations",
-        insert_idx, push_iters);
-    }
-
-    std::vector<PathPoint> cleaned;
-    std::vector<bool> cleaned_locked;
-    for (int i = 0; i < static_cast<int>(path.size()); ++i) {
-      if (locked[i]) {
-        cleaned.push_back(path[i]);
-        cleaned_locked.push_back(true);
-      }
-    }
-    path = cleaned;
-    locked = cleaned_locked;
-
-    if (total_iterations >= max_iterations_) {break;}
+    waypoint.is_locked = true;
+    path.insert(path.begin() + seg + 1, waypoint);
+    // Stay on `seg`: the new segment (path[seg] -> waypoint) is checked next.
   }
 
-  if (total_iterations >= max_iterations_) {
-    RCLCPP_WARN(
-      logger_,
-      "LCP: Reached max iterations (%d). Path may clip obstacles.", max_iterations_);
-  }
-
-  if (path.empty()) {
-    throw nav2_core::PlannerException("LazyCoulombPlanner: Path is empty after planning");
+  if (simplify_path_) {
+    path = removeRedundant(path);
   }
 
   if (enable_smoothing_ && path.size() >= 3) {
+    // Chaikin cuts corners, so each pass is kept only if it is still collision free.
     for (int i = 0; i < smoothing_iterations_; ++i) {
-      path = chaikinSmooth(path);
+      std::vector<PathPoint> smoothed = chaikinSmooth(path);
+      if (!isPathClear(smoothed)) {
+        break;
+      }
+      path = std::move(smoothed);
     }
   }
 
+  if (output_spacing_ > 0.0) {
+    path = densify(path, output_spacing_);
+  }
+
   std_msgs::msg::Header header;
-  header.stamp = rclcpp::Clock().now();
+  header.stamp = clock_->now();
   header.frame_id = global_frame_;
 
-  nav_msgs::msg::Path nav_path = toNavPath(path, header);
+  RCLCPP_DEBUG(
+    logger_, "LCP: %zu poses after %d corrections", path.size(), corrections);
 
-  RCLCPP_INFO(
-    logger_,
-    "LCP: Plan created with %zu poses in %d iterations",
-    nav_path.poses.size(), total_iterations);
-
-  return nav_path;
-}
-
-// =============================================================================
-//  Coordinate helpers
-// =============================================================================
-
-bool LazyCoulombPlanner::worldToMap(
-  double wx, double wy, unsigned int & mx, unsigned int & my) const
-{
-  return costmap_->worldToMap(wx, wy, mx, my);
-}
-
-void LazyCoulombPlanner::mapToWorld(
-  unsigned int mx, unsigned int my, double & wx, double & wy) const
-{
-  costmap_->mapToWorld(mx, my, wx, wy);
+  return toNavPath(path, header, goal_pose.pose.orientation);
 }
 
 // =============================================================================
@@ -314,182 +205,233 @@ void LazyCoulombPlanner::mapToWorld(
 bool LazyCoulombPlanner::isPointInObstacle(double wx, double wy) const
 {
   unsigned int mx, my;
-  if (!worldToMap(wx, wy, mx, my)) {
+  if (!costmap_->worldToMap(wx, wy, mx, my)) {
     return true;
   }
-  unsigned char cost = costmap_->getCost(mx, my);
-  return static_cast<double>(cost) >= lethal_cost_threshold_;
-}
-
-bool LazyCoulombPlanner::segmentIntersectsObstacle(
-  const PathPoint & p1, const PathPoint & p2) const
-{
-  double dx = p2.x - p1.x;
-  double dy = p2.y - p1.y;
-  double len = std::hypot(dx, dy);
-
-  int steps = std::max(
-    segment_check_steps_,
-    static_cast<int>(std::ceil(len / costmap_->getResolution())));
-
-  for (int i = 1; i < steps; ++i) {
-    double t = static_cast<double>(i) / steps;
-    double x = p1.x + dx * t;
-    double y = p1.y + dy * t;
-    if (isPointInObstacle(x, y)) {return true;}
-  }
-  return false;
+  return static_cast<double>(costmap_->getCost(mx, my)) >= lethal_cost_threshold_;
 }
 
 bool LazyCoulombPlanner::findSegmentObstacleEntry(
   const PathPoint & p1, const PathPoint & p2, PathPoint & intersection) const
 {
-  double dx = p2.x - p1.x;
-  double dy = p2.y - p1.y;
-  double len = std::hypot(dx, dy);
+  // Exact grid traversal (Amanatides & Woo): visits every cell the segment
+  // touches, so a corner clipped by a short chord cannot be skipped.
+  const double res = costmap_->getResolution();
+  const int size_x = static_cast<int>(costmap_->getSizeInCellsX());
+  const int size_y = static_cast<int>(costmap_->getSizeInCellsY());
+  const unsigned char * cells = costmap_->getCharMap();
 
-  int steps = std::max(
-    segment_check_steps_ * 2,
-    static_cast<int>(std::ceil(len / costmap_->getResolution())));
+  const double x0 = (p1.x - costmap_->getOriginX()) / res;
+  const double y0 = (p1.y - costmap_->getOriginY()) / res;
+  const double dx = (p2.x - p1.x) / res;
+  const double dy = (p2.y - p1.y) / res;
 
-  for (int i = 1; i < steps; ++i) {
-    double t = static_cast<double>(i) / steps;
-    double x = p1.x + dx * t;
-    double y = p1.y + dy * t;
-    if (isPointInObstacle(x, y)) {
-      intersection = PathPoint(x, y);
+  int cx = static_cast<int>(std::floor(x0));
+  int cy = static_cast<int>(std::floor(y0));
+  const int end_x = static_cast<int>(std::floor(x0 + dx));
+  const int end_y = static_cast<int>(std::floor(y0 + dy));
+
+  const int step_x = dx > 0.0 ? 1 : -1;
+  const int step_y = dy > 0.0 ? 1 : -1;
+  const double inf = std::numeric_limits<double>::infinity();
+  // Segment parameter t in [0, 1] at which the next vertical / horizontal cell edge is crossed.
+  const double dt_x = dx != 0.0 ? std::abs(1.0 / dx) : inf;
+  const double dt_y = dy != 0.0 ? std::abs(1.0 / dy) : inf;
+  double t_next_x = dx != 0.0 ? ((dx > 0.0 ? cx + 1 - x0 : x0 - cx) * dt_x) : inf;
+  double t_next_y = dy != 0.0 ? ((dy > 0.0 ? cy + 1 - y0 : y0 - cy) * dt_y) : inf;
+
+  double t_enter = 0.0;
+  const int max_cells = std::abs(end_x - cx) + std::abs(end_y - cy) + 1;
+  for (int n = 0; n < max_cells; ++n) {
+    const double t_exit = std::min({t_next_x, t_next_y, 1.0});
+    const bool outside = cx < 0 || cy < 0 || cx >= size_x || cy >= size_y;
+    if (outside ||
+      static_cast<double>(cells[static_cast<size_t>(cy) * size_x + cx]) >= lethal_cost_threshold_)
+    {
+      // Middle of the chord through the offending cell: guaranteed to lie inside it.
+      const double t = 0.5 * (t_enter + t_exit);
+      intersection = PathPoint(p1.x + (p2.x - p1.x) * t, p1.y + (p2.y - p1.y) * t);
       return true;
     }
+    if (t_exit >= 1.0) {
+      break;
+    }
+    if (t_next_x < t_next_y) {
+      cx += step_x;
+      t_next_x += dt_x;
+    } else {
+      cy += step_y;
+      t_next_y += dt_y;
+    }
+    t_enter = t_exit;
   }
   return false;
+}
+
+bool LazyCoulombPlanner::segmentIntersectsObstacle(
+  const PathPoint & p1, const PathPoint & p2) const
+{
+  PathPoint unused(0.0, 0.0);
+  return findSegmentObstacleEntry(p1, p2, unused);
+}
+
+bool LazyCoulombPlanner::isPathClear(const std::vector<PathPoint> & points) const
+{
+  for (size_t i = 0; i < points.size(); ++i) {
+    if (isPointInObstacle(points[i].x, points[i].y)) {
+      return false;
+    }
+    if (i + 1 < points.size() && segmentIntersectsObstacle(points[i], points[i + 1])) {
+      return false;
+    }
+  }
+  return true;
 }
 
 // =============================================================================
 //  Repulsion physics
 // =============================================================================
 
-void LazyCoulombPlanner::calculateRepulsionForce(
-  const PathPoint & point,
-  const PathPoint & path_ref_prev,
-  const PathPoint & path_ref_next,
-  double & force_x,
-  double & force_y) const
+double LazyCoulombPlanner::coulombForceAlong(
+  const PathPoint & pt, double nx, double ny) const
 {
-  double path_dx = path_ref_next.x - path_ref_prev.x;
-  double path_dy = path_ref_next.y - path_ref_prev.y;
-  double path_len = std::hypot(path_dx, path_dy);
+  const double res = costmap_->getResolution();
+  const int size_x = static_cast<int>(costmap_->getSizeInCellsX());
+  const int size_y = static_cast<int>(costmap_->getSizeInCellsY());
+  const unsigned char * cells = costmap_->getCharMap();
 
-  if (path_len < 1e-6) {
-    pushAwayFromNearestObstacle(point, force_x, force_y);
-    return;
-  }
+  // Point position in continuous cell coordinates (cell centres at integer + 0.5).
+  const double px = (pt.x - costmap_->getOriginX()) / res;
+  const double py = (pt.y - costmap_->getOriginY()) / res;
 
-  path_dx /= path_len;
-  path_dy /= path_len;
+  const double radius = std::max(1.0, charge_radius_ / res);
+  const double radius2 = radius * radius;
+  const int reach = static_cast<int>(std::ceil(radius));
+  const int cx = static_cast<int>(std::floor(px));
+  const int cy = static_cast<int>(std::floor(py));
 
-  double left_x = -path_dy, left_y = path_dx;
-  double right_x = path_dy, right_y = -path_dx;
+  const int x0 = std::max(0, cx - reach), x1 = std::min(size_x - 1, cx + reach);
+  const int y0 = std::max(0, cy - reach), y1 = std::min(size_y - 1, cy + reach);
 
-  double res = costmap_->getResolution();
-  double max_search = std::max(costmap_->getSizeInMetersX(), costmap_->getSizeInMetersY());
-
-  double dist_left_clear = -1.0;
-  double dist_right_clear = -1.0;
-
-  for (double d = res; d < max_search; d += res) {
-    if (dist_left_clear < 0 &&
-      !isPointInObstacle(point.x + left_x * d, point.y + left_y * d))
-    {
-      dist_left_clear = d;
+  double fx = 0.0, fy = 0.0;
+  for (int y = y0; y <= y1; ++y) {
+    const unsigned char * row = cells + static_cast<size_t>(y) * size_x;
+    const double dy = py - (y + 0.5);
+    for (int x = x0; x <= x1; ++x) {
+      if (static_cast<double>(row[x]) < lethal_cost_threshold_) {
+        continue;
+      }
+      const double dx = px - (x + 0.5);
+      double r2 = dx * dx + dy * dy;
+      if (r2 > radius2) {
+        continue;
+      }
+      r2 = std::max(r2, 0.25);  // soften the singularity inside the charge's own cell
+      // Unit vector (d / r) times magnitude 1 / r^n  ->  d / r^(n + 1)
+      double w;
+      if (force_exponent_ == 1.0) {
+        w = 1.0 / r2;
+      } else if (force_exponent_ == 2.0) {
+        w = 1.0 / (r2 * std::sqrt(r2));
+      } else {
+        w = std::pow(r2, -0.5 * (force_exponent_ + 1.0));
+      }
+      fx += dx * w;
+      fy += dy * w;
     }
-    if (dist_right_clear < 0 &&
-      !isPointInObstacle(point.x + right_x * d, point.y + right_y * d))
-    {
-      dist_right_clear = d;
-    }
-    if (dist_left_clear > 0 && dist_right_clear > 0) {break;}
   }
-
-  if (dist_left_clear > 0 && (dist_right_clear < 0 || dist_left_clear <= dist_right_clear)) {
-    force_x = left_x;
-    force_y = left_y;
-  } else if (dist_right_clear > 0) {
-    force_x = right_x;
-    force_y = right_y;
-  } else {
-    pushAwayFromNearestObstacle(point, force_x, force_y);
-  }
+  return fx * nx + fy * ny;
 }
 
-void LazyCoulombPlanner::pushAwayFromNearestObstacle(
-  const PathPoint & point,
-  double & force_x,
-  double & force_y) const
+int LazyCoulombPlanner::probeNearestClearSide(
+  const PathPoint & pt, double nx, double ny) const
 {
-  unsigned int cx, cy;
-  if (!worldToMap(point.x, point.y, cx, cy)) {
-    force_x = 0;
-    force_y = 0;
-    return;
+  const double res = costmap_->getResolution();
+  const double max_search = std::max(costmap_->getSizeInMetersX(), costmap_->getSizeInMetersY());
+  for (double d = res; d < max_search; d += res) {
+    if (!isPointInObstacle(pt.x + nx * d, pt.y + ny * d)) {
+      return 1;
+    }
+    if (!isPointInObstacle(pt.x - nx * d, pt.y - ny * d)) {
+      return -1;
+    }
   }
+  return 0;
+}
 
-  int search_radius = 20;
-  double best_dist = std::numeric_limits<double>::max();
-  int best_dx = 0, best_dy = 0;
+bool LazyCoulombPlanner::pushClear(
+  PathPoint & pt, const PathPoint & a, const PathPoint & b) const
+{
+  const double seg_len = std::hypot(b.x - a.x, b.y - a.y);
+  if (seg_len < 1e-9) {
+    return false;
+  }
+  // Left unit normal of the segment; the waypoint only ever moves along it.
+  const double nx = -(b.y - a.y) / seg_len;
+  const double ny = (b.x - a.x) / seg_len;
 
-  int map_w = static_cast<int>(costmap_->getSizeInCellsX());
-  int map_h = static_cast<int>(costmap_->getSizeInCellsY());
+  const double res = costmap_->getResolution();
+  const double max_step = max_push_step_ > 0.0 ? max_push_step_ : res;
+  const double min_step = 0.25 * res;
 
-  for (int dy = -search_radius; dy <= search_radius; ++dy) {
-    for (int dx = -search_radius; dx <= search_radius; ++dx) {
-      int nx = static_cast<int>(cx) + dx;
-      int ny = static_cast<int>(cy) + dy;
-      if (nx < 0 || ny < 0 || nx >= map_w || ny >= map_h) {continue;}
-
-      unsigned char cost = costmap_->getCost(
-        static_cast<unsigned int>(nx), static_cast<unsigned int>(ny));
-
-      if (static_cast<double>(cost) < lethal_cost_threshold_) {
-        double d = std::hypot(dx, dy);
-        if (d < best_dist) {
-          best_dist = d;
-          best_dx = -dx;
-          best_dy = -dy;
-        }
-      }
+  int side = 0;  // +1 left, -1 right, 0 undecided
+  if (force_model_ == "probe") {
+    side = probeNearestClearSide(pt, nx, ny);
+    if (side == 0) {
+      return false;
     }
   }
 
-  double mag = std::hypot(best_dx, best_dy);
-  if (mag > 1e-6) {
-    force_x = best_dx / mag;
-    force_y = best_dy / mag;
-  } else {
-    force_x = 0.0;
-    force_y = 1.0;
+  for (int i = 0; i < max_push_iterations_; ++i) {
+    if (!isPointInObstacle(pt.x, pt.y)) {
+      return true;
+    }
+
+    double step = max_step;
+    if (force_model_ == "coulomb") {
+      const double force = coulombForceAlong(pt, nx, ny);
+      const bool balanced = std::abs(force) < force_balance_threshold_;
+      const int force_side = force > 0.0 ? 1 : -1;
+
+      if (side == 0 || !commit_direction_) {
+        // Physics picks the side. At a saddle keep the previous side, else kick left.
+        if (!balanced) {
+          side = force_side;
+        } else if (side == 0) {
+          side = 1;
+        }
+      }
+      if (!balanced && force_side == side) {
+        step = std::clamp(repulsion_strength_ * std::abs(force) * res, min_step, max_step);
+      }
+    }
+
+    pt.x += side * nx * step;
+    pt.y += side * ny * step;
   }
+  return !isPointInObstacle(pt.x, pt.y);
 }
 
 // =============================================================================
 //  Path utilities
 // =============================================================================
 
-std::vector<PathPoint> LazyCoulombPlanner::initializePath(
-  const PathPoint & start, const PathPoint & goal) const
+std::vector<PathPoint> LazyCoulombPlanner::removeRedundant(
+  const std::vector<PathPoint> & pts) const
 {
-  std::vector<PathPoint> path;
-  path.reserve(initial_path_points_ + 1);
+  if (pts.size() < 3) {return pts;}
 
-  for (int i = 0; i <= initial_path_points_; ++i) {
-    double t = static_cast<double>(i) / initial_path_points_;
-    PathPoint p(
-      start.x + (goal.x - start.x) * t,
-      start.y + (goal.y - start.y) * t);
-    p.is_locked = (i == 0 || i == initial_path_points_);
-    path.push_back(p);
+  std::vector<PathPoint> out;
+  out.reserve(pts.size());
+  out.push_back(pts.front());
+  for (size_t i = 1; i + 1 < pts.size(); ++i) {
+    // Keep pts[i] only if its neighbours cannot be joined directly.
+    if (segmentIntersectsObstacle(out.back(), pts[i + 1])) {
+      out.push_back(pts[i]);
+    }
   }
-
-  return path;
+  out.push_back(pts.back());
+  return out;
 }
 
 std::vector<PathPoint> LazyCoulombPlanner::chaikinSmooth(
@@ -499,48 +441,66 @@ std::vector<PathPoint> LazyCoulombPlanner::chaikinSmooth(
 
   std::vector<PathPoint> out;
   out.reserve(pts.size() * 2);
-
   out.push_back(pts.front());
 
   for (size_t i = 0; i < pts.size() - 1; ++i) {
     const PathPoint & p0 = pts[i];
     const PathPoint & p1 = pts[i + 1];
-
-    PathPoint q(
-      p0.x * 0.75 + p1.x * 0.25,
-      p0.y * 0.75 + p1.y * 0.25);
-
-    PathPoint r(
-      p0.x * 0.25 + p1.x * 0.75,
-      p0.y * 0.25 + p1.y * 0.75);
-
+    PathPoint q(p0.x * 0.75 + p1.x * 0.25, p0.y * 0.75 + p1.y * 0.25);
+    PathPoint r(p0.x * 0.25 + p1.x * 0.75, p0.y * 0.25 + p1.y * 0.75);
     if (i > 0) {out.push_back(q);}
     if (i < pts.size() - 2) {out.push_back(r);}
   }
 
   out.push_back(pts.back());
+  return out;
+}
 
+std::vector<PathPoint> LazyCoulombPlanner::densify(
+  const std::vector<PathPoint> & pts, double spacing) const
+{
+  std::vector<PathPoint> out;
+  if (pts.empty()) {return out;}
+  out.push_back(pts.front());
+  for (size_t i = 0; i + 1 < pts.size(); ++i) {
+    const double dx = pts[i + 1].x - pts[i].x;
+    const double dy = pts[i + 1].y - pts[i].y;
+    const int n = std::max(1, static_cast<int>(std::ceil(std::hypot(dx, dy) / spacing)));
+    for (int k = 1; k <= n; ++k) {
+      const double t = static_cast<double>(k) / n;
+      out.emplace_back(pts[i].x + dx * t, pts[i].y + dy * t);
+    }
+  }
   return out;
 }
 
 nav_msgs::msg::Path LazyCoulombPlanner::toNavPath(
   const std::vector<PathPoint> & points,
-  const std_msgs::msg::Header & header) const
+  const std_msgs::msg::Header & header,
+  const geometry_msgs::msg::Quaternion & goal_orientation) const
 {
   nav_msgs::msg::Path nav_path;
   nav_path.header = header;
   nav_path.poses.reserve(points.size());
 
-  for (const auto & pt : points) {
+  double yaw = 0.0;
+  for (size_t i = 0; i < points.size(); ++i) {
     geometry_msgs::msg::PoseStamped pose;
     pose.header = header;
-    pose.pose.position.x = pt.x;
-    pose.pose.position.y = pt.y;
+    pose.pose.position.x = points[i].x;
+    pose.pose.position.y = points[i].y;
     pose.pose.position.z = 0.0;
-    pose.pose.orientation.w = 1.0;
-    pose.pose.orientation.x = 0.0;
-    pose.pose.orientation.y = 0.0;
-    pose.pose.orientation.z = 0.0;
+    if (i + 1 < points.size()) {
+      const double dx = points[i + 1].x - points[i].x;
+      const double dy = points[i + 1].y - points[i].y;
+      if (std::hypot(dx, dy) > 1e-9) {
+        yaw = std::atan2(dy, dx);
+      }
+      pose.pose.orientation.z = std::sin(yaw / 2.0);
+      pose.pose.orientation.w = std::cos(yaw / 2.0);
+    } else {
+      pose.pose.orientation = goal_orientation;
+    }
     nav_path.poses.push_back(pose);
   }
 

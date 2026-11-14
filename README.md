@@ -14,17 +14,31 @@ start to goal — and only does work when that line is blocked.
 
 ```
 1. Draw straight line  S ──────────────────── G
-2. Find FIRST segment that clips an obstacle
-3. Insert a waypoint at the entry point
-4. Push it perpendicular to the path until clear
+2. Find the FIRST segment that touches an obstacle cell
+3. Insert a waypoint inside that cell
+4. Push it perpendicular to the segment until clear (Coulomb force, below)
 5. Lock it (it won't move again)
 6. Repeat from step 2
-7. Apply optional Chaikin smoothing
+7. Remove redundant waypoints, smooth, resample
 ```
 
-Each waypoint is pushed **perpendicular to the local path direction**, choosing
-the side with the shorter distance to clear space. This ensures the detour
-stays as close to the original straight line as possible.
+### Coulomb push
+
+Every obstacle cell within `charge_radius` of the waypoint repels it with a
+force of magnitude `1 / r^force_exponent` (r in cells). The forces are summed
+and projected onto the normal of the segment the waypoint sits on. The sign of
+that projection picks the side the waypoint leaves on; its size sets the step
+length, capped at `max_push_step`. With `commit_direction: true` the side
+chosen on the first step is kept, which stops the waypoint oscillating between
+two obstacles.
+
+### Failure instead of a bad path
+
+The planner never returns a path it knows to be in collision. Segments are
+checked with an exact grid traversal, smoothing passes are kept only if they
+stay collision free, and if a waypoint cannot be cleared or the correction
+budget runs out the planner throws `nav2_core::NoValidPathCouldBeFound`, so a
+fallback planner can take over.
 
 ---
 
@@ -96,42 +110,40 @@ ros2 launch nav2_bringup navigation_launch.py \
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `max_iterations` | 1000 | Hard cap on total algorithm steps |
-| `max_push_iterations` | 300 | Max steps to push one waypoint clear |
-| `step_size` | 0.05 | Integration step size (meters) |
-| `repulsion_strength` | 0.15 | Force magnitude per step |
-| `force_balance_threshold` | 0.01 | Below this, use fallback direction |
-| `perturbation_strength` | 0.08 | Fallback nudge magnitude |
-| `initial_path_points` | 20 | Waypoints in initial straight line |
-| `lethal_cost_threshold` | 253.0 | Costmap cost = obstacle boundary |
-| `segment_check_steps` | 20 | Samples per segment for intersection check |
-| `enable_smoothing` | true | Apply Chaikin smoothing to final path |
-| `smoothing_iterations` | 3 | Chaikin passes (1–8) |
+| `force_model` | `coulomb` | `coulomb`, or `probe` for the legacy nearest-clear-side rule |
+| `force_exponent` | 2.0 | n in the `1 / r^n` repulsion law (1.0 or 2.0) |
+| `charge_radius` | 1.0 | Obstacle cells within this range repel the waypoint (m) |
+| `commit_direction` | true | Keep the side chosen on the first push step |
+| `repulsion_strength` | 1.0 | Cells moved per unit of normalised force |
+| `max_push_step` | 0.0 | Cap on one push step (m); 0 means one costmap cell |
+| `force_balance_threshold` | 0.05 | Below this force the push is a fixed kick |
+| `max_iterations` | 500 | Max waypoints inserted before reporting failure |
+| `max_push_iterations` | 400 | Max steps to push one waypoint clear |
+| `lethal_cost_threshold` | 253.0 | Cost at or above this is an obstacle |
+| `simplify_path` | true | Remove waypoints whose neighbours join directly |
+| `enable_smoothing` | true | Chaikin smoothing, kept only if collision free |
+| `smoothing_iterations` | 3 | Chaikin passes |
+| `output_spacing` | 0.1 | Max distance between output poses (m); 0 disables |
 
 ---
 
 ## Tuning Guide
 
-### Robot is clipping obstacle corners
-→ Raise `lethal_cost_threshold` to `253` (INSCRIBED) or increase
-`inflation_radius` in your costmap config.
+### Fails in cluttered or indoor maps
+→ Raise `charge_radius` (2–4 m). The waypoint then "sees" more of the obstacle
+and picks the better side more often, at the cost of planning time, which
+grows with the square of the radius.
 
 ### Planner is too slow
-→ Reduce `initial_path_points`, increase `step_size`, or lower
-`segment_check_steps`.
+→ Lower `charge_radius`.
 
 ### Path has sharp corners
-→ Enable `enable_smoothing: true` and raise `smoothing_iterations` to 4–6.
+→ Raise `smoothing_iterations`. Passes that would cut into an obstacle are
+dropped automatically.
 
-### Fails in narrow corridors
-→ Lower `step_size` to `0.02` and raise `max_push_iterations` to `500`.
-The perpendicular-push approach inherently struggles here; consider using
-a grid planner (Smac/NavFn) as fallback for tight spaces.
-
-### Non-deterministic behavior
-→ The fallback is fully deterministic (always pushes perpendicular-left).
-If you see inconsistent paths, check that your costmap is stable between
-plan requests.
+### Fails in narrow corridors or mazes
+→ Expected: a single sideways push cannot route around dead ends. Catch the
+failure and fall back to a grid planner (Smac/NavFn).
 
 ---
 
