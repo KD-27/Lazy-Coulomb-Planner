@@ -10,6 +10,9 @@ source "$ws/install/setup.bash"
 export ROS_LOG_DIR=${ROS_LOG_DIR:-/tmp/roslog}
 # Own DDS domain, so other ROS nodes on this machine cannot interfere.
 export ROS_DOMAIN_ID=${LCP_ROS_DOMAIN_ID:-87}
+# Gazebo has its own discovery: give each run its own partition as well, so
+# several simulations on one network cannot see each other.
+export GZ_PARTITION=lcp_sim_${ROS_DOMAIN_ID}
 planner=$1; goals=$2; out=${3:-$here/results}
 bringup=$(ros2 pkg prefix nav2_bringup)/share/nav2_bringup
 

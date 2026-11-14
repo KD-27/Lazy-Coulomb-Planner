@@ -72,13 +72,29 @@ give back up to `smoothing_cost_slack` of the gained clearance to round a
 corner. Both mechanisms need an inflation layer in the costmap; with
 `comfort_cost: 253` they are off.
 
+### When the lazy search struggles
+
+Two things happen once waypoint placement stops going smoothly:
+
+- After `reachability_check_after` attempts, a breadth-first search grown from
+  both the start and the goal checks whether either is sealed inside a small
+  pocket. If so the planner reports that the goal is unreachable straight away,
+  instead of spending its whole budget first. The check is capped at 20 000
+  cells so it stays cheap on large open maps.
+- If the lazy search uses up `max_iterations`, the same search runs to
+  completion. If no route exists the planner fails; otherwise, with
+  `grid_fallback: true`, the route it found is cut down to the longest
+  collision-free straight segments and goes through the same clearance and
+  smoothing steps as a lazy path. The planner therefore returns a path whenever
+  one exists.
+
 ### Failure instead of a bad path
 
 The planner never returns a path it knows to be in collision. Segments are
-checked with an exact grid traversal, the finished path gets a final collision
-check, and if no side choice works or the correction
-budget runs out the planner throws `nav2_core::NoValidPathCouldBeFound`, so a
-fallback planner can take over.
+checked with an exact grid traversal (a segment through the corner shared by
+four cells counts as touching all of them), the finished path gets a final
+collision check, and when no route exists the planner throws
+`nav2_core::NoValidPathCouldBeFound`.
 
 ---
 
@@ -165,7 +181,9 @@ ros2 launch nav2_bringup navigation_launch.py \
 | `retry_other_side` | true | Back up and try the other side when a branch dead-ends |
 | `retry_order` | `shortest` | Retry from the `shortest` partial path, or the most `recent` decision |
 | `max_path_stretch` | 5.0 | Abandon detours longer than this × the straight-line distance |
-| `max_iterations` | 2000 | Max waypoint placement attempts before reporting failure |
+| `max_iterations` | 300 | Waypoint placement attempts before the lazy search gives up |
+| `grid_fallback` | true | When the lazy search gives up, use the route found by the grid search |
+| `reachability_check_after` | 50 | Attempts before checking that start and goal are not sealed in |
 | `max_push_iterations` | 400 | Max steps to push one waypoint clear |
 | `lethal_cost_threshold` | 253.0 | Cost at or above this is an obstacle |
 | `simplify_path` | true | Remove waypoints whose neighbours join directly |
@@ -178,7 +196,8 @@ ros2 launch nav2_bringup navigation_launch.py \
 ## Tuning Guide
 
 ### Fails in cluttered or indoor maps
-→ Raise `max_iterations` so more side combinations are tried, or raise `charge_radius` (2–4 m). The waypoint then "sees" more of the obstacle
+→ With `grid_fallback: true` a path is returned whenever one exists. To get
+more of them from the lazy search itself, raise `max_iterations` or raise `charge_radius` (2–4 m). The waypoint then "sees" more of the obstacle
 and picks the better side more often, at the cost of planning time, which
 grows with the square of the radius.
 

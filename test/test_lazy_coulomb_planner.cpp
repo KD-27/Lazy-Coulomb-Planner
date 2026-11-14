@@ -351,9 +351,36 @@ TEST_F(LcpTest, RetriesTheOtherSideWhenTheFirstIsBlocked)
   expectEndpoints(path, start, goal);
   EXPECT_FALSE(collides(path));
 
-  auto without_retry = makePlanner({rclcpp::Parameter("retry_other_side", false)});
-  EXPECT_THROW(
-    without_retry->createPlan(start, goal, never), nav2_core::NoValidPathCouldBeFound);
+  // Without the retry the lazy search fails here ...
+  auto lazy_only = makePlanner(
+    {rclcpp::Parameter("retry_other_side", false), rclcpp::Parameter("grid_fallback", false)});
+  EXPECT_THROW(lazy_only->createPlan(start, goal, never), nav2_core::NoValidPathCouldBeFound);
+
+  // ... and the grid fallback still delivers a collision-free path.
+  auto with_fallback = makePlanner({rclcpp::Parameter("retry_other_side", false)});
+  const auto fallback_path = with_fallback->createPlan(start, goal, never);
+  expectEndpoints(fallback_path, start, goal);
+  EXPECT_FALSE(collides(fallback_path));
+  EXPECT_LT(length(fallback_path), 1.3 * length(path));
+}
+
+TEST_F(LcpTest, GridFallbackSolvesAMazeTheLazySearchCannot)
+{
+  // Three staggered walls force an S-shaped route.
+  addBox(2.5, 0.0, 2.8, 8.0);
+  addBox(5.0, 2.0, 5.3, 10.0);
+  addBox(7.5, 0.0, 7.8, 8.0);
+  const auto start = pose(1.0, 1.0), goal = pose(9.0, 1.0);
+
+  // A tiny budget makes the lazy search give up at once.
+  auto planner = makePlanner({rclcpp::Parameter("max_iterations", 1)});
+  const auto path = planner->createPlan(start, goal, never);
+  expectEndpoints(path, start, goal);
+  EXPECT_FALSE(collides(path));
+
+  auto lazy_only = makePlanner(
+    {rclcpp::Parameter("max_iterations", 1), rclcpp::Parameter("grid_fallback", false)});
+  EXPECT_THROW(lazy_only->createPlan(start, goal, never), nav2_core::NoValidPathCouldBeFound);
 }
 
 TEST_F(LcpTest, CancelIsHonoured)

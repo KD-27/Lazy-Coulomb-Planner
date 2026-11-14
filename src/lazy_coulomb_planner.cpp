@@ -42,6 +42,10 @@ static const double kMaxOffsetRatio = 0.35;
 // change in cost are tolerated before the descent is considered finished.
 static const int kMaxFlatSteps = 2;
 
+// The early reachability check visits at most this many cells. That is enough
+// to exhaust a sealed-in pocket without flooding a large open map.
+static const size_t kPocketCheckCells = 20000;
+
 // =============================================================================
 //  Nav2 Lifecycle Interface
 // =============================================================================
@@ -72,7 +76,7 @@ void LazyCoulombPlanner::configure(
       return node->get_parameter(name_ + "." + key);
     };
 
-  max_iterations_ = declare("max_iterations", rclcpp::ParameterValue(2000)).as_int();
+  max_iterations_ = declare("max_iterations", rclcpp::ParameterValue(300)).as_int();
   max_push_iterations_ = declare("max_push_iterations", rclcpp::ParameterValue(400)).as_int();
   force_model_ = declare("force_model", rclcpp::ParameterValue("coulomb")).as_string();
   force_exponent_ = declare("force_exponent", rclcpp::ParameterValue(2.0)).as_double();
@@ -83,6 +87,9 @@ void LazyCoulombPlanner::configure(
     declare("force_balance_threshold", rclcpp::ParameterValue(0.05)).as_double();
   commit_direction_ = declare("commit_direction", rclcpp::ParameterValue(true)).as_bool();
   retry_other_side_ = declare("retry_other_side", rclcpp::ParameterValue(true)).as_bool();
+  grid_fallback_ = declare("grid_fallback", rclcpp::ParameterValue(true)).as_bool();
+  reachability_check_after_ =
+    declare("reachability_check_after", rclcpp::ParameterValue(50)).as_int();
   retry_order_ = declare("retry_order", rclcpp::ParameterValue("shortest")).as_string();
   max_path_stretch_ = declare("max_path_stretch", rclcpp::ParameterValue(5.0)).as_double();
   start_escape_radius_ =
@@ -272,6 +279,10 @@ nav_msgs::msg::Path LazyCoulombPlanner::createPlan(
       return true;
     };
 
+  std::string lazy_failure;            // why the lazy search gave up, if it did
+  std::vector<PathPoint> grid_path;    // route found by the grid search, if it ran
+  bool grid_searched = false;
+
   while (seg + 1 < path.size()) {
     PathPoint entry(0.0, 0.0);
     if (!findSegmentObstacleEntry(path[seg], path[seg + 1], entry)) {
@@ -289,14 +300,24 @@ nav_msgs::msg::Path LazyCoulombPlanner::createPlan(
     }
     bool placed = false;
     bool first_attempt = true;
-    while (!placed) {
+    while (!placed && lazy_failure.empty()) {
       if (cancel_checker && cancel_checker()) {
         throw nav2_core::PlannerCancelled("LazyCoulombPlanner: Planning was cancelled");
       }
       if (++corrections > max_iterations_) {
-        throw nav2_core::NoValidPathCouldBeFound(
-                "LazyCoulombPlanner: Correction budget (" + std::to_string(max_iterations_) +
-                ") exhausted");
+        lazy_failure = "correction budget (" + std::to_string(max_iterations_) + ") exhausted";
+        break;
+      }
+      // The lazy search is struggling: check, cheaply, whether the start or the
+      // goal is sealed inside a small pocket, so that an unreachable goal is
+      // reported now and not after the whole budget has been spent.
+      if (corrections == reachability_check_after_) {
+        const Reachability found = gridSearch(start, goal, grid_path, kPocketCheckCells);
+        if (found == Reachability::kUnreachable) {
+          throw nav2_core::NoValidPathCouldBeFound(
+                  "LazyCoulombPlanner: Goal is not reachable from the start");
+        }
+        grid_searched = found == Reachability::kReachable;
       }
       if (first_attempt) {
         first_attempt = false;
@@ -304,8 +325,8 @@ nav_msgs::msg::Path LazyCoulombPlanner::createPlan(
         continue;
       }
       if (alternatives.empty()) {
-        throw nav2_core::NoValidPathCouldBeFound(
-                "LazyCoulombPlanner: No side of the blocking obstacles leads to a clear path");
+        lazy_failure = "no side of the blocking obstacles leads to a clear path";
+        break;
       }
       // Dead end: undo back to a waypoint with an untried side.
       // "recent" undoes the latest decision; "shortest" resumes from the shortest
@@ -322,6 +343,25 @@ nav_msgs::msg::Path LazyCoulombPlanner::createPlan(
       alternatives.erase(alternatives.begin() + pick);
       placed = tryInsert(alt.path, alt.seg, alt.entry, alt.side, true);
     }
+    if (!lazy_failure.empty()) {
+      break;
+    }
+  }
+
+  if (!lazy_failure.empty()) {
+    // The lazy search gave up. A route may still exist: settle it with the grid
+    // search, and use its path if allowed.
+    if (!grid_searched &&
+      gridSearch(start, goal, grid_path, 0) != Reachability::kReachable)
+    {
+      throw nav2_core::NoValidPathCouldBeFound(
+              "LazyCoulombPlanner: Goal is not reachable from the start");
+    }
+    if (!grid_fallback_) {
+      throw nav2_core::NoValidPathCouldBeFound("LazyCoulombPlanner: " + lazy_failure);
+    }
+    RCLCPP_DEBUG(logger_, "LCP: %s, using the grid fallback", lazy_failure.c_str());
+    path = shortcut(grid_path);
   }
 
   if (simplify_path_) {
@@ -406,17 +446,33 @@ void LazyCoulombPlanner::traverseCells(
   double t_next_x = dx != 0.0 ? ((dx > 0.0 ? cx + 1 - x0 : x0 - cx) * dt_x) : inf;
   double t_next_y = dy != 0.0 ? ((dy > 0.0 ? cy + 1 - y0 : y0 - cy) * dt_y) : inf;
 
+  auto cost_of = [&](int x, int y) -> unsigned char {
+      const bool outside = x < 0 || y < 0 || x >= size_x || y >= size_y;
+      return outside ? nav2_costmap_2d::NO_INFORMATION : cells[static_cast<size_t>(y) * size_x + x];
+    };
+
   double t_enter = 0.0;
   const int max_cells = std::abs(end_x - cx) + std::abs(end_y - cy) + 1;
   for (int n = 0; n < max_cells; ++n) {
     const double t_exit = std::min({t_next_x, t_next_y, 1.0});
-    const bool outside = cx < 0 || cy < 0 || cx >= size_x || cy >= size_y;
-    const unsigned char cost = outside ?
-      nav2_costmap_2d::NO_INFORMATION : cells[static_cast<size_t>(cy) * size_x + cx];
-    if (visit(cost, t_enter, t_exit) || t_exit >= 1.0) {
+    if (visit(cost_of(cx, cy), t_enter, t_exit) || t_exit >= 1.0) {
       return;
     }
-    if (t_next_x < t_next_y) {
+    if (std::abs(t_next_x - t_next_y) < 1e-9) {
+      // The segment passes exactly through the corner shared by four cells.
+      // Which cell that single point belongs to depends on rounding, so treat it
+      // as touching both side cells before moving on diagonally.
+      if (visit(cost_of(cx + step_x, cy), t_exit, t_exit) ||
+        visit(cost_of(cx, cy + step_y), t_exit, t_exit))
+      {
+        return;
+      }
+      cx += step_x;
+      cy += step_y;
+      t_next_x += dt_x;
+      t_next_y += dt_y;
+      ++n;
+    } else if (t_next_x < t_next_y) {
       cx += step_x;
       t_next_x += dt_x;
     } else {
@@ -678,6 +734,140 @@ bool LazyCoulombPlanner::pushClear(
 // =============================================================================
 //  Path utilities
 // =============================================================================
+
+LazyCoulombPlanner::Reachability LazyCoulombPlanner::gridSearch(
+  const PathPoint & start, const PathPoint & goal, std::vector<PathPoint> & route,
+  size_t cell_limit) const
+{
+  // Breadth-first search over free cells, grown from both ends at once. If
+  // either end is sealed in, its side runs out of cells almost immediately, so
+  // an unreachable goal is cheap to detect. When the two sides meet, the cells
+  // walked form a route. With a cell_limit the search stops early and reports
+  // kUnknown once that many cells have been visited.
+  unsigned int sx, sy, gx, gy;
+  if (!costmap_->worldToMap(start.x, start.y, sx, sy) ||
+    !costmap_->worldToMap(goal.x, goal.y, gx, gy))
+  {
+    return Reachability::kUnreachable;
+  }
+  const int size_x = static_cast<int>(costmap_->getSizeInCellsX());
+  const int size_y = static_cast<int>(costmap_->getSizeInCellsY());
+  const unsigned char * cells = costmap_->getCharMap();
+  auto is_free = [&](int x, int y) {
+      return x >= 0 && y >= 0 && x < size_x && y < size_y &&
+             static_cast<double>(cells[static_cast<size_t>(y) * size_x + x]) <
+             lethal_cost_threshold_;
+    };
+
+  static const int kDx[8] = {1, -1, 0, 0, 1, 1, -1, -1};
+  static const int kDy[8] = {0, 0, 1, -1, 1, -1, 1, -1};
+  const unsigned char kRoot = 9;  // low nibble: 1 + direction walked to get here, or kRoot
+  // High nibble: which side reached the cell first (1 = start, 2 = goal). 0 = unvisited.
+  std::vector<unsigned char> state(static_cast<size_t>(size_x) * size_y, 0);
+  auto index = [&](int x, int y) {return static_cast<size_t>(y) * size_x + x;};
+
+  std::vector<std::pair<int, int>> frontier[2], next;
+  state[index(sx, sy)] = (1 << 4) | kRoot;
+  frontier[0].emplace_back(sx, sy);
+  if (sx == gx && sy == gy) {
+    route = {start, goal};
+    return Reachability::kReachable;
+  }
+  state[index(gx, gy)] = (2 << 4) | kRoot;
+  frontier[1].emplace_back(gx, gy);
+
+  // Cells from (x, y) back to the origin of its side.
+  auto walk_back = [&](int x, int y) {
+      std::vector<PathPoint> chain;
+      while (true) {
+        double wx, wy;
+        costmap_->mapToWorld(x, y, wx, wy);
+        chain.emplace_back(wx, wy, true);
+        const unsigned char how = state[index(x, y)] & 0x0F;
+        if (how == kRoot) {
+          return chain;
+        }
+        x -= kDx[how - 1];
+        y -= kDy[how - 1];
+      }
+    };
+
+  size_t visited = 2;
+  while (!frontier[0].empty() && !frontier[1].empty()) {
+    if (cell_limit > 0 && visited > cell_limit) {
+      return Reachability::kUnknown;
+    }
+    // Grow the smaller side by one layer.
+    const int side = frontier[0].size() <= frontier[1].size() ? 0 : 1;
+    const unsigned char mine = static_cast<unsigned char>((side + 1) << 4);
+    next.clear();
+    for (const auto & cell : frontier[side]) {
+      for (int d = 0; d < 8; ++d) {
+        const int x = cell.first + kDx[d];
+        const int y = cell.second + kDy[d];
+        if (!is_free(x, y)) {
+          continue;
+        }
+        // No squeezing diagonally between two occupied cells.
+        if (d >= 4 && (!is_free(cell.first + kDx[d], cell.second) ||
+          !is_free(cell.first, cell.second + kDy[d])))
+        {
+          continue;
+        }
+        const unsigned char seen = state[index(x, y)];
+        if (seen == 0) {
+          state[index(x, y)] = mine | static_cast<unsigned char>(d + 1);
+          next.emplace_back(x, y);
+          ++visited;
+        } else if ((seen & 0xF0) != mine) {
+          // The two sides met between `cell` and (x, y).
+          std::vector<PathPoint> a = walk_back(cell.first, cell.second);
+          std::vector<PathPoint> b = walk_back(x, y);
+          std::vector<PathPoint> & from_start = side == 0 ? a : b;
+          std::vector<PathPoint> & from_goal = side == 0 ? b : a;
+          route.assign(from_start.rbegin(), from_start.rend());
+          route.insert(route.end(), from_goal.begin(), from_goal.end());
+          route.front() = start;
+          route.back() = goal;
+          return Reachability::kReachable;
+        }
+      }
+    }
+    frontier[side].swap(next);
+  }
+  return Reachability::kUnreachable;
+}
+
+std::vector<PathPoint> LazyCoulombPlanner::shortcut(const std::vector<PathPoint> & pts) const
+{
+  // Replace runs of cell-to-cell steps by the longest straight segments that
+  // stay collision free.
+  if (pts.size() < 3) {return pts;}
+
+  std::vector<PathPoint> out;
+  out.push_back(pts.front());
+  size_t i = 0;
+  while (i + 1 < pts.size()) {
+    size_t reach = i + 1;  // neighbouring cells are always mutually visible
+    size_t lo = i + 2, hi = pts.size() - 1;
+    if (lo <= hi && !segmentIntersectsObstacle(pts[i], pts[hi])) {
+      reach = hi;
+    } else {
+      while (lo <= hi) {
+        const size_t mid = lo + (hi - lo) / 2;
+        if (!segmentIntersectsObstacle(pts[i], pts[mid])) {
+          reach = mid;
+          lo = mid + 1;
+        } else {
+          hi = mid - 1;
+        }
+      }
+    }
+    out.push_back(pts[reach]);
+    i = reach;
+  }
+  return out;
+}
 
 std::vector<PathPoint> LazyCoulombPlanner::removeRedundant(
   const std::vector<PathPoint> & pts) const

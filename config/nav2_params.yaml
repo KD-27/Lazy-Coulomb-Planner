@@ -25,22 +25,11 @@ planner_server:
       max_push_step: 0.0         # cap on one push step (m); 0 = one costmap cell
       force_balance_threshold: 0.05
 
-      # ── Budgets: exceeding either makes the planner report failure ────────
-      max_iterations: 2000       # waypoint placement attempts, retries included
+      # ── When the lazy search struggles ────────────────────────────────────
+      max_iterations: 300        # waypoint placement attempts, retries included
       max_push_iterations: 400   # steps to push a single waypoint clear
-
-      # ── Keeping distance (needs an inflation layer in the global costmap) ─
-      comfort_cost: 100.0        # avoid costs above this where possible; 253 = off
-      max_clearance_push: 1.0    # furthest a waypoint moves to gain clearance (m)
-      smoothing_cost_slack: 40.0 # cost a smoothing cut may add above comfort_cost
-
-      # A robot stopped slightly inside the inflated zone plans from the nearest
-      # free cell within this range (m). 0 = refuse to plan from an occupied cell.
-      start_escape_radius: 0.5
-
-      # Extra push past the obstacle edge when the way is free (m). Gives the
-      # smoother room to round the corner and reduces repeat corrections.
-      waypoint_margin: 0.3
+      reachability_check_after: 50  # attempts before checking start/goal are not sealed in
+      grid_fallback: true        # lazy search gave up: use the grid search's route
 
       # ── Retry: on a dead end, back up and try the other side ──────────────
       retry_other_side: true

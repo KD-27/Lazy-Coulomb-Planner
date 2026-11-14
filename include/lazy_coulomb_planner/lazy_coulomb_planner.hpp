@@ -173,6 +173,20 @@ protected:
    */
   std::vector<PathPoint> improveClearance(const std::vector<PathPoint> & points) const;
 
+  enum class Reachability {kReachable, kUnreachable, kUnknown};
+
+  /**
+   * @brief Breadth-first search over free cells from both ends at once.
+   * @param route Cell-by-cell route from start to goal, filled in when kReachable
+   * @param cell_limit Stop with kUnknown after visiting this many cells; 0 = no limit
+   */
+  Reachability gridSearch(
+    const PathPoint & start, const PathPoint & goal, std::vector<PathPoint> & route,
+    size_t cell_limit) const;
+
+  /** @brief Replace a cell-by-cell route by the longest collision-free straight segments. */
+  std::vector<PathPoint> shortcut(const std::vector<PathPoint> & points) const;
+
   /** @brief Drop waypoints whose neighbours can be joined directly. */
   std::vector<PathPoint> removeRedundant(const std::vector<PathPoint> & points) const;
 
@@ -210,6 +224,8 @@ protected:
   double max_push_step_;            // Cap on a single push step (m); <= 0 means one cell
   double force_balance_threshold_;  // Below this |force| the push is a fixed kick
   bool commit_direction_;           // Keep the side chosen on the first step
+  bool grid_fallback_;              // Use the grid search's route when the lazy search fails
+  int reachability_check_after_;    // Attempts before checking that a route exists at all
   bool retry_other_side_;           // Back up and try the other side on a dead end
   std::string retry_order_;         // Which untried side to retry first: "recent" or "shortest"
   double max_path_stretch_;         // Abandon detours longer than this x straight line

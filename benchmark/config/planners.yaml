@@ -2,7 +2,7 @@
 planner_server:
   ros__parameters:
     expected_planner_frequency: 20.0
-    planner_plugins: ["Navfn", "Smac2d", "ThetaStar", "LCP"]
+    planner_plugins: ["Navfn", "Smac2d", "ThetaStar", "LCP", "LCP_lazy"]
     Navfn:
       plugin: "nav2_navfn_planner::NavfnPlanner"
     Smac2d:
@@ -11,6 +11,10 @@ planner_server:
       plugin: "nav2_theta_star_planner::ThetaStarPlanner"
     LCP:
       plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+    # The lazy search on its own: fails instead of using the grid fallback.
+    LCP_lazy:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      grid_fallback: false
 global_costmap:
   global_costmap:
     ros__parameters:
