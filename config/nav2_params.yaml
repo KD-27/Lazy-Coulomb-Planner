@@ -31,6 +31,23 @@ planner_server:
       reachability_check_after: 50  # attempts before checking start/goal are not sealed in
       grid_fallback: true        # lazy search gave up: use the grid search's route
 
+      # ── Keeping distance (needs an inflation layer in the global costmap) ─
+      comfort_cost: 30.0         # avoid costs above this where possible; 253 = off
+      max_clearance_push: 1.0    # furthest a waypoint moves to gain clearance (m)
+      smoothing_cost_slack: 40.0 # cost a smoothing cut may add above comfort_cost
+
+      # A goal on an occupied cell is replaced by the nearest free cell within
+      # this range (m), as NavFn's tolerance does. 0 = reject such goals.
+      goal_tolerance: 0.5
+
+      # A robot stopped slightly inside the inflated zone plans from the nearest
+      # free cell within this range (m). 0 = refuse to plan from an occupied cell.
+      start_escape_radius: 0.5
+
+      # Extra push past the obstacle edge when the way is free (m). Gives the
+      # smoother room to round the corner and reduces repeat corrections.
+      waypoint_margin: 0.3
+
       # ── Retry: on a dead end, back up and try the other side ──────────────
       retry_other_side: true
       retry_order: "shortest"    # resume from the shortest partial path ("recent" = latest)
@@ -82,7 +99,7 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.2    # Should be >= robot_radius + safety margin
+        inflation_radius: 0.7    # well beyond robot_radius, so the planner can keep its distance
 
 controller_server:
   ros__parameters:

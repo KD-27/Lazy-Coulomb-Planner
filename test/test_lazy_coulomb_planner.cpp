@@ -324,6 +324,24 @@ TEST_F(LcpTest, StartJustInsideAnObstacleStepsOutFirst)
   EXPECT_THROW(strict->createPlan(start, goal, never), nav2_core::StartOccupied);
 }
 
+TEST_F(LcpTest, GoalJustInsideAnObstacleEndsAtTheNearestFreePoint)
+{
+  addBox(4.0, 4.0, 6.0, 6.0);
+  auto planner = makePlanner();
+  const auto start = pose(1.0, 1.0), goal = pose(4.2, 5.0, 1.0);
+  const auto path = planner->createPlan(start, goal, never);
+
+  ASSERT_GE(path.poses.size(), 2u);
+  EXPECT_FALSE(collides(path));
+  const auto & end = path.poses.back().pose;
+  EXPECT_LT(std::hypot(end.position.x - 4.2, end.position.y - 5.0), 0.5);
+  EXPECT_FALSE(lethal(end.position.x, end.position.y));
+  EXPECT_NEAR(end.orientation.z, goal.pose.orientation.z, 1e-9);
+
+  auto strict = makePlanner({rclcpp::Parameter("goal_tolerance", 0.0)});
+  EXPECT_THROW(strict->createPlan(start, goal, never), nav2_core::GoalOccupied);
+}
+
 TEST_F(LcpTest, EnclosedGoalFailsInsteadOfReturningAPath)
 {
   // A closed ring of walls around the goal: no route exists.
@@ -425,8 +443,8 @@ TEST_F(LcpTest, KeepsDistanceFromObstaclesItDoesNotCross)
   EXPECT_FALSE(collides(grazing_path));
   EXPECT_FALSE(collides(comfortable_path));
   EXPECT_GT(maxCost(grazing_path), 110);
-  // The default comfort_cost is 100: the whole path ends up at or below it.
-  EXPECT_LE(maxCost(comfortable_path), 100);
+  // Well clear of the band the straight line ran through.
+  EXPECT_LE(maxCost(comfortable_path), 70);
   // The detour is gentle: no hairpin, and hardly any extra length.
   EXPECT_LT(sharpestCorner(comfortable_path), 0.35);
   EXPECT_LT(length(comfortable_path), 1.05 * 8.0);

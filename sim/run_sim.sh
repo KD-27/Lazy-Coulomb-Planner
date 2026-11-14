@@ -40,7 +40,13 @@ cleanup() {
 trap cleanup EXIT
 trap 'exit 1' INT TERM
 sleep 25
+if grep -q "gz-.*process has died" "$out/$planner.launch.log"; then
+  echo "$planner: the simulator did not start, see $out/$planner.launch.log"
+  exit 1
+fi
 # The robot spawns at (-2.0, -0.5) in the tb3_sandbox world.
-python3 "$here/drive.py" "$here/maps/tb3_sandbox.yaml" "$out/$planner.csv" "$planner" \
+# A healthy run takes a few minutes; the limit only catches a hung simulation.
+timeout 1200 python3 "$here/drive.py" "$here/maps/tb3_sandbox.yaml" "$out/$planner.csv" "$planner" \
   "$goals" -2.0 -0.5 2>&1 | grep -v "^\[INFO\]"
+[ "${PIPESTATUS[0]}" -eq 0 ] || { echo "$planner: run did not complete"; exit 1; }
 exit 0

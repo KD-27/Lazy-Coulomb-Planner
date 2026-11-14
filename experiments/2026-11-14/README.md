@@ -62,11 +62,15 @@ little.
 | `native_rpp_parallel_pairs` | Native; `old` = commit 671e2c3, `new` = waypoint sliding and comfort 30 (no goal tolerance), side by side | old 12, 15, 15 of 15 goals with 45, 25, 37 recoveries; new 14, 13, 15 with 38, 26, 10. **Unreliable**: lint and tests ran on the machine during the first pair, and two simulations share the CPU. Four requests failed with "goal is inside an obstacle", which led to the goal tolerance. |
 | `native_rpp_sequential` | Native, one run at a time; `new` also has the goal tolerance | new 15 and 14 of 15 with 22 and 45 recoveries; old 14 and 14 with 45 and 42. **Incomplete**: the third run hung because Gazebo started before its world file was written (since fixed), and the batch was stopped. |
 
+| `native_rpp_sequential_rerun` | Native, one run at a time on an idle machine, after the Gazebo start-up race was fixed. `old` = commit 671e2c3; `new` = waypoint sliding, comfort 30 and goal tolerance; plus NavFn | new: 15, 15, 14 of 15 goals, 234, 203, 201 s, 40, 20, 33 recoveries. old: 13, 14, 15 goals, 209, 243, 189 s, 36, 51, 22 recoveries. NavFn: 15 and 15 goals, 172 and 184 s, 1 and 9 recoveries. New and old do not differ beyond noise in recoveries; new reaches more goals (44 against 42 of 45) because the goal tolerance removes the "goal is inside an obstacle" failures. LCP triggers several times more recoveries than NavFn with this controller, always on the same legs (2, 6, 7, 9 to 11, 13). |
+
 Earlier Docker runs with the MPPI controller are only in the git history of
 `sim/results/`: LCP before the start-cell fix reached 10/15 goals; after it,
 15/15 in 316 s with 11 recoveries; NavFn 15/15 in 254 s with 5 recoveries.
 
-Open question at the end of the day: the native runs with Regulated Pure Pursuit
-show far more recoveries (16 to 45 for the same code) than the Docker runs with
-MPPI, and the spread is too wide to tell whether the latest clearance change
-helps the robot.
+Conclusion at the end of the day: with the Regulated Pure Pursuit controller the
+robot stops for "collision ahead" far more often on LCP paths than on NavFn
+paths, and on the same legs every run, so the cause is the shape of those
+paths and not noise. The clearance changes lowered path costs in the planner
+benchmark but did not measurably reduce these stops. With the MPPI controller
+(Docker runs) the same planner drove with 0 to 1 recoveries.

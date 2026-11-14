@@ -229,6 +229,7 @@ protected:
   bool retry_other_side_;           // Back up and try the other side on a dead end
   std::string retry_order_;         // Which untried side to retry first: "recent" or "shortest"
   double max_path_stretch_;         // Abandon detours longer than this x straight line
+  double goal_tolerance_;           // Goal on an occupied cell: end at free space this near (m)
   double start_escape_radius_;      // Start on an occupied cell may step this far to free space (m)
   double comfort_cost_;             // Costs above this are avoided where possible
   double smoothing_cost_slack_;     // Cost a smoothing cut may add above comfort_cost

@@ -61,7 +61,12 @@ drive. Two mechanisms use the costmap's inflation costs to back off:
   keeps falling towards `comfort_cost`, and stops when the cost starts to rise
   again (another obstacle is getting closer, so it ends up near the middle of
   a gap).
-- After a path is found, each stretch is checked for where it comes closest to
+- After a path is found, every waypoint that is still closer than
+  `comfort_cost` slides along the Coulomb force, which points away from the
+  nearby obstacles, while the cost keeps falling and the two segments that meet
+  at it get no closer to anything. Corner waypoints are usually the closest
+  points of a path, so this step matters most indoors.
+- Then each stretch is checked for where it comes closest to
   an obstacle. If the cost there is above `comfort_cost`, a waypoint is placed
   at that spot and the Coulomb force from the nearby obstacles pushes it away.
   It is kept only if the path stays collision free and ends up further away.
@@ -173,8 +178,9 @@ ros2 launch nav2_bringup navigation_launch.py \
 | `repulsion_strength` | 1.0 | Cells moved per unit of normalised force |
 | `max_push_step` | 0.0 | Cap on one push step (m); 0 means one costmap cell |
 | `force_balance_threshold` | 0.05 | Below this force the push is a fixed kick |
+| `goal_tolerance` | 0.5 | If the goal is on an occupied cell, end the path at the nearest free cell within this range (m); 0 disables |
 | `start_escape_radius` | 0.5 | If the robot sits on an occupied cell, plan from the nearest free cell within this range (m); 0 disables |
-| `comfort_cost` | 100.0 | Costmap costs above this are avoided where possible; 253 disables |
+| `comfort_cost` | 30.0 | Costmap costs above this are avoided where possible; 253 disables |
 | `max_clearance_push` | 1.0 | Furthest a waypoint moves to gain clearance (m) |
 | `smoothing_cost_slack` | 40.0 | Cost a smoothing cut may add above `comfort_cost` |
 | `waypoint_margin` | 0.3 | Extra push past the obstacle edge when free (m); gives corners room to be smoothed |

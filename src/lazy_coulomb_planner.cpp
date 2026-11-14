@@ -92,9 +92,10 @@ void LazyCoulombPlanner::configure(
     declare("reachability_check_after", rclcpp::ParameterValue(50)).as_int();
   retry_order_ = declare("retry_order", rclcpp::ParameterValue("shortest")).as_string();
   max_path_stretch_ = declare("max_path_stretch", rclcpp::ParameterValue(5.0)).as_double();
+  goal_tolerance_ = declare("goal_tolerance", rclcpp::ParameterValue(0.5)).as_double();
   start_escape_radius_ =
     declare("start_escape_radius", rclcpp::ParameterValue(0.5)).as_double();
-  comfort_cost_ = declare("comfort_cost", rclcpp::ParameterValue(100.0)).as_double();
+  comfort_cost_ = declare("comfort_cost", rclcpp::ParameterValue(30.0)).as_double();
   smoothing_cost_slack_ =
     declare("smoothing_cost_slack", rclcpp::ParameterValue(40.0)).as_double();
   max_clearance_push_ =
@@ -173,8 +174,16 @@ nav_msgs::msg::Path LazyCoulombPlanner::createPlan(
             "LazyCoulombPlanner: Start is inside an obstacle with no free space within " +
             std::to_string(start_escape_radius_) + " m");
   }
+  // A goal on an occupied cell (sensor noise next to an obstacle, or a goal set
+  // a little too close to a wall) is replaced by the nearest free point within
+  // goal_tolerance, and the path ends there.
   if (isPointInObstacle(goal.x, goal.y)) {
-    throw nav2_core::GoalOccupied("LazyCoulombPlanner: Goal is inside an obstacle");
+    const PathPoint requested = goal;
+    if (!nearestFreePoint(requested, goal_tolerance_, goal)) {
+      throw nav2_core::GoalOccupied(
+              "LazyCoulombPlanner: Goal is inside an obstacle with no free space within " +
+              std::to_string(goal_tolerance_) + " m");
+    }
   }
 
   // Lazy start: the straight line. Segments before `seg` are verified clear.
@@ -905,6 +914,59 @@ std::vector<PathPoint> LazyCoulombPlanner::improveClearance(
   const double res = costmap_->getResolution();
   std::vector<PathPoint> path = pts;
   int budget = 200;
+
+  // First the waypoints that are already there. A corner waypoint sits right
+  // next to the obstacle it goes around and is usually the closest point of the
+  // whole path. Slide it along the Coulomb force, which points away from the
+  // nearby obstacles, for as long as the cost keeps falling and both segments
+  // that meet at it stay collision free and get no closer to anything.
+  for (int sweep = 0; sweep < 2; ++sweep) {
+    for (size_t i = 1; i + 1 < path.size(); ++i) {
+      PathPoint w = path[i];
+      double cost = costAt(w.x, w.y);
+      if (cost <= comfort_cost_) {
+        continue;
+      }
+      const double fx = coulombForceAlong(w, 1.0, 0.0);
+      const double fy = coulombForceAlong(w, 0.0, 1.0);
+      const double f = std::hypot(fx, fy);
+      if (f < force_balance_threshold_) {
+        continue;
+      }
+      const double ux = fx / f, uy = fy / f;
+      PathPoint unused(0.0, 0.0);
+      double limit = std::max(
+        segmentMaxCost(path[i - 1], w, unused), segmentMaxCost(w, path[i + 1], unused));
+      PathPoint probe = w;
+      int flat_steps = 0;
+      for (double d = res; d <= max_clearance_push_ + 1e-9 && cost > comfort_cost_; d += res) {
+        probe.x += ux * res;
+        probe.y += uy * res;
+        const double next_cost = costAt(probe.x, probe.y);
+        if (next_cost > cost) {
+          break;
+        }
+        if (next_cost == cost) {
+          if (++flat_steps > kMaxFlatSteps) {
+            break;
+          }
+          continue;
+        }
+        const double moved_limit = std::max(
+          segmentMaxCost(path[i - 1], probe, unused),
+          segmentMaxCost(probe, path[i + 1], unused));
+        if (moved_limit > limit) {
+          break;  // one of the two segments would come closer to something
+        }
+        w = probe;
+        cost = next_cost;
+        limit = moved_limit;
+        flat_steps = 0;
+      }
+      w.is_locked = true;
+      path[i] = w;
+    }
+  }
 
   for (size_t i = 0; i + 1 < path.size() && budget > 0; ) {
     const PathPoint a = path[i];

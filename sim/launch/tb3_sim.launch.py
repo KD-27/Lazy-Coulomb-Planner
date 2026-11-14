@@ -6,6 +6,7 @@ servers. Everything is launched as plain nodes so the planner under test can be
 swapped through the parameters file alone.
 """
 import os
+import subprocess
 import tempfile
 
 from ament_index_python.packages import get_package_share_directory
@@ -28,10 +29,13 @@ def generate_launch_description():
         robot_description = f.read()
 
     # The world is a xacro file; Gazebo needs it expanded into a real SDF file.
-    world_sdf = tempfile.mktemp(prefix='lcp_sim_', suffix='.sdf')
-    expand_world = ExecuteProcess(cmd=[
-        'xacro', '-o', world_sdf, 'headless:=True',
-        os.path.join(sim_dir, 'worlds', 'tb3_sandbox.sdf.xacro')])
+    # Expand it here, before anything is launched: started as a separate process,
+    # xacro can lose the race against Gazebo, which then exits for lack of a world.
+    handle, world_sdf = tempfile.mkstemp(prefix='lcp_sim_', suffix='.sdf')
+    os.close(handle)
+    subprocess.run(
+        ['xacro', '-o', world_sdf, 'headless:=True',
+         os.path.join(sim_dir, 'worlds', 'tb3_sandbox.sdf.xacro')], check=True)
     gazebo = ExecuteProcess(cmd=['gz', 'sim', '-r', '-s', world_sdf], output='screen')
     remove_world = RegisterEventHandler(OnShutdown(on_shutdown=[
         OpaqueFunction(function=lambda _: os.path.exists(world_sdf) and os.remove(world_sdf))]))
@@ -64,7 +68,7 @@ def generate_launch_description():
         # robot's meshes use package:// URIs, resolved from the share directory.
         AppendEnvironmentVariable('GZ_SIM_RESOURCE_PATH', os.path.join(sim_dir, 'models')),
         AppendEnvironmentVariable('GZ_SIM_RESOURCE_PATH', os.path.dirname(sim_dir)),
-        expand_world, remove_world, gazebo, robot,
+        remove_world, gazebo, robot,
         Node(package='robot_state_publisher', executable='robot_state_publisher', output='screen',
              parameters=[sim_time, {'robot_description': robot_description}]),
 
