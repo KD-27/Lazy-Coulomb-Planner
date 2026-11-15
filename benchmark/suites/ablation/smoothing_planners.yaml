@@ -1,0 +1,52 @@
+# Ablation: Post-processing: no simplification, no smoothing, and different numbers of Chaikin passes.
+# Every variant is the default LCP with only the listed parameters changed.
+# path_reuse_distance 0 everywhere: the benchmark measures planning from scratch.
+planner_server:
+  ros__parameters:
+    expected_planner_frequency: 20.0
+    planner_plugins: ["Navfn", "raw", "no_smooth", "p1", "p3", "p5", "p8"]
+    Navfn:
+      plugin: "nav2_navfn_planner::NavfnPlanner"
+    raw:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      simplify_path: false
+      enable_smoothing: false
+    no_smooth:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      enable_smoothing: false
+    p1:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      smoothing_iterations: 1
+    p3:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      smoothing_iterations: 3
+    p5:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+    p8:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      smoothing_iterations: 8
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      update_frequency: 1.0
+      publish_frequency: 1.0
+      global_frame: map
+      robot_base_frame: base_link
+      robot_radius: 0.22
+      resolution: 0.05
+      track_unknown_space: true
+      always_send_full_costmap: true
+      plugins: ["static_layer", "inflation_layer"]
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: true
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.7

@@ -3,6 +3,8 @@
 # swapped for the one named. Needs Nav2 Jazzy, nav2_minimal_tb3_sim, ros_gz and
 # this workspace built; nav2_bringup is not required.
 # usage: run_sim.sh <lcp|navfn|smac2d|theta> <goals> [out_dir]
+# LCP_SIM_CONTROLLER=mppi drives with the MPPI controller (needs
+# nav2_mppi_controller) instead of Regulated Pure Pursuit.
 here=$(cd "$(dirname "$0")" && pwd)
 ws=$(cd "$here/../../.." && pwd)
 source /opt/ros/jazzy/setup.bash
@@ -40,7 +42,7 @@ fi
 mkdir -p "$out"
 params=$(mktemp --suffix=.yaml)
 sed "s|plugin: .*nav2_navfn_planner::NavfnPlanner.*|plugin: \"$plugin\"|" \
-  "$here/config/nav2_sim_params.yaml" > "$params"
+  "$here/config/nav2_sim_params${LCP_SIM_CONTROLLER:+_$LCP_SIM_CONTROLLER}.yaml" > "$params"
 grep -q "$plugin" "$params" || { echo "failed to set planner plugin"; exit 1; }
 
 setsid ros2 launch "$here/launch/tb3_sim.launch.py" params_file:="$params" \
@@ -70,8 +72,17 @@ if grep -q "gz-.*process has died" "$out/$planner.launch.log"; then
   exit 1
 fi
 # The robot spawns at (-2.0, -0.5) in the tb3_sandbox world.
+# Navigation must come up soon after the driver sets the initial pose. If it has
+# not after 3 minutes the start-up has failed: stop the driver so the run ends.
+( sleep 180
+  grep -q "lifecycle_manager_navigation.*Managed nodes are active" "$out/$planner.launch.log" ||
+    pkill -KILL -f "sim/drive.py .*$out/$planner.csv" ) &
+watchdog=$!
 # A healthy run takes a few minutes; the limit only catches a hung simulation.
-timeout 1200 python3 "$here/drive.py" "$here/maps/tb3_sandbox.yaml" "$out/$planner.csv" "$planner" \
+# -k: the driver does not always exit on SIGTERM, so follow up with SIGKILL.
+timeout -k 10 1200 python3 "$here/drive.py" "$here/maps/tb3_sandbox.yaml" "$out/$planner.csv" "$planner" \
   "$goals" -2.0 -0.5 2>&1 | grep -v "^\[INFO\]"
-[ "${PIPESTATUS[0]}" -eq 0 ] || { echo "$planner: run did not complete"; exit 1; }
+status=${PIPESTATUS[0]}
+kill "$watchdog" 2>/dev/null
+[ "$status" -eq 0 ] || { echo "$planner: run did not complete"; exit 1; }
 exit 0

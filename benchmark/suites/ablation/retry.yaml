@@ -1,0 +1,15 @@
+# Ablation: Other-side retry: off, most recent first, or shortest partial path first, and the attempt budget. Grid fallback off so the lazy search is measured alone.
+pairs: 100
+repeats: 3
+planners_file: retry_planners.yaml
+planners: [Navfn, "noretry", "recent300", "shortest100", "shortest300", "shortest1000"]
+
+maps:
+  - {name: base,         group: generated, size: 50, shape: circle, density: 0.10}
+  - {name: density_20,   group: generated, size: 50, shape: circle, density: 0.20}
+  - {name: density_30,   group: generated, size: 50, shape: circle, density: 0.30}
+  - {name: shape_u,      group: generated, size: 50, shape: u,      density: 0.10}
+  - {name: corridor_1.2, group: generated, size: 50, shape: blocks, block: 4.0, corridor: 1.2}
+  - {name: maze,         group: indoor, file: maps/maze.yaml}
+  - {name: house,        group: indoor, file: maps/house.yaml}
+  - {name: event_venue,  group: indoor, file: maps/event_venue.yaml}

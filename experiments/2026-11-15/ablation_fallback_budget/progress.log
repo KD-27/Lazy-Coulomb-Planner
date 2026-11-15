@@ -1,0 +1,9 @@
+[1/8] base (51 s): Navfn 100/100 14.0ms, lazy_only 100/100 1.3ms, fb100 100/100 1.2ms, fb300 100/100 1.3ms, fb1000 100/100 1.3ms, fb2000 100/100 1.3ms
+[2/8] density_20 (64 s): Navfn 94/94 13.9ms, lazy_only 87/94 2.1ms, fb100 94/94 2.2ms, fb300 94/94 2.3ms, fb1000 94/94 2.4ms, fb2000 94/94 2.5ms
+[3/8] density_30 (95 s): Navfn 84/84 14.1ms, lazy_only 47/84 3.0ms, fb100 84/84 19.6ms, fb300 84/84 18.8ms, fb1000 84/84 17.9ms, fb2000 84/84 18.3ms
+[4/8] shape_u (84 s): Navfn 93/93 13.3ms, lazy_only 51/93 2.1ms, fb100 93/93 19.0ms, fb300 93/93 13.2ms, fb1000 93/93 12.1ms, fb2000 93/93 12.5ms
+[5/8] corridor_1.2 (52 s): Navfn 100/100 7.5ms, lazy_only 99/100 1.9ms, fb100 100/100 2.0ms, fb300 100/100 1.9ms, fb1000 100/100 1.9ms, fb2000 100/100 2.0ms
+[6/8] maze (51 s): Navfn 100/100 2.9ms, lazy_only 82/100 1.9ms, fb100 100/100 2.4ms, fb300 100/100 2.6ms, fb1000 100/100 2.7ms, fb2000 100/100 2.6ms
+[7/8] house (38 s): Navfn 57/57 1.4ms, lazy_only 56/57 0.4ms, fb100 57/57 0.5ms, fb300 57/57 0.5ms, fb1000 57/57 0.5ms, fb2000 57/57 0.5ms
+[8/8] event_venue (40 s): Navfn 54/54 1.9ms, lazy_only 49/54 0.8ms, fb100 54/54 0.8ms, fb300 54/54 0.8ms, fb1000 54/54 0.8ms, fb2000 54/54 0.8ms
+SUITE DONE

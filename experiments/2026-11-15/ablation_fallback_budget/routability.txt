@@ -1,0 +1,18 @@
+           map routable |                  Navfn |              lazy_only |                  fb100 |                  fb300 |                 fb1000 |                 fb2000
+                          solved insc leth fail |  solved insc leth fail |  solved insc leth fail |  solved insc leth fail |  solved insc leth fail |  solved insc leth fail
+          base      100 |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0  
+    density_20      100 |     94    6    0    0   |     92    0    0    8   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0  
+    density_30       94 |     84   10    0    0   |     51    0    0   43   |     94    0    0    0   |     94    0    0    0   |     94    0    0    0   |     94    0    0    0  
+       shape_u       98 |     93    5    0    0   |     53    0    0   45   |     98    0    0    0   |     98    0    0    0   |     98    0    0    0   |     98    0    0    0  
+  corridor_1.2      100 |    100    0    0    0   |     99    0    0    1   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0  
+          maze      100 |    100    0    0    0   |     82    0    0   18   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0  
+         house       57 |     57    0    0    0   |     56    0    0    1   |     57    0    0    0   |     57    0    0    0   |     57    0    0    0   |     57    0    0    0  
+   event_venue       55 |     54    1    0    0   |     49    0    0    6   |     55    0    0    0   |     55    0    0    0   |     55    0    0    0   |     55    0    0    0  
+
+Pairs with no route: clean path returned / bad path returned / correctly refused
+     Navfn: 0 / 1 / 95
+ lazy_only: 0 / 0 / 96
+     fb100: 0 / 0 / 96
+     fb300: 0 / 0 / 96
+    fb1000: 0 / 0 / 96
+    fb2000: 0 / 0 / 96

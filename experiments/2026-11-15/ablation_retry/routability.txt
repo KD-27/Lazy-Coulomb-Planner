@@ -1,0 +1,18 @@
+           map routable |                  Navfn |                noretry |              recent300 |            shortest100 |            shortest300 |           shortest1000
+                          solved insc leth fail |  solved insc leth fail |  solved insc leth fail |  solved insc leth fail |  solved insc leth fail |  solved insc leth fail
+          base      100 |    100    0    0    0   |     99    0    0    1   |    100    0    0    0   |     98    0    0    2   |    100    0    0    0   |    100    0    0    0  
+    density_20      100 |     94    6    0    0   |     90    0    0   10   |     90    0    0   10   |     84    0    0   16   |     92    0    0    8   |     97    0    0    3  
+    density_30       94 |     84   10    0    0   |     46    0    0   48   |     46    0    0   48   |     36    0    0   58   |     51    0    0   43   |     63    0    0   31  
+       shape_u       98 |     93    5    0    0   |     48    0    0   50   |     50    0    0   48   |     44    0    0   54   |     53    0    0   45   |     66    0    0   32  
+  corridor_1.2      100 |    100    0    0    0   |     99    0    0    1   |     99    0    0    1   |     97    0    0    3   |     99    0    0    1   |     99    0    0    1  
+          maze      100 |    100    0    0    0   |     64    0    0   36   |     71    0    0   29   |     71    0    0   29   |     82    0    0   18   |     94    0    0    6  
+         house       57 |     57    0    0    0   |     50    0    0    7   |     50    0    0    7   |     54    0    0    3   |     56    0    0    1   |     57    0    0    0  
+   event_venue       55 |     54    1    0    0   |     47    0    0    8   |     49    0    0    6   |     47    0    0    8   |     49    0    0    6   |     51    0    0    4  
+
+Pairs with no route: clean path returned / bad path returned / correctly refused
+     Navfn: 0 / 1 / 95
+   noretry: 0 / 0 / 96
+ recent300: 0 / 0 / 96
+shortest100: 0 / 0 / 96
+shortest300: 0 / 0 / 96
+shortest1000: 0 / 0 / 96

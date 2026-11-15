@@ -1,0 +1,17 @@
+           map routable |                  Navfn |                   R0p5 |                   R1p0 |                   R2p0 |                   R4p0
+                          solved insc leth fail |  solved insc leth fail |  solved insc leth fail |  solved insc leth fail |  solved insc leth fail
+          base      100 |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0  
+    density_20      100 |     94    6    0    0   |     84    0    0   16   |     92    0    0    8   |     91    0    0    9   |     93    0    0    7  
+    density_30       94 |     84   10    0    0   |     50    0    0   44   |     51    0    0   43   |     57    0    0   37   |     58    0    0   36  
+       shape_u       98 |     93    5    0    0   |     56    0    0   42   |     53    0    0   45   |     55    0    0   43   |     58    0    0   40  
+  corridor_1.2      100 |    100    0    0    0   |     99    0    0    1   |     99    0    0    1   |     99    0    0    1   |     99    0    0    1  
+          maze      100 |    100    0    0    0   |     80    0    0   20   |     82    0    0   18   |     86    0    0   14   |     84    0    0   16  
+         house       57 |     57    0    0    0   |     57    0    0    0   |     56    0    0    1   |     57    0    0    0   |     57    0    0    0  
+   event_venue       55 |     54    1    0    0   |     46    0    0    9   |     49    0    0    6   |     50    0    0    5   |     50    0    0    5  
+
+Pairs with no route: clean path returned / bad path returned / correctly refused
+     Navfn: 0 / 1 / 95
+      R0p5: 0 / 0 / 96
+      R1p0: 0 / 0 / 96
+      R2p0: 0 / 0 / 96
+      R4p0: 0 / 0 / 96

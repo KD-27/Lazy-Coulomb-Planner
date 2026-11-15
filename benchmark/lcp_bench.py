@@ -6,9 +6,13 @@ Differences from upstream: failures are recorded instead of discarded, every
 returned path is audited against the costmap at a tenth-of-a-cell spacing, and the map
 origin is respected. Usage:  lcp_bench.py <out.csv> <pairs> <planner> [<planner> ...]
 The first planner is the reference for "a route exists" and for path length.
+Set LCP_BENCH_REPEATS to plan every pair that many times; the planning time
+reported is then the median of the repeats (the fastest and slowest are kept
+too), and the path is the one from the first call.
 """
 import csv
 import math
+import os
 import random
 import sys
 import time
@@ -22,6 +26,7 @@ from rclpy.action import ActionClient
 
 out_csv, n_pairs, planners = sys.argv[1], int(sys.argv[2]), sys.argv[3:]
 MAX_START_COST, MIN_DIST, OBSTACLE_COST = 210, 3.0, 253
+REPEATS = max(1, int(os.environ.get('LCP_BENCH_REPEATS', '1')))
 
 rclpy.init()
 nav = BasicNavigator()
@@ -102,6 +107,10 @@ for pair in range(n_pairs):
             break
     for planner in planners:
         r, wall_ms = timed_plan(planner, s, g)
+        times = [r.planning_time.sec * 1e3 + r.planning_time.nanosec / 1e6]
+        for _ in range(REPEATS - 1):
+            again, _ = timed_plan(planner, s, g)
+            times.append(again.planning_time.sec * 1e3 + again.planning_time.nanosec / 1e6)
         pts = [(p.pose.position.x, p.pose.position.y) for p in r.path.poses]
         ok = r.error_code == 0 and len(pts) >= 2
         nan = float('nan')
@@ -110,7 +119,8 @@ for pair in range(n_pairs):
             'pair': pair, 'planner': planner, 'sx': s[0], 'sy': s[1], 'gx': g[0], 'gy': g[1],
             'straight': math.hypot(g[0] - s[0], g[1] - s[1]), 'error_code': r.error_code,
             'returned': int(ok), 'valid': int(ok and worst < OBSTACLE_COST),
-            'time_ms': r.planning_time.sec * 1e3 + r.planning_time.nanosec / 1e6,
+            'time_ms': float(np.median(times)), 'time_min_ms': min(times),
+            'time_max_ms': max(times), 'repeats': REPEATS,
             'wall_ms': wall_ms, 'length': length, 'max_cost': worst, 'mean_cost': mean_cost,
             'turn_rad': turn,
             'sharpest_deg': math.degrees(sharpest), 'poses': len(pts)})

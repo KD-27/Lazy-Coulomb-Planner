@@ -17,7 +17,12 @@ params=$1; map=$2; out=$3; pairs=$4; shift 4
 setsid ros2 launch "$here/config/bringup_headless.launch.py" params:="$params" map:="$map" \
   > "${out%.csv}.bringup.log" 2>&1 &
 launch_pid=$!
-sleep 12
+# Large maps take a while to load and inflate: wait for the servers, up to 3 minutes.
+for _ in $(seq 1 180); do
+  grep -q "Managed nodes are active" "${out%.csv}.bringup.log" 2>/dev/null && break
+  sleep 1
+done
+sleep 5
 python3 "$here/lcp_bench.py" "$out" "$pairs" "$@" 2>&1 | grep -v "^\["
 kill -INT -- "-$launch_pid" 2>/dev/null
 sleep 2

@@ -20,6 +20,30 @@ respected.
 | `maps/` | `event_venue`, `maze`, `house`, `empty`; `fetch_nav2_maps.sh` adds Nav2's 100 m maps |
 | `results/` | CSVs of the last full run |
 
+## Suites
+
+`run_all.sh` covers the six fixed maps. For controlled experiments use the
+suite runner, which generates its maps and collects one summary:
+
+| File | Purpose |
+|---|---|
+| `generate_map.py` | Map with a chosen size, obstacle density and shape (circles, squares, concave U, or a block grid with corridors), reproducible from a seed |
+| `run_suite.py` | Runs a suite: generates each map, benchmarks every planner on it, writes `summary.csv`; resumable |
+| `suites/controlled.yaml`, `suites/controlled_seeds.yaml` | Density, size, shape and corridor-width sweeps, and their repeats with other seeds |
+| `suites/ablation/` | One suite per LCP design choice, with the planner variants it compares |
+| `routability.py` | Ground truth for which pairs have a route, computed from the map; re-scores every planner against it |
+| `report_suite.py` | Tables (Markdown) and plots from a finished suite |
+| `aggregate_seeds.py` | Mean and spread over suites that repeat configurations with different seeds |
+
+```bash
+benchmark/run_suite.py benchmark/suites/controlled.yaml <out_dir>
+benchmark/routability.py <out_dir>
+benchmark/report_suite.py <out_dir> "Controlled benchmark"
+```
+
+Set `LCP_BENCH_REPEATS` (the suites do) to plan every pair several times and
+report the median time.
+
 ## Running
 
 ```bash

@@ -9,12 +9,16 @@ planner_server:
       plugin: "nav2_smac_planner::SmacPlanner2D"
     ThetaStar:
       plugin: "nav2_theta_star_planner::ThetaStarPlanner"
+    # path_reuse_distance 0: the benchmark measures planning from scratch. Left on,
+    # a repeated request for the same goal would return the previous path.
     LCP:
       plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
     # The lazy search on its own: fails instead of using the grid fallback.
     LCP_lazy:
       plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
       grid_fallback: false
+      path_reuse_distance: 0.0
 global_costmap:
   global_costmap:
     ros__parameters:
