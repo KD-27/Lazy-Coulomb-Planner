@@ -4,33 +4,38 @@
 planner_server:
   ros__parameters:
     expected_planner_frequency: 20.0
-    planner_plugins: ["Navfn", "noretry", "recent300", "shortest100", "shortest300", "shortest1000"]
+    planner_plugins: ["Navfn", "noretry", "recent50", "shortest25", "shortest50", "shortest100", "shortest300"]
     Navfn:
       plugin: "nav2_navfn_planner::NavfnPlanner"
     noretry:
       plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
       path_reuse_distance: 0.0
-      retry_other_side: false
       grid_fallback: false
-    recent300:
+      retry_other_side: false
+    recent50:
       plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
       path_reuse_distance: 0.0
+      grid_fallback: false
       retry_order: "recent"
+    shortest25:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      grid_fallback: false
+      max_iterations: 25
+    shortest50:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
       grid_fallback: false
     shortest100:
       plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
       path_reuse_distance: 0.0
-      max_iterations: 100
       grid_fallback: false
+      max_iterations: 100
     shortest300:
       plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
       path_reuse_distance: 0.0
       grid_fallback: false
-    shortest1000:
-      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
-      path_reuse_distance: 0.0
-      max_iterations: 1000
-      grid_fallback: false
+      max_iterations: 300
 global_costmap:
   global_costmap:
     ros__parameters:

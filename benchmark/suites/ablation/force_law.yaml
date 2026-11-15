@@ -2,7 +2,7 @@
 pairs: 100
 repeats: 3
 planners_file: force_law_planners.yaml
-planners: [Navfn, "probe", "r1", "r2", "r1_free", "r2_free"]
+planners: [Navfn, probe, r1, r2, r1_free, r2_free]
 
 maps:
   - {name: base,         group: generated, size: 50, shape: circle, density: 0.10}

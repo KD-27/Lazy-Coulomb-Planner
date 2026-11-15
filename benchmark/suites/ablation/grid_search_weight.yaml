@@ -1,0 +1,15 @@
+# Ablation: Weight of the heuristic in the A* search of the fallback: 1 gives the shortest grid route, larger values visit fewer cells.
+pairs: 100
+repeats: 3
+planners_file: grid_search_weight_planners.yaml
+planners: [Navfn, w1, w2, w3, w4, w6]
+
+maps:
+  - {name: base,         group: generated, size: 50, shape: circle, density: 0.10}
+  - {name: density_20,   group: generated, size: 50, shape: circle, density: 0.20}
+  - {name: density_30,   group: generated, size: 50, shape: circle, density: 0.30}
+  - {name: shape_u,      group: generated, size: 50, shape: u,      density: 0.10}
+  - {name: corridor_1.2, group: generated, size: 50, shape: blocks, block: 4.0, corridor: 1.2}
+  - {name: maze,         group: indoor, file: maps/maze.yaml}
+  - {name: house,        group: indoor, file: maps/house.yaml}
+  - {name: event_venue,  group: indoor, file: maps/event_venue.yaml}

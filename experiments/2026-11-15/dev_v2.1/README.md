@@ -24,7 +24,7 @@ build.
 | `step5_budget_and_weight/` | Budget 35, 50, 75 with A\* weights 2, 3, 4 | All close. Chosen: budget 50, weight 3 (mean median 1.20 ms, slowest plan 11.7 ms). The lazy search alone then solves 489 of 704 |
 | `baseline_v2.0.0_release_build/` | The tag `v2.0.0` built optimised, for a fair comparison | Mean median 2.05 ms, slowest plan 19 ms, 104 paths with a corner over 90° |
 | `step6_candidate_v2.1/` | The candidate with its new defaults | Mean median 1.20 ms, slowest plan 9 ms, 13 paths with a corner over 90°, 704 of 704 solved |
-| `driving_rpp_v2.1_candidate/` | Five driving runs, Regulated Pure Pursuit | See below |
+| `driving_rpp_v2.1_candidate/` | Five driving runs of the candidate, Regulated Pure Pursuit, one at a time | 13.8 ± 1.3 goals of 15, 40 ± 28 recoveries, 207 ± 31 s. Against v2.0.0's ten runs (14.1 goals, 39 recoveries, 212 s; `../driving_rpp/`) no difference: Mann-Whitney p = 0.75, 0.95 and 0.86. The robot's closest approach to an obstacle improved from 0.22 to 0.25 m (p = 0.05) |
 
 ## v2.0.0 against the v2.1 candidate, both optimised
 

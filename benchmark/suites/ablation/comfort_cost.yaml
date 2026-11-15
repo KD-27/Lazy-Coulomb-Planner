@@ -2,7 +2,7 @@
 pairs: 100
 repeats: 3
 planners_file: comfort_cost_planners.yaml
-planners: [Navfn, "off", "c150", "c100", "c60", "c30", "c1"]
+planners: [Navfn, off, c150, c100, c60, c30, c1]
 
 maps:
   - {name: base,         group: generated, size: 50, shape: circle, density: 0.10}

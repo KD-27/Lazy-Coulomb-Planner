@@ -4,7 +4,7 @@
 planner_server:
   ros__parameters:
     expected_planner_frequency: 20.0
-    planner_plugins: ["Navfn", R0p5, R1p0, R2p0, R4p0]
+    planner_plugins: ["Navfn", "R0p5", "R1p0", "R2p0", "R4p0"]
     Navfn:
       plugin: "nav2_navfn_planner::NavfnPlanner"
     R0p5:

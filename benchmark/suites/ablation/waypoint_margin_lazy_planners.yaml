@@ -1,32 +1,36 @@
-# Ablation: Extra push of a waypoint past the obstacle edge (m).
-# Grid fallback off in every variant: this measures what the lazy search solves on its own.
+# Ablation (lazy search alone, grid fallback off): Extra push of a waypoint past the obstacle edge (m).
 # Every variant is the default LCP with only the listed parameters changed.
 # path_reuse_distance 0 everywhere: the benchmark measures planning from scratch.
 planner_server:
   ros__parameters:
     expected_planner_frequency: 20.0
-    planner_plugins: ["Navfn", m0p0, m0p15, m0p3, m0p5]
+    planner_plugins: ["Navfn", "m0p0", "m0p25", "m0p5", "m0p75", "m1p0"]
     Navfn:
       plugin: "nav2_navfn_planner::NavfnPlanner"
     m0p0:
       plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
       path_reuse_distance: 0.0
-      grid_fallback: false
       waypoint_margin: 0.0
-    m0p15:
-      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
-      path_reuse_distance: 0.0
       grid_fallback: false
-      waypoint_margin: 0.15
-    m0p3:
+    m0p25:
       plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
       path_reuse_distance: 0.0
+      waypoint_margin: 0.25
       grid_fallback: false
     m0p5:
       plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
       path_reuse_distance: 0.0
       grid_fallback: false
-      waypoint_margin: 0.5
+    m0p75:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      waypoint_margin: 0.75
+      grid_fallback: false
+    m1p0:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      waypoint_margin: 1.0
+      grid_fallback: false
 global_costmap:
   global_costmap:
     ros__parameters:

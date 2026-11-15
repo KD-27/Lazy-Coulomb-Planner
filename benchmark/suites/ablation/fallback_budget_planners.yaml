@@ -4,13 +4,25 @@
 planner_server:
   ros__parameters:
     expected_planner_frequency: 20.0
-    planner_plugins: ["Navfn", "lazy_only", "fb100", "fb300", "fb1000", "fb2000"]
+    planner_plugins: ["Navfn", "lazy_only", "fb10", "fb25", "fb50", "fb100", "fb300"]
     Navfn:
       plugin: "nav2_navfn_planner::NavfnPlanner"
     lazy_only:
       plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
       path_reuse_distance: 0.0
       grid_fallback: false
+    fb10:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      max_iterations: 10
+      reachability_check_after: 10
+    fb25:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      max_iterations: 25
+    fb50:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
     fb100:
       plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
       path_reuse_distance: 0.0
@@ -18,14 +30,7 @@ planner_server:
     fb300:
       plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
       path_reuse_distance: 0.0
-    fb1000:
-      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
-      path_reuse_distance: 0.0
-      max_iterations: 1000
-    fb2000:
-      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
-      path_reuse_distance: 0.0
-      max_iterations: 2000
+      max_iterations: 300
 global_costmap:
   global_costmap:
     ros__parameters:

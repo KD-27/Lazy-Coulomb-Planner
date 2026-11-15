@@ -2,7 +2,7 @@
 pairs: 100
 repeats: 3
 planners_file: retry_planners.yaml
-planners: [Navfn, "noretry", "recent300", "shortest100", "shortest300", "shortest1000"]
+planners: [Navfn, noretry, recent50, shortest25, shortest50, shortest100, shortest300]
 
 maps:
   - {name: base,         group: generated, size: 50, shape: circle, density: 0.10}

@@ -33,6 +33,18 @@ maps:
   - {name: density_30_s3, group: density, size: 50, shape: circle, density: 0.3, seed: 3}
   - {name: density_30_s4, group: density, size: 50, shape: circle, density: 0.3, seed: 4}
   - {name: density_30_s5, group: density, size: 50, shape: circle, density: 0.3, seed: 5}
+  - {name: density_35_s2, group: density, size: 50, shape: circle, density: 0.35, seed: 2}
+  - {name: density_35_s3, group: density, size: 50, shape: circle, density: 0.35, seed: 3}
+  - {name: density_35_s4, group: density, size: 50, shape: circle, density: 0.35, seed: 4}
+  - {name: density_35_s5, group: density, size: 50, shape: circle, density: 0.35, seed: 5}
+  - {name: density_40_s2, group: density, size: 50, shape: circle, density: 0.4, seed: 2}
+  - {name: density_40_s3, group: density, size: 50, shape: circle, density: 0.4, seed: 3}
+  - {name: density_40_s4, group: density, size: 50, shape: circle, density: 0.4, seed: 4}
+  - {name: density_40_s5, group: density, size: 50, shape: circle, density: 0.4, seed: 5}
+  - {name: density_45_s2, group: density, size: 50, shape: circle, density: 0.45, seed: 2}
+  - {name: density_45_s3, group: density, size: 50, shape: circle, density: 0.45, seed: 3}
+  - {name: density_45_s4, group: density, size: 50, shape: circle, density: 0.45, seed: 4}
+  - {name: density_45_s5, group: density, size: 50, shape: circle, density: 0.45, seed: 5}
   - {name: size_010_s2, group: size, size: 10, shape: circle, density: 0.10, seed: 2}
   - {name: size_010_s3, group: size, size: 10, shape: circle, density: 0.10, seed: 3}
   - {name: size_025_s2, group: size, size: 25, shape: circle, density: 0.10, seed: 2}

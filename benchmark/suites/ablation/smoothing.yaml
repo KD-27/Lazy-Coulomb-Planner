@@ -2,7 +2,7 @@
 pairs: 100
 repeats: 3
 planners_file: smoothing_planners.yaml
-planners: [Navfn, "raw", "no_smooth", "p1", "p3", "p5", "p8"]
+planners: [Navfn, raw, no_smooth, p1, p3, p5, p8]
 
 maps:
   - {name: base,         group: generated, size: 50, shape: circle, density: 0.10}

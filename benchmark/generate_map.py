@@ -39,16 +39,26 @@ def cells(metres):
     return max(1, int(round(metres / res)))
 
 
+def fill(y0, y1, x0, x1, mask):
+    """Mark `mask` inside the window as occupied; return how many cells that added."""
+    window = occupied[y0:y1, x0:x1]
+    before = int(window.sum())
+    window |= mask
+    return int(window.sum()) - before
+
+
 def stamp_circle():
     r = cells(rng.uniform(0.3, 0.8))
     cx, cy = rng.integers(0, n, 2)
-    occupied[(xx - cx) ** 2 + (yy - cy) ** 2 <= r * r] = True
+    y0, y1, x0, x1 = max(0, cy - r), min(n, cy + r + 1), max(0, cx - r), min(n, cx + r + 1)
+    inside = (xx[y0:y1, x0:x1] - cx) ** 2 + (yy[y0:y1, x0:x1] - cy) ** 2 <= r * r
+    return fill(y0, y1, x0, x1, inside)
 
 
 def stamp_square():
     half = cells(rng.uniform(0.3, 0.8))
     cx, cy = rng.integers(0, n, 2)
-    occupied[max(0, cy - half):cy + half, max(0, cx - half):cx + half] = True
+    return fill(max(0, cy - half), cy + half, max(0, cx - half), cx + half, True)
 
 
 def stamp_u():
@@ -66,7 +76,7 @@ def stamp_u():
         box[t:-t, :t] = False
     else:
         box[t:-t, -t:] = False
-    occupied[y0:y0 + h, x0:x0 + w] |= box
+    return fill(y0, y0 + h, x0, x0 + w, box)
 
 
 if args.shape == 'blocks':
@@ -75,9 +85,12 @@ if args.shape == 'blocks':
     inside = ((xx - c) % period < b) & ((yy - c) % period < b)
     occupied |= inside
 else:
+    # Count occupied cells as they are added: recomputing the mean of a large map
+    # after every obstacle is what made big maps slow to generate.
     stamp = {'circle': stamp_circle, 'square': stamp_square, 'u': stamp_u}[args.shape]
-    while occupied.mean() < args.density:
-        stamp()
+    count = 0
+    while count / (n * n) < args.density:
+        count += stamp()
 
 # A wall around the map, two cells thick.
 occupied[:2, :] = occupied[-2:, :] = occupied[:, :2] = occupied[:, -2:] = True

@@ -4,24 +4,28 @@
 planner_server:
   ros__parameters:
     expected_planner_frequency: 20.0
-    planner_plugins: ["Navfn", m0p0, m0p15, m0p3, m0p5]
+    planner_plugins: ["Navfn", "m0p0", "m0p25", "m0p5", "m0p75", "m1p0"]
     Navfn:
       plugin: "nav2_navfn_planner::NavfnPlanner"
     m0p0:
       plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
       path_reuse_distance: 0.0
       waypoint_margin: 0.0
-    m0p15:
+    m0p25:
       plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
       path_reuse_distance: 0.0
-      waypoint_margin: 0.15
-    m0p3:
-      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
-      path_reuse_distance: 0.0
+      waypoint_margin: 0.25
     m0p5:
       plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
       path_reuse_distance: 0.0
-      waypoint_margin: 0.5
+    m0p75:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      waypoint_margin: 0.75
+    m1p0:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      waypoint_margin: 1.0
 global_costmap:
   global_costmap:
     ros__parameters:

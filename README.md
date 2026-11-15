@@ -153,7 +153,8 @@ git clone <this_repo> lazy_coulomb_planner
 cd ~/ros2_ws
 rosdep install --from-paths src --ignore-src -r -y
 
-# 3. Build
+# 3. Build (optimised: the package defaults to a Release build, which matters,
+#    an unoptimised build plans about 2.5 times slower)
 colcon build --packages-select lazy_coulomb_planner
 
 # 4. Source

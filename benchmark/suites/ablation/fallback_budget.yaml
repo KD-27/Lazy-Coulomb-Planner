@@ -2,7 +2,7 @@
 pairs: 100
 repeats: 3
 planners_file: fallback_budget_planners.yaml
-planners: [Navfn, "lazy_only", "fb100", "fb300", "fb1000", "fb2000"]
+planners: [Navfn, lazy_only, fb10, fb25, fb50, fb100, fb300]
 
 maps:
   - {name: base,         group: generated, size: 50, shape: circle, density: 0.10}

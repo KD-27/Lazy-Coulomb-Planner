@@ -1,5 +1,4 @@
-# Ablation: How a waypoint is pushed: the legacy probe, or a Coulomb sum with 1/r or 1/r^2, each with and without keeping the first side.
-# Grid fallback off in every variant: this measures what the lazy search solves on its own.
+# Ablation (lazy search alone, grid fallback off): How a waypoint is pushed: the legacy probe, or a Coulomb sum with 1/r or 1/r^2, each with and without keeping the first side.
 # Every variant is the default LCP with only the listed parameters changed.
 # path_reuse_distance 0 everywhere: the benchmark measures planning from scratch.
 planner_server:
@@ -11,13 +10,13 @@ planner_server:
     probe:
       plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
       path_reuse_distance: 0.0
-      grid_fallback: false
       force_model: "probe"
+      grid_fallback: false
     r1:
       plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
       path_reuse_distance: 0.0
-      grid_fallback: false
       force_exponent: 1.0
+      grid_fallback: false
     r2:
       plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
       path_reuse_distance: 0.0
@@ -25,14 +24,14 @@ planner_server:
     r1_free:
       plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
       path_reuse_distance: 0.0
-      grid_fallback: false
       force_exponent: 1.0
       commit_direction: false
+      grid_fallback: false
     r2_free:
       plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
       path_reuse_distance: 0.0
-      grid_fallback: false
       commit_direction: false
+      grid_fallback: false
 global_costmap:
   global_costmap:
     ros__parameters:

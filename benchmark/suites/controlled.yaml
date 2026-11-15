@@ -6,7 +6,7 @@ repeats: 5          # every pair is planned this many times; the median time is 
 planners: [Navfn, Smac2d, ThetaStar, LCP, LCP_lazy]
 
 maps:
-  # --- obstacle density, from empty to dense -------------------------------
+  # --- obstacle density, from empty to the point where free space falls apart ---
   - {name: density_00, group: density, size: 50, shape: circle, density: 0.0}
   - {name: density_02, group: density, size: 50, shape: circle, density: 0.025}
   - {name: density_05, group: density, size: 50, shape: circle, density: 0.05}
@@ -15,6 +15,9 @@ maps:
   - {name: density_20, group: density, size: 50, shape: circle, density: 0.20}
   - {name: density_25, group: density, size: 50, shape: circle, density: 0.25}
   - {name: density_30, group: density, size: 50, shape: circle, density: 0.30}
+  - {name: density_35, group: density, size: 50, shape: circle, density: 0.35}
+  - {name: density_40, group: density, size: 50, shape: circle, density: 0.40}
+  - {name: density_45, group: density, size: 50, shape: circle, density: 0.45}
   # --- map size at 10 % density --------------------------------------------
   - {name: size_010, group: size, size: 10,  shape: circle, density: 0.10}
   - {name: size_025, group: size, size: 25,  shape: circle, density: 0.10}

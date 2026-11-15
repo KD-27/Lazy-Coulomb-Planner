@@ -2,7 +2,7 @@
 pairs: 100
 repeats: 3
 planners_file: waypoint_margin_lazy_planners.yaml
-planners: [Navfn, m0p0, m0p15, m0p3, m0p5]
+planners: [Navfn, m0p0, m0p25, m0p5, m0p75, m1p0]
 
 maps:
   - {name: base,         group: generated, size: 50, shape: circle, density: 0.10}

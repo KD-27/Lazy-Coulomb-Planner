@@ -1,0 +1,6 @@
+run,planner,goals,reached,sim_time_s,travelled_m,recoveries,closest_obstacle_m
+lcp_01,lcp,15,13,232.3,41.24,56,0.239
+lcp_02,lcp,15,14,216.8,39.58,42,0.256
+lcp_03,lcp,15,12,233.9,34.67,75,0.247
+lcp_04,lcp,15,15,192.8,41.91,25,0.241
+lcp_05,lcp,15,15,161.6,41.2,2,0.263
