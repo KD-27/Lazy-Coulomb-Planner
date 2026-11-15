@@ -1,0 +1,4 @@
+[1/3] density_30 (31 s): Navfn 84/84 13.6ms, LCP 84/84 12.9ms, LCP_lazy 53/84 3.0ms, w1 84/84 13.7ms, w4 84/84 13.5ms
+[2/3] shape_u (30 s): Navfn 93/93 13.3ms, LCP 93/93 9.9ms, LCP_lazy 55/93 2.0ms, w1 93/93 9.7ms, w4 93/93 10.1ms
+[3/3] maze (21 s): Navfn 100/100 3.0ms, LCP 100/100 2.6ms, LCP_lazy 90/100 2.0ms, w1 100/100 2.3ms, w4 100/100 2.9ms
+SUITE DONE

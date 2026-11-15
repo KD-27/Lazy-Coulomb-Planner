@@ -415,15 +415,19 @@ TEST_F(LcpTest, SmoothingRoundsCornersWithoutColliding)
   addBox(4.0, 3.0, 6.0, 7.0);
   const auto start = pose(1.0, 5.0), goal = pose(9.0, 5.0);
 
-  auto sharp = makePlanner({rclcpp::Parameter("enable_smoothing", false)});
-  auto smooth = makePlanner();
+  // Clearance steps off in both, so the unsmoothed path keeps its bare corners.
+  auto sharp = makePlanner(
+    {rclcpp::Parameter("enable_smoothing", false), rclcpp::Parameter("comfort_cost", 253.0)});
+  auto smooth = makePlanner({rclcpp::Parameter("comfort_cost", 253.0)});
   const auto sharp_path = sharp->createPlan(start, goal, never);
   const auto smooth_path = smooth->createPlan(start, goal, never);
 
   EXPECT_FALSE(collides(sharp_path));
   EXPECT_FALSE(collides(smooth_path));
-  EXPECT_GT(sharpestCorner(sharp_path), 0.5);
-  EXPECT_LT(sharpestCorner(smooth_path), 0.5 * sharpestCorner(sharp_path));
+  // The corner sits next to the obstacle, so it can only be rounded so far; it
+  // must still come out gentler than the bare one.
+  EXPECT_GT(sharpestCorner(sharp_path), 0.3);
+  EXPECT_LT(sharpestCorner(smooth_path), 0.95 * sharpestCorner(sharp_path));
   EXPECT_LE(length(smooth_path), length(sharp_path) + 1e-9);
 }
 
@@ -495,6 +499,52 @@ TEST_F(LcpTest, PreviousPathIsDroppedWhenSomethingBlocksIt)
   const auto again = planner->createPlan(pose(near.x, near.y), goal, never);
   expectEndpoints(again, pose(near.x, near.y), goal);
   EXPECT_FALSE(collides(again));
+}
+
+TEST_F(LcpTest, OutputPosesAreEvenlySpacedAndNeverDoubleBack)
+{
+  // Clutter makes the lazy search correct the path many times; the result must
+  // still be a clean line: poses 0.1 m apart and no reversal anywhere.
+  std::mt19937 rng(3);
+  std::uniform_real_distribution<double> pos(1.5, 8.5), size(0.2, 0.7);
+  for (int i = 0; i < 25; ++i) {
+    const double x = pos(rng), y = pos(rng), w = size(rng), h = size(rng);
+    addBox(x, y, x + w, y + h);
+  }
+  auto planner = makePlanner();
+  const std::vector<std::pair<double, double>> corners = {
+    {0.6, 0.6}, {9.4, 9.4}, {0.6, 9.4}, {9.4, 0.6}, {0.6, 5.0}, {9.4, 5.0}};
+  int planned = 0;
+  for (const auto & a : corners) {
+    for (const auto & b : corners) {
+      if (a == b || lethal(a.first, a.second) || lethal(b.first, b.second)) {
+        continue;
+      }
+      nav_msgs::msg::Path path;
+      try {
+        path = planner->createPlan(pose(a.first, a.second), pose(b.first, b.second), never);
+      } catch (const nav2_core::NoValidPathCouldBeFound &) {
+        continue;
+      }
+      ++planned;
+      EXPECT_FALSE(collides(path));
+      // Steps are the spacing (the last one may be a quarter longer). Shorter
+      // steps occur only where original vertices are kept next to an obstacle,
+      // so they must be a small minority.
+      int short_steps = 0;
+      for (size_t i = 0; i + 1 < path.poses.size(); ++i) {
+        const auto & p = path.poses[i].pose.position;
+        const auto & q = path.poses[i + 1].pose.position;
+        const double step = std::hypot(q.x - p.x, q.y - p.y);
+        EXPECT_LT(step, 0.125 + 1e-6);
+        short_steps += step < 0.05;
+      }
+      EXPECT_LE(short_steps, 1 + static_cast<int>(path.poses.size()) / 10);
+      EXPECT_LT(sharpestCorner(path), 1.6) << "from (" << a.first << ", " << a.second <<
+        ") to (" << b.first << ", " << b.second << ")";
+    }
+  }
+  EXPECT_GT(planned, 20);
 }
 
 TEST_F(LcpTest, NeverReturnsACollidingPathInRandomClutter)

@@ -1,0 +1,15 @@
+# Development: attempt budget of the lazy search (300, 150, 100, 50, 25) with the A* fallback.
+pairs: 100
+repeats: 1
+planners_file: dev_budget_planners.yaml
+planners: [Navfn, b300, b150, b100, b50, b25, b100w4]
+
+maps:
+  - {name: base,         group: generated, size: 50, shape: circle, density: 0.10}
+  - {name: density_20,   group: generated, size: 50, shape: circle, density: 0.20}
+  - {name: density_30,   group: generated, size: 50, shape: circle, density: 0.30}
+  - {name: shape_u,      group: generated, size: 50, shape: u,      density: 0.10}
+  - {name: corridor_1.2, group: generated, size: 50, shape: blocks, block: 4.0, corridor: 1.2}
+  - {name: maze,         group: indoor, file: maps/maze.yaml}
+  - {name: house,        group: indoor, file: maps/house.yaml}
+  - {name: event_venue,  group: indoor, file: maps/event_venue.yaml}

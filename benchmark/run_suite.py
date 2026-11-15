@@ -86,6 +86,8 @@ def summarise(spec, rows):
                 'mean_cost': round(median([float(r['mean_cost']) for r in valid]), 2),
                 'max_cost': round(median([float(r['max_cost']) for r in valid]), 1),
                 'total_turn_rad': round(median([float(r['turn_rad']) for r in valid]), 3),
+                'sharp_corner_paths': sum(float(r['sharpest_deg']) > 90.0 for r in valid),
+                'poses_median': round(median([float(r['poses']) for r in valid])),
             }
         )
     return out

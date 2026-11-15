@@ -1,0 +1,10 @@
+# Development: the three hard maps only, heuristic weights of the fallback's A*.
+pairs: 100
+repeats: 1
+planners_file: dev_weight_planners.yaml
+planners: [Navfn, LCP, LCP_lazy, w1, w4]
+
+maps:
+  - {name: density_30,   group: generated, size: 50, shape: circle, density: 0.30}
+  - {name: shape_u,      group: generated, size: 50, shape: u,      density: 0.10}
+  - {name: maze,         group: indoor, file: maps/maze.yaml}

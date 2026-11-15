@@ -1,0 +1,4 @@
+map,arguments,sha256,generated
+density_30,--size 50 --shape circle --seed 1 --density 0.3,bb8eef976dd5249d39e056e64a5f2cb054e18844b43ee277831fbf4b2ce976ee,"1000 x 1000 cells, 30.7 % occupied"
+shape_u,--size 50 --shape u --seed 1 --density 0.1,052d6c89649e6f419c20be7f2753c4f6a05d0310c60ac8cd841866f9c5381fd9,"1000 x 1000 cells, 10.8 % occupied"
+maze,file maps/maze.yaml,cd4e68c58b78b25ba1d12bb43ca80fe77282919722e6c7af602f4fcfc6c6a511,existing map

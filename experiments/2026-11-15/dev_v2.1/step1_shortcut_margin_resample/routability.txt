@@ -1,0 +1,15 @@
+           map routable |                  Navfn |                    LCP |               LCP_lazy
+                          solved insc leth fail |  solved insc leth fail |  solved insc leth fail
+          base      100 |    100    0    0    0   |    100    0    0    0   |    100    0    0    0  
+    density_20      100 |     94    6    0    0   |    100    0    0    0   |     92    0    0    8  
+    density_30       94 |     84   10    0    0   |     94    0    0    0   |     56    0    0   38  
+       shape_u       98 |     93    5    0    0   |     98    0    0    0   |     58    0    0   40  
+  corridor_1.2      100 |    100    0    0    0   |    100    0    0    0   |     99    0    0    1  
+          maze      100 |    100    0    0    0   |    100    0    0    0   |     90    0    0   10  
+         house       57 |     57    0    0    0   |     57    0    0    0   |     56    0    0    1  
+   event_venue       55 |     54    1    0    0   |     55    0    0    0   |     50    0    0    5  
+
+Pairs with no route: clean path returned / bad path returned / correctly refused
+     Navfn: 0 / 1 / 95
+       LCP: 0 / 0 / 96
+  LCP_lazy: 0 / 0 / 96

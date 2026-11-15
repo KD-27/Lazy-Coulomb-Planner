@@ -26,10 +26,11 @@ planner_server:
       force_balance_threshold: 0.05
 
       # ── When the lazy search struggles ────────────────────────────────────
-      max_iterations: 300        # waypoint placement attempts, retries included
+      max_iterations: 50         # waypoint placement attempts, retries included
       max_push_iterations: 400   # steps to push a single waypoint clear
-      reachability_check_after: 50  # attempts before checking start/goal are not sealed in
-      grid_fallback: true        # lazy search gave up: use the grid search's route
+      reachability_check_after: 25  # attempts before checking start/goal are not sealed in
+      grid_fallback: true        # lazy search gave up: use the A* route over free cells
+      grid_search_weight: 3.0    # heuristic weight of that A* (1 = shortest route)
 
       # ── Keeping distance (needs an inflation layer in the global costmap) ─
       comfort_cost: 30.0         # avoid costs above this where possible; 253 = off
@@ -46,7 +47,7 @@ planner_server:
 
       # Extra push past the obstacle edge when the way is free (m). Gives the
       # smoother room to round the corner and reduces repeat corrections.
-      waypoint_margin: 0.3
+      waypoint_margin: 0.5
 
       # ── Consistency between replans while driving ────────────────────────
       path_reuse_distance: 0.5   # keep the previous path while the robot is this near it (m)
@@ -62,10 +63,10 @@ planner_server:
       lethal_cost_threshold: 253.0
 
       # ── Post-processing ───────────────────────────────────────────────────
-      simplify_path: true        # drop waypoints whose neighbours join directly
+      simplify_path: true        # join each waypoint to the farthest one it can reach
       enable_smoothing: true     # Chaikin; a corner is cut only as far as it stays clear
       smoothing_iterations: 5
-      output_spacing: 0.1        # max distance between output poses (m)
+      output_spacing: 0.1        # distance between output poses (m)
 
 # ── Costmap configuration (global) ─────────────────────────────────────────
 global_costmap:

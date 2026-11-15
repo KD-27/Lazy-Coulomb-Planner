@@ -15,11 +15,14 @@
 #include "lazy_coulomb_planner/lazy_coulomb_planner.hpp"
 
 #include <algorithm>
+#include <cstdlib>
 #include <functional>
 #include <limits>
 #include <memory>
+#include <queue>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "nav2_core/planner_exceptions.hpp"
@@ -45,6 +48,10 @@ static const int kMaxFlatSteps = 2;
 // When continuing the previous path, join it at least this far ahead of the
 // robot (m), so the connecting piece runs forwards.
 static const double kRejoinAhead = 0.3;
+
+// Waypoint lists up to this length are simplified by an exhaustive search for
+// the farthest reachable point; longer lists use a binary search.
+static const size_t kExhaustiveShortcut = 200;
 
 // The early reachability check visits at most this many cells. That is enough
 // to exhaust a sealed-in pocket without flooding a large open map.
@@ -80,7 +87,7 @@ void LazyCoulombPlanner::configure(
       return node->get_parameter(name_ + "." + key);
     };
 
-  max_iterations_ = declare("max_iterations", rclcpp::ParameterValue(300)).as_int();
+  max_iterations_ = declare("max_iterations", rclcpp::ParameterValue(50)).as_int();
   max_push_iterations_ = declare("max_push_iterations", rclcpp::ParameterValue(400)).as_int();
   force_model_ = declare("force_model", rclcpp::ParameterValue("coulomb")).as_string();
   force_exponent_ = declare("force_exponent", rclcpp::ParameterValue(2.0)).as_double();
@@ -93,11 +100,12 @@ void LazyCoulombPlanner::configure(
   retry_other_side_ = declare("retry_other_side", rclcpp::ParameterValue(true)).as_bool();
   grid_fallback_ = declare("grid_fallback", rclcpp::ParameterValue(true)).as_bool();
   reachability_check_after_ =
-    declare("reachability_check_after", rclcpp::ParameterValue(50)).as_int();
+    declare("reachability_check_after", rclcpp::ParameterValue(25)).as_int();
   path_reuse_distance_ =
     declare("path_reuse_distance", rclcpp::ParameterValue(0.5)).as_double();
   path_reuse_min_saving_ =
     declare("path_reuse_min_saving", rclcpp::ParameterValue(0.15)).as_double();
+  grid_search_weight_ = declare("grid_search_weight", rclcpp::ParameterValue(3.0)).as_double();
   retry_order_ = declare("retry_order", rclcpp::ParameterValue("shortest")).as_string();
   max_path_stretch_ = declare("max_path_stretch", rclcpp::ParameterValue(5.0)).as_double();
   goal_tolerance_ = declare("goal_tolerance", rclcpp::ParameterValue(0.5)).as_double();
@@ -108,7 +116,7 @@ void LazyCoulombPlanner::configure(
     declare("smoothing_cost_slack", rclcpp::ParameterValue(40.0)).as_double();
   max_clearance_push_ =
     declare("max_clearance_push", rclcpp::ParameterValue(1.0)).as_double();
-  waypoint_margin_ = declare("waypoint_margin", rclcpp::ParameterValue(0.3)).as_double();
+  waypoint_margin_ = declare("waypoint_margin", rclcpp::ParameterValue(0.5)).as_double();
   simplify_path_ = declare("simplify_path", rclcpp::ParameterValue(true)).as_bool();
   enable_smoothing_ = declare("enable_smoothing", rclcpp::ParameterValue(true)).as_bool();
   smoothing_iterations_ = declare("smoothing_iterations", rclcpp::ParameterValue(5)).as_int();
@@ -372,9 +380,7 @@ nav_msgs::msg::Path LazyCoulombPlanner::createPlan(
       if (!lazy_failure.empty()) {
       // The lazy search gave up. A route may still exist: settle it with the grid
       // search, and use its path if allowed.
-        if (!grid_searched &&
-          gridSearch(start, goal, grid_path, 0) != Reachability::kReachable)
-        {
+        if (!grid_searched && !gridRoute(start, goal, grid_path)) {
           throw nav2_core::NoValidPathCouldBeFound(
                 "LazyCoulombPlanner: Goal is not reachable from the start");
         }
@@ -386,7 +392,7 @@ nav_msgs::msg::Path LazyCoulombPlanner::createPlan(
       }
 
       if (simplify_path_) {
-        path = removeRedundant(path);
+        path = shortcut(path);
       }
 
       path = improveClearance(path);
@@ -398,7 +404,8 @@ nav_msgs::msg::Path LazyCoulombPlanner::createPlan(
       }
 
       if (output_spacing_ > 0.0) {
-        path = densify(path, output_spacing_);
+        // Evenly spaced poses.
+        path = resample(path, output_spacing_);
       }
 
     // Safety net: nothing leaves the planner without a final collision check.
@@ -891,33 +898,225 @@ LazyCoulombPlanner::Reachability LazyCoulombPlanner::gridSearch(
   return Reachability::kUnreachable;
 }
 
+bool LazyCoulombPlanner::gridRoute(
+  const PathPoint & start, const PathPoint & goal, std::vector<PathPoint> & route) const
+{
+  // A* over free cells from the start to the goal, eight-connected, with the
+  // straight-line distance as heuristic. Unlike the breadth-first check above it
+  // heads for the goal, so in a map with free space it visits a narrow band of
+  // cells, not the whole map. The heuristic is weighted (grid_search_weight):
+  // the route may be a little longer than the shortest one, which matters
+  // little because it is straightened afterwards, and far fewer cells are
+  // visited.
+  unsigned int sx, sy, gx, gy;
+  if (!costmap_->worldToMap(start.x, start.y, sx, sy) ||
+    !costmap_->worldToMap(goal.x, goal.y, gx, gy))
+  {
+    return false;
+  }
+  const int size_x = static_cast<int>(costmap_->getSizeInCellsX());
+  const int size_y = static_cast<int>(costmap_->getSizeInCellsY());
+  const size_t cell_count = static_cast<size_t>(size_x) * size_y;
+  const unsigned char * cells = costmap_->getCharMap();
+  // Costs are whole numbers, so "cost < threshold" is "cost <= blocked_from - 1".
+  const unsigned char blocked_from = static_cast<unsigned char>(
+    std::clamp(std::ceil(lethal_cost_threshold_), 0.0, 255.0));
+  auto is_free = [&](int x, int y) {
+      return x >= 0 && y >= 0 && x < size_x && y < size_y &&
+             cells[static_cast<size_t>(y) * size_x + x] < blocked_from;
+    };
+
+  static const int kDx[8] = {1, -1, 0, 0, 1, 1, -1, -1};
+  static const int kDy[8] = {0, 0, 1, -1, 1, -1, 1, -1};
+  const unsigned char kSettled = 0x80;   // flag in `from`: the cell has been expanded
+  static const float kStep[8] = {1.0f, 1.0f, 1.0f, 1.0f, 1.41421356f, 1.41421356f,
+    1.41421356f, 1.41421356f};
+
+  // calloc hands out zero pages that cost nothing until they are touched, so
+  // these arrays are cheap even on a very large map. cost[i] == 0 means "not
+  // reached"; otherwise it is the cost to reach the cell plus one.
+  struct Free {void operator()(void * p) const {std::free(p);}};
+  std::unique_ptr<float,
+    Free> cost_mem(static_cast<float *>(std::calloc(cell_count, sizeof(float))));
+  std::unique_ptr<unsigned char, Free> from_mem(
+    static_cast<unsigned char *>(std::calloc(cell_count, 1)));
+  float * cost = cost_mem.get();
+  unsigned char * from = from_mem.get();   // 1 + direction walked to get here; 9 = start
+  if (!cost || !from) {
+    return false;
+  }
+
+  const float weight = static_cast<float>(std::max(1.0, grid_search_weight_));
+  const int goal_x = static_cast<int>(gx), goal_y = static_cast<int>(gy);
+  auto heuristic = [&](int x, int y) {
+      const float dx = static_cast<float>(x - goal_x), dy = static_cast<float>(y - goal_y);
+      return weight * std::sqrt(dx * dx + dy * dy);
+    };
+  auto index = [&](int x, int y) {return static_cast<size_t>(y) * size_x + x;};
+
+  using Entry = std::pair<float, unsigned int>;   // (cost so far + heuristic, cell)
+  std::vector<Entry> storage;
+  storage.reserve(4096);
+  std::priority_queue<Entry, std::vector<Entry>, std::greater<Entry>> open(
+    std::greater<Entry>(), std::move(storage));
+  const size_t start_index = index(sx, sy), goal_index = index(gx, gy);
+  cost[start_index] = 1.0f;
+  from[start_index] = 9;
+  open.emplace(heuristic(sx, sy), start_index);
+
+  bool found = start_index == goal_index;
+  while (!found && !open.empty()) {
+    const size_t cell = open.top().second;
+    open.pop();
+    const int x = static_cast<int>(cell % size_x), y = static_cast<int>(cell / size_x);
+    if (from[cell] & kSettled) {
+      continue;   // settled already through a cheaper entry
+    }
+    // Settle each cell once. With a weighted heuristic a cell could otherwise be
+    // re-opened many times; settling it keeps the search linear in the cells
+    // visited, at the price of a route that is not always the shortest.
+    from[cell] |= kSettled;
+    const float here = cost[cell];
+    for (int d = 0; d < 8; ++d) {
+      const int nx = x + kDx[d], ny = y + kDy[d];
+      if (!is_free(nx, ny)) {
+        continue;
+      }
+      // No squeezing diagonally between two occupied cells.
+      if (d >= 4 && (!is_free(x + kDx[d], y) || !is_free(x, y + kDy[d]))) {
+        continue;
+      }
+      const size_t next = index(nx, ny);
+      if (from[next] & kSettled) {
+        continue;
+      }
+      const float reached = here + kStep[d];
+      if (cost[next] == 0.0f || reached < cost[next]) {
+        cost[next] = reached;
+        from[next] = static_cast<unsigned char>(d + 1);
+        if (next == goal_index) {
+          found = true;
+          break;
+        }
+        open.emplace(reached - 1.0f + heuristic(nx, ny), next);
+      }
+    }
+  }
+  if (!found) {
+    return false;
+  }
+
+  std::vector<PathPoint> back;
+  int x = static_cast<int>(gx), y = static_cast<int>(gy);
+  while (true) {
+    double wx, wy;
+    costmap_->mapToWorld(x, y, wx, wy);
+    back.emplace_back(wx, wy, true);
+    const unsigned char how = from[index(x, y)] & 0x0F;
+    if (how == 9) {
+      break;
+    }
+    x -= kDx[how - 1];
+    y -= kDy[how - 1];
+  }
+  route.assign(back.rbegin(), back.rend());
+  route.front() = start;
+  route.back() = goal;
+  return true;
+}
+
 std::vector<PathPoint> LazyCoulombPlanner::shortcut(const std::vector<PathPoint> & pts) const
 {
-  // Replace runs of cell-to-cell steps by the longest straight segments that
-  // stay collision free.
+  // From each kept point jump to the farthest later point that can be reached
+  // in a straight line. This is what untangles a path: where the lazy search
+  // went back and forth around an obstacle, the whole detour is cut out.
   if (pts.size() < 3) {return pts;}
+
+  // Short lists are scanned exhaustively from the far end. Long ones (the
+  // cell-by-cell route of the grid search) use a binary search, which assumes
+  // that visibility ends once and may stop a little early.
+  const bool exhaustive = pts.size() <= kExhaustiveShortcut;
 
   std::vector<PathPoint> out;
   out.push_back(pts.front());
   size_t i = 0;
   while (i + 1 < pts.size()) {
-    size_t reach = i + 1;  // neighbouring cells are always mutually visible
-    size_t lo = i + 2, hi = pts.size() - 1;
-    if (lo <= hi && !segmentIntersectsObstacle(pts[i], pts[hi])) {
-      reach = hi;
+    size_t reach = i + 1;  // consecutive points are always mutually visible
+    if (exhaustive) {
+      for (size_t j = pts.size() - 1; j > i + 1; --j) {
+        if (!segmentIntersectsObstacle(pts[i], pts[j])) {
+          reach = j;
+          break;
+        }
+      }
     } else {
-      while (lo <= hi) {
-        const size_t mid = lo + (hi - lo) / 2;
-        if (!segmentIntersectsObstacle(pts[i], pts[mid])) {
-          reach = mid;
-          lo = mid + 1;
-        } else {
-          hi = mid - 1;
+      size_t lo = i + 2, hi = pts.size() - 1;
+      if (lo <= hi && !segmentIntersectsObstacle(pts[i], pts[hi])) {
+        reach = hi;
+      } else {
+        while (lo <= hi) {
+          const size_t mid = lo + (hi - lo) / 2;
+          if (!segmentIntersectsObstacle(pts[i], pts[mid])) {
+            reach = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
         }
       }
     }
     out.push_back(pts[reach]);
     i = reach;
+  }
+  return out;
+}
+
+std::vector<PathPoint> LazyCoulombPlanner::resample(
+  const std::vector<PathPoint> & pts, double spacing) const
+{
+  // Points `spacing` apart along the polyline, plus its two ends. Smoothing
+  // leaves runs of points a millimetre apart; this evens them out.
+  //
+  // A new point is joined to the previous one by a chord, which cuts slightly
+  // inside the curve between them. Where that chord would touch an obstacle the
+  // original vertices in between are kept, so that stretch follows the original
+  // path exactly. The result is therefore collision free whenever the input is.
+  if (pts.size() < 2) {return pts;}
+  std::vector<PathPoint> out{pts.front()};
+  std::vector<size_t> passed;   // original vertices passed since the last output point
+  auto emit = [&](const PathPoint & point) {
+      if (!passed.empty() && segmentIntersectsObstacle(out.back(), point)) {
+        for (const size_t v : passed) {
+          out.push_back(pts[v]);
+        }
+      }
+      passed.clear();
+      out.push_back(point);
+    };
+
+  double until_next = spacing;
+  for (size_t i = 0; i + 1 < pts.size(); ++i) {
+    const double dx = pts[i + 1].x - pts[i].x;
+    const double dy = pts[i + 1].y - pts[i].y;
+    const double len = std::hypot(dx, dy);
+    double at = 0.0;
+    while (len - at >= until_next) {
+      at += until_next;
+      emit(PathPoint(pts[i].x + dx * at / len, pts[i].y + dy * at / len));
+      until_next = spacing;
+    }
+    until_next -= len - at;
+    if (i + 2 < pts.size()) {
+      passed.push_back(i + 1);
+    }
+  }
+  const PathPoint & last = pts.back();
+  if (out.size() > 1 && passed.empty() &&
+    std::hypot(out.back().x - last.x, out.back().y - last.y) < 0.25 * spacing)
+  {
+    out.back() = last;   // avoid a very short final step
+  } else {
+    emit(last);
   }
   return out;
 }

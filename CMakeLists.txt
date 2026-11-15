@@ -8,6 +8,13 @@ endif()
 
 set(CMAKE_CXX_STANDARD 17)
 
+# Build optimised unless told otherwise. Without a build type CMake adds no
+# optimisation flags at all, which makes the planner several times slower.
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  message(STATUS "lazy_coulomb_planner: no build type given, using Release")
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+endif()
+
 # ── Dependencies ───────────────────────────────────────────────────────────────
 find_package(ament_cmake        REQUIRED)
 find_package(rclcpp             REQUIRED)

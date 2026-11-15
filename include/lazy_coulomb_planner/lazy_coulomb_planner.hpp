@@ -184,7 +184,14 @@ protected:
     const PathPoint & start, const PathPoint & goal, std::vector<PathPoint> & route,
     size_t cell_limit) const;
 
-  /** @brief Replace a cell-by-cell route by the longest collision-free straight segments. */
+  /**
+   * @brief A* route over free cells from start to goal (weighted by grid_search_weight).
+   * @return false if the goal cannot be reached from the start
+   */
+  bool gridRoute(
+    const PathPoint & start, const PathPoint & goal, std::vector<PathPoint> & route) const;
+
+  /** @brief Jump from each kept point to the farthest later point reachable in a straight line. */
   std::vector<PathPoint> shortcut(const std::vector<PathPoint> & points) const;
 
   /** @brief Length of a polyline (m). */
@@ -205,6 +212,12 @@ protected:
    *        each corner is cut only as far as the cut stays clear of obstacles.
    */
   std::vector<PathPoint> chaikinSmooth(const std::vector<PathPoint> & points) const;
+
+  /**
+   * @brief Points `spacing` apart along the polyline, plus its two ends. Original
+   *        vertices are kept where joining two samples directly would touch an obstacle.
+   */
+  std::vector<PathPoint> resample(const std::vector<PathPoint> & points, double spacing) const;
 
   /** @brief Resample the polyline so consecutive poses are at most `spacing` apart. */
   std::vector<PathPoint> densify(const std::vector<PathPoint> & points, double spacing) const;
@@ -240,6 +253,7 @@ protected:
   double path_reuse_min_saving_;    // ... unless a fresh plan is shorter by this fraction
   std::vector<PathPoint> last_path_;  // Path returned by the previous request
   PathPoint last_goal_{0.0, 0.0};     // Goal of the previous request
+  double grid_search_weight_;       // Weight of the heuristic in the fallback's A* (>= 1)
   bool retry_other_side_;           // Back up and try the other side on a dead end
   std::string retry_order_;         // Which untried side to retry first: "recent" or "shortest"
   double max_path_stretch_;         // Abandon detours longer than this x straight line

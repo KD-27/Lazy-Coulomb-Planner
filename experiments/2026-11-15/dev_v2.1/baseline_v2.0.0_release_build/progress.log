@@ -1,0 +1,9 @@
+[1/8] base (20 s): Navfn 100/100 13.8ms, LCP 100/100 0.5ms, LCP_lazy 100/100 0.5ms
+[2/8] density_20 (22 s): Navfn 94/94 13.3ms, LCP 94/94 1.0ms, LCP_lazy 87/94 0.9ms
+[3/8] density_30 (22 s): Navfn 84/84 13.6ms, LCP 84/84 7.7ms, LCP_lazy 47/84 1.4ms
+[4/8] shape_u (20 s): Navfn 93/93 14.2ms, LCP 93/93 4.9ms, LCP_lazy 51/93 0.9ms
+[5/8] corridor_1.2 (20 s): Navfn 100/100 7.8ms, LCP 100/100 0.8ms, LCP_lazy 99/100 0.8ms
+[6/8] maze (16 s): Navfn 100/100 2.8ms, LCP 100/100 1.1ms, LCP_lazy 82/100 0.7ms
+[7/8] house (14 s): Navfn 57/57 1.4ms, LCP 57/57 0.2ms, LCP_lazy 56/57 0.2ms
+[8/8] event_venue (14 s): Navfn 54/54 2.0ms, LCP 54/54 0.3ms, LCP_lazy 49/54 0.3ms
+SUITE DONE

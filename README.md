@@ -90,19 +90,30 @@ at least `path_reuse_min_saving`.
 
 ### When the lazy search struggles
 
-Two things happen once waypoint placement stops going smoothly:
+The lazy search is given a small budget of waypoint placement attempts
+(`max_iterations`). Easy requests need a handful; a request that uses up the
+budget is one the lazy search is unlikely to win, and continuing costs more
+than switching method.
 
 - After `reachability_check_after` attempts, a breadth-first search grown from
   both the start and the goal checks whether either is sealed inside a small
-  pocket. If so the planner reports that the goal is unreachable straight away,
-  instead of spending its whole budget first. The check is capped at 20 000
-  cells so it stays cheap on large open maps.
-- If the lazy search uses up `max_iterations`, the same search runs to
-  completion. If no route exists the planner fails; otherwise, with
-  `grid_fallback: true`, the route it found is cut down to the longest
-  collision-free straight segments and goes through the same clearance and
-  smoothing steps as a lazy path. The planner therefore returns a path whenever
-  one exists.
+  pocket. If so the planner reports that the goal is unreachable straight away.
+  The check is capped at 20 000 cells so it stays cheap on large open maps.
+- When the budget is used up, an A\* search over free cells finds a route from
+  start to goal (or establishes that there is none). Its heuristic is weighted
+  by `grid_search_weight`, which keeps it to a narrow band of cells. With
+  `grid_fallback: true` that route is then straightened into the longest
+  collision-free segments and goes through the same clearance and smoothing
+  steps as a lazy path. The planner therefore returns a path whenever one
+  exists.
+
+### Simplification
+
+Around a single obstacle the lazy search can leave a tangle of waypoints that
+go back and forth. Before anything else is done to the path, each kept point is
+joined to the farthest later point it can reach in a straight line, which cuts
+such detours out whole. The finished path is resampled to poses
+`output_spacing` apart.
 
 ### Failure instead of a bad path
 
@@ -196,19 +207,20 @@ ros2 launch nav2_bringup navigation_launch.py \
 | `comfort_cost` | 30.0 | Costmap costs above this are avoided where possible; 253 disables |
 | `max_clearance_push` | 1.0 | Furthest a waypoint moves to gain clearance (m) |
 | `smoothing_cost_slack` | 40.0 | Cost a smoothing cut may add above `comfort_cost` |
-| `waypoint_margin` | 0.3 | Extra push past the obstacle edge when free (m); gives corners room to be smoothed |
+| `waypoint_margin` | 0.5 | Extra push past the obstacle edge when free (m); gives corners room to be smoothed |
 | `retry_other_side` | true | Back up and try the other side when a branch dead-ends |
 | `retry_order` | `shortest` | Retry from the `shortest` partial path, or the most `recent` decision |
 | `max_path_stretch` | 5.0 | Abandon detours longer than this × the straight-line distance |
-| `max_iterations` | 300 | Waypoint placement attempts before the lazy search gives up |
+| `max_iterations` | 50 | Waypoint placement attempts before the lazy search gives up |
 | `grid_fallback` | true | When the lazy search gives up, use the route found by the grid search |
-| `reachability_check_after` | 50 | Attempts before checking that start and goal are not sealed in |
+| `reachability_check_after` | 25 | Attempts before checking that start and goal are not sealed in |
+| `grid_search_weight` | 3.0 | Weight of the heuristic in the fallback's A* search (1 = shortest route, larger = fewer cells visited) |
 | `max_push_iterations` | 400 | Max steps to push one waypoint clear |
 | `lethal_cost_threshold` | 253.0 | Cost at or above this is an obstacle |
-| `simplify_path` | true | Remove waypoints whose neighbours join directly |
+| `simplify_path` | true | Join each waypoint to the farthest one it can reach in a straight line |
 | `enable_smoothing` | true | Collision-safe Chaikin smoothing |
 | `smoothing_iterations` | 5 | Chaikin passes; each roughly halves the corner angles |
-| `output_spacing` | 0.1 | Max distance between output poses (m); 0 disables |
+| `output_spacing` | 0.1 | Distance between output poses (m); 0 keeps the raw points |
 
 ---
 
