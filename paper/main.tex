@@ -116,7 +116,11 @@ A\textsuperscript{*}~\cite{hart1968formal} underlie NavFn and Smac~2D;
 weighted A\textsuperscript{*}~\cite{pohl1970heuristic} trades optimality for
 speed, as our fallback does. Any-angle planners such as
 Theta\textsuperscript{*}~\cite{nash2007theta} remove the grid's heading
-restrictions. All of them search free space whether or not it is needed.
+restrictions. Jump point search~\cite{harabor2011jps}, extended to 3D
+in~\cite{liu2017sfc}, prunes symmetric grid paths and speeds up
+A\textsuperscript{*} considerably without losing optimality, but it still
+expands outwards from the start. All of them search free space whether or not
+it is needed.
 
 \emph{Potential fields.} Artificial potential fields~\cite{khatib1986real} steer a
 robot down the gradient of an attractive goal and repulsive obstacles and are
@@ -128,7 +132,14 @@ descent, and local minima are handled by backtracking and the fallback.
 path under internal and external forces. \lcp{} likewise starts from a path and
 moves it away from obstacles, but it builds the path incrementally from the
 straight line, moves only the points that are blocked, and freezes them once
-clear.
+clear. The distance map planner distributed with the jps3d
+library~\cite{jps3d} combines search and potential field in the opposite order
+to ours: it first finds a grid path with jump point search and then uses an
+artificial potential field around the obstacles to move that path to a safer
+one within a region around it, accepting a longer path for more clearance.
+In \lcp{} the repulsion produces the path and the grid search is only the
+fallback; a clearance pass of this kind over \lcp{}'s output is a natural
+remedy for the short clearances we report in Section~\ref{sec:driving}.
 
 \emph{Lazy and reactive planning.} Lazy collision checking defers work until it
 is unavoidable~\cite{bohlin2000lazy}; bug algorithms~\cite{lumelsky1987path} and
@@ -506,6 +517,7 @@ path (78 to 39) for 3\,\% more length; the effect saturates at a comfort cost of
 60. Even so, \lcp{} paths stay closer to obstacles than NavFn's (39 against 15).
 
 \subsection{Driving}
+\label{sec:driving}
 
 \begin{table}[t]
 \centering
