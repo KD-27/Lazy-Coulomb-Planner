@@ -1,0 +1,9 @@
+map,arguments,sha256,generated
+base,--size 50 --shape circle --seed 1 --density 0.1,da89bef72ce4575152e72d657fec5091a0b6315e89678835bfa39ac3234ea1b5,"1000 x 1000 cells, 10.8 % occupied"
+density_20,--size 50 --shape circle --seed 1 --density 0.2,edb0c5bead4a58e7d738a852b03bd9e6f31d03c174f10b69d69303d5b3474dbb,"1000 x 1000 cells, 20.7 % occupied"
+density_30,--size 50 --shape circle --seed 1 --density 0.3,bb8eef976dd5249d39e056e64a5f2cb054e18844b43ee277831fbf4b2ce976ee,"1000 x 1000 cells, 30.7 % occupied"
+shape_u,--size 50 --shape u --seed 1 --density 0.1,052d6c89649e6f419c20be7f2753c4f6a05d0310c60ac8cd841866f9c5381fd9,"1000 x 1000 cells, 10.8 % occupied"
+corridor_1.2,--size 50 --shape blocks --seed 1 --block 4.0 --corridor 1.2,6abf9aedeae3b09fc4fc90dd751a7892358199681a397d78c00ab4f612bb9fd1,"1000 x 1000 cells, 58.3 % occupied"
+maze,file maps/maze.yaml,cd4e68c58b78b25ba1d12bb43ca80fe77282919722e6c7af602f4fcfc6c6a511,existing map
+house,file maps/house.yaml,7a37105c4f9af12a4ea9767fc47822daea17461dc0f669a752ac7a4fb3df8b3b,existing map
+event_venue,file maps/event_venue.yaml,08e1a61e80d5c1f67cba2581de0dc4d6dfdff212bdfcf4948e7c692039f957e3,existing map

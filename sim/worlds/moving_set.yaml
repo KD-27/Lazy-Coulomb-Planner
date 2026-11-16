@@ -1,0 +1,5 @@
+# Worlds for the moving-obstacle driving test: 20 m square, no static obstacles
+# and 10 % static obstacles; moving obstacles are added by add_moving_obstacles.py.
+worlds:
+  - {name: open,       size: 20, shape: circle, density: 0.0}
+  - {name: density_10, size: 20, shape: circle, density: 0.10}

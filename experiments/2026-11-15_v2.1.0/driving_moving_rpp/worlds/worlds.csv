@@ -1,0 +1,3 @@
+world,start_x,start_y,arguments,obstacles
+open,10.025,10.025,--size 20 --shape circle --seed 1 --sdf --density 0.0,"0 cylinders, 4 boxes"
+density_10,10.025,10.025,--size 20 --shape circle --seed 1 --sdf --density 0.1,"42 cylinders, 4 boxes"

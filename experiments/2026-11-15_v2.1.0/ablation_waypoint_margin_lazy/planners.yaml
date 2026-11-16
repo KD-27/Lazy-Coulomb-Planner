@@ -1,0 +1,52 @@
+# Ablation (lazy search alone, grid fallback off): Extra push of a waypoint past the obstacle edge (m).
+# Every variant is the default LCP with only the listed parameters changed.
+# path_reuse_distance 0 everywhere: the benchmark measures planning from scratch.
+planner_server:
+  ros__parameters:
+    expected_planner_frequency: 20.0
+    planner_plugins: ["Navfn", "m0p0", "m0p25", "m0p5", "m0p75", "m1p0"]
+    Navfn:
+      plugin: "nav2_navfn_planner::NavfnPlanner"
+    m0p0:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      waypoint_margin: 0.0
+      grid_fallback: false
+    m0p25:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      waypoint_margin: 0.25
+      grid_fallback: false
+    m0p5:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      grid_fallback: false
+    m0p75:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      waypoint_margin: 0.75
+      grid_fallback: false
+    m1p0:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      waypoint_margin: 1.0
+      grid_fallback: false
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      update_frequency: 1.0
+      publish_frequency: 1.0
+      global_frame: map
+      robot_base_frame: base_link
+      robot_radius: 0.22
+      resolution: 0.05
+      track_unknown_space: true
+      always_send_full_costmap: true
+      plugins: ["static_layer", "inflation_layer"]
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: true
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.7

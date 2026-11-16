@@ -1,0 +1,47 @@
+# Ablation (lazy search alone, grid fallback off): Range within which obstacle cells repel a waypoint (m).
+# Every variant is the default LCP with only the listed parameters changed.
+# path_reuse_distance 0 everywhere: the benchmark measures planning from scratch.
+planner_server:
+  ros__parameters:
+    expected_planner_frequency: 20.0
+    planner_plugins: ["Navfn", "R0p5", "R1p0", "R2p0", "R4p0"]
+    Navfn:
+      plugin: "nav2_navfn_planner::NavfnPlanner"
+    R0p5:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      charge_radius: 0.5
+      grid_fallback: false
+    R1p0:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      grid_fallback: false
+    R2p0:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      charge_radius: 2.0
+      grid_fallback: false
+    R4p0:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      charge_radius: 4.0
+      grid_fallback: false
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      update_frequency: 1.0
+      publish_frequency: 1.0
+      global_frame: map
+      robot_base_frame: base_link
+      robot_radius: 0.22
+      resolution: 0.05
+      track_unknown_space: true
+      always_send_full_costmap: true
+      plugins: ["static_layer", "inflation_layer"]
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: true
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.7

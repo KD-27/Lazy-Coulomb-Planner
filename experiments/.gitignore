@@ -3,3 +3,4 @@
 *.pgm
 *.trace.jsonl
 *.stdout
+HOLD_MOVING

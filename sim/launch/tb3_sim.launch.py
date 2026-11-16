@@ -28,14 +28,17 @@ def generate_launch_description():
     with open(os.path.join(sim_dir, 'urdf', 'turtlebot3_waffle.urdf'), 'r') as f:
         robot_description = f.read()
 
+    # LCP_SIM_WORLD selects another world (an SDF or xacro file, for example one
+    # written by benchmark/generate_map.py --sdf); the default is Nav2's sandbox.
+    world_source = os.environ.get('LCP_SIM_WORLD') or os.path.join(
+        sim_dir, 'worlds', 'tb3_sandbox.sdf.xacro')
     # The world is a xacro file; Gazebo needs it expanded into a real SDF file.
     # Expand it here, before anything is launched: started as a separate process,
     # xacro can lose the race against Gazebo, which then exits for lack of a world.
     handle, world_sdf = tempfile.mkstemp(prefix='lcp_sim_', suffix='.sdf')
     os.close(handle)
     subprocess.run(
-        ['xacro', '-o', world_sdf, 'headless:=True',
-         os.path.join(sim_dir, 'worlds', 'tb3_sandbox.sdf.xacro')], check=True)
+        ['xacro', '-o', world_sdf, 'headless:=True', world_source], check=True)
     gazebo = ExecuteProcess(cmd=['gz', 'sim', '-r', '-s', world_sdf], output='screen')
     remove_world = RegisterEventHandler(OnShutdown(on_shutdown=[
         OpaqueFunction(function=lambda _: os.path.exists(world_sdf) and os.remove(world_sdf))]))
@@ -55,11 +58,38 @@ def generate_launch_description():
     # Velocity chain: controller / behaviours -> cmd_vel_nav -> velocity smoother
     # -> cmd_vel_smoothed -> collision monitor -> cmd_vel.
     to_smoother = [('cmd_vel', 'cmd_vel_nav')]
-    localization = ['map_server', 'amcl']
+    # LCP_SIM_LOCALIZATION=odometry: no AMCL; the map frame is fixed to where the
+    # robot was spawned, so its pose comes from the simulator's wheel odometry.
+    # Used in generated worlds, where AMCL can lock onto the wrong one of many
+    # identical obstacles and the test would then measure localisation failures.
+    odometry_only = os.environ.get('LCP_SIM_LOCALIZATION') == 'odometry'
+    localization = ['map_server'] if odometry_only else ['map_server', 'amcl']
+    if odometry_only:
+        localizer = Node(
+            package='tf2_ros', executable='static_transform_publisher', name='map_to_odom',
+            output='screen', parameters=[sim_time],
+            arguments=['--x', LaunchConfiguration('x_pose'), '--y', LaunchConfiguration('y_pose'),
+                       '--frame-id', 'map', '--child-frame-id', 'odom'])
+    else:
+        localizer = nav2('nav2_amcl', 'amcl', 'amcl')
     navigation = ['controller_server', 'smoother_server', 'planner_server', 'behavior_server',
                   'velocity_smoother', 'collision_monitor', 'bt_navigator']
 
-    return LaunchDescription([
+    # LCP_SIM_MOVERS: prefix of a world built by add_moving_obstacles.py; adds the
+    # bridge for the obstacles' velocity commands and the node that drives them.
+    movers = []
+    movers_prefix = os.environ.get('LCP_SIM_MOVERS')
+    if movers_prefix:
+        movers = [
+            Node(package='ros_gz_bridge', executable='parameter_bridge', name='movers_bridge',
+                 output='screen', parameters=[{'config_file': movers_prefix + '.bridge.yaml',
+                                               'use_sim_time': True}]),
+            ExecuteProcess(cmd=['python3', os.path.join(os.path.dirname(__file__), '..',
+                                                        'move_obstacles.py'),
+                                movers_prefix + '.lanes.yaml'], output='screen'),
+        ]
+
+    return LaunchDescription(movers + [
         DeclareLaunchArgument('params_file'),
         DeclareLaunchArgument('map'),
         DeclareLaunchArgument('x_pose', default_value='-2.0'),
@@ -74,7 +104,7 @@ def generate_launch_description():
 
         Node(package='nav2_map_server', executable='map_server', name='map_server',
              output='screen', parameters=[params, {'yaml_filename': map_yaml}]),
-        nav2('nav2_amcl', 'amcl', 'amcl'),
+        localizer,
         Node(package='nav2_lifecycle_manager', executable='lifecycle_manager',
              name='lifecycle_manager_localization', output='screen',
              parameters=[sim_time, {'autostart': True, 'node_names': localization}]),

@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<!-- Gazebo world for the driving test on a generated map. Same plugins, light,
+     ground and physics as Nav2's tb3_sandbox world (headless); the obstacles are
+     filled in by generate_map.py (option sdf). -->
+<sdf version="1.6">
+  <world name="default">
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"/>
+    <light name="sun" type="directional">
+      <cast_shadows>0</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.8 0.8 0.8 1</specular>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+    <model name="ground_plane">
+      <static>1</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><plane><normal>0 0 1</normal><size>60 60</size></plane></geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name="visual">
+          <geometry><plane><normal>0 0 1</normal><size>60 60</size></plane></geometry>
+          <material><ambient>0.8 0.8 0.8 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <scene><shadows>0</shadows></scene>
+    <physics name="3ms" type="ode">
+      <max_step_size>0.003</max_step_size>
+      <real_time_factor>1</real_time_factor>
+    </physics>
+    <model name="obstacles">
+      <static>1</static>
+      <link name="link">
+        <collision name="b0"><pose>10.0000 0.0500 0.25 0 0 0</pose><geometry><box><size>20.0000 0.1000 0.5</size></box></geometry></collision>
+        <visual name="b0"><pose>10.0000 0.0500 0.25 0 0 0</pose><geometry><box><size>20.0000 0.1000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b1"><pose>19.9500 0.6500 0.25 0 0 0</pose><geometry><box><size>0.1000 1.1000 0.5</size></box></geometry></collision>
+        <visual name="b1"><pose>19.9500 0.6500 0.25 0 0 0</pose><geometry><box><size>0.1000 1.1000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b2"><pose>3.2000 3.2000 0.25 0 0 0</pose><geometry><box><size>4.0000 4.0000 0.5</size></box></geometry></collision>
+        <visual name="b2"><pose>3.2000 3.2000 0.25 0 0 0</pose><geometry><box><size>4.0000 4.0000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b3"><pose>13.6000 3.2000 0.25 0 0 0</pose><geometry><box><size>4.0000 4.0000 0.5</size></box></geometry></collision>
+        <visual name="b3"><pose>13.6000 3.2000 0.25 0 0 0</pose><geometry><box><size>4.0000 4.0000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b4"><pose>8.4000 3.2000 0.25 0 0 0</pose><geometry><box><size>4.0000 4.0000 0.5</size></box></geometry></collision>
+        <visual name="b4"><pose>8.4000 3.2000 0.25 0 0 0</pose><geometry><box><size>4.0000 4.0000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b5"><pose>18.4000 3.2000 0.25 0 0 0</pose><geometry><box><size>3.2000 4.0000 0.5</size></box></geometry></collision>
+        <visual name="b5"><pose>18.4000 3.2000 0.25 0 0 0</pose><geometry><box><size>3.2000 4.0000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b6"><pose>19.9500 5.8000 0.25 0 0 0</pose><geometry><box><size>0.1000 1.2000 0.5</size></box></geometry></collision>
+        <visual name="b6"><pose>19.9500 5.8000 0.25 0 0 0</pose><geometry><box><size>0.1000 1.2000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b7"><pose>3.2000 8.4000 0.25 0 0 0</pose><geometry><box><size>4.0000 4.0000 0.5</size></box></geometry></collision>
+        <visual name="b7"><pose>3.2000 8.4000 0.25 0 0 0</pose><geometry><box><size>4.0000 4.0000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b8"><pose>13.6000 8.4000 0.25 0 0 0</pose><geometry><box><size>4.0000 4.0000 0.5</size></box></geometry></collision>
+        <visual name="b8"><pose>13.6000 8.4000 0.25 0 0 0</pose><geometry><box><size>4.0000 4.0000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b9"><pose>8.4000 8.4000 0.25 0 0 0</pose><geometry><box><size>4.0000 4.0000 0.5</size></box></geometry></collision>
+        <visual name="b9"><pose>8.4000 8.4000 0.25 0 0 0</pose><geometry><box><size>4.0000 4.0000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b10"><pose>18.4000 8.4000 0.25 0 0 0</pose><geometry><box><size>3.2000 4.0000 0.5</size></box></geometry></collision>
+        <visual name="b10"><pose>18.4000 8.4000 0.25 0 0 0</pose><geometry><box><size>3.2000 4.0000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b11"><pose>19.9500 11.0000 0.25 0 0 0</pose><geometry><box><size>0.1000 1.2000 0.5</size></box></geometry></collision>
+        <visual name="b11"><pose>19.9500 11.0000 0.25 0 0 0</pose><geometry><box><size>0.1000 1.2000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b12"><pose>3.2000 13.6000 0.25 0 0 0</pose><geometry><box><size>4.0000 4.0000 0.5</size></box></geometry></collision>
+        <visual name="b12"><pose>3.2000 13.6000 0.25 0 0 0</pose><geometry><box><size>4.0000 4.0000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b13"><pose>13.6000 13.6000 0.25 0 0 0</pose><geometry><box><size>4.0000 4.0000 0.5</size></box></geometry></collision>
+        <visual name="b13"><pose>13.6000 13.6000 0.25 0 0 0</pose><geometry><box><size>4.0000 4.0000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b14"><pose>8.4000 13.6000 0.25 0 0 0</pose><geometry><box><size>4.0000 4.0000 0.5</size></box></geometry></collision>
+        <visual name="b14"><pose>8.4000 13.6000 0.25 0 0 0</pose><geometry><box><size>4.0000 4.0000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b15"><pose>18.4000 13.6000 0.25 0 0 0</pose><geometry><box><size>3.2000 4.0000 0.5</size></box></geometry></collision>
+        <visual name="b15"><pose>18.4000 13.6000 0.25 0 0 0</pose><geometry><box><size>3.2000 4.0000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b16"><pose>19.9500 16.2000 0.25 0 0 0</pose><geometry><box><size>0.1000 1.2000 0.5</size></box></geometry></collision>
+        <visual name="b16"><pose>19.9500 16.2000 0.25 0 0 0</pose><geometry><box><size>0.1000 1.2000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b17"><pose>0.0500 10.0000 0.25 0 0 0</pose><geometry><box><size>0.1000 19.8000 0.5</size></box></geometry></collision>
+        <visual name="b17"><pose>0.0500 10.0000 0.25 0 0 0</pose><geometry><box><size>0.1000 19.8000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b18"><pose>3.2000 18.3500 0.25 0 0 0</pose><geometry><box><size>4.0000 3.1000 0.5</size></box></geometry></collision>
+        <visual name="b18"><pose>3.2000 18.3500 0.25 0 0 0</pose><geometry><box><size>4.0000 3.1000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b19"><pose>13.6000 18.3500 0.25 0 0 0</pose><geometry><box><size>4.0000 3.1000 0.5</size></box></geometry></collision>
+        <visual name="b19"><pose>13.6000 18.3500 0.25 0 0 0</pose><geometry><box><size>4.0000 3.1000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b20"><pose>8.4000 18.3500 0.25 0 0 0</pose><geometry><box><size>4.0000 3.1000 0.5</size></box></geometry></collision>
+        <visual name="b20"><pose>8.4000 18.3500 0.25 0 0 0</pose><geometry><box><size>4.0000 3.1000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b21"><pose>18.4000 18.3500 0.25 0 0 0</pose><geometry><box><size>3.2000 3.1000 0.5</size></box></geometry></collision>
+        <visual name="b21"><pose>18.4000 18.3500 0.25 0 0 0</pose><geometry><box><size>3.2000 3.1000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b22"><pose>10.0000 19.9500 0.25 0 0 0</pose><geometry><box><size>20.0000 0.1000 0.5</size></box></geometry></collision>
+        <visual name="b22"><pose>10.0000 19.9500 0.25 0 0 0</pose><geometry><box><size>20.0000 0.1000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+      </link>
+    </model>
+  </world>
+</sdf>

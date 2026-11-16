@@ -1,0 +1,15 @@
+# Ablation: How a waypoint is pushed: the legacy probe, or a Coulomb sum with 1/r or 1/r^2, each with and without keeping the first side.
+pairs: 100
+repeats: 3
+planners_file: force_law_planners.yaml
+planners: [Navfn, probe, r1, r2, r1_free, r2_free]
+
+maps:
+  - {name: base,         group: generated, size: 50, shape: circle, density: 0.10}
+  - {name: density_20,   group: generated, size: 50, shape: circle, density: 0.20}
+  - {name: density_30,   group: generated, size: 50, shape: circle, density: 0.30}
+  - {name: shape_u,      group: generated, size: 50, shape: u,      density: 0.10}
+  - {name: corridor_1.2, group: generated, size: 50, shape: blocks, block: 4.0, corridor: 1.2}
+  - {name: maze,         group: indoor, file: maps/maze.yaml}
+  - {name: house,        group: indoor, file: maps/house.yaml}
+  - {name: event_venue,  group: indoor, file: maps/event_venue.yaml}

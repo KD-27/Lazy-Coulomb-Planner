@@ -1,0 +1,201 @@
+2026-11-15 16:04:05 planner: v2.1.0
+2026-11-15 16:04:05 controlled: start
+2026-11-15 16:37:20 controlled: done
+2026-11-15 16:37:20 controlled_seeds: start
+2026-11-15 17:39:11 controlled_seeds: done
+2026-11-15 17:39:11 benchmark: done
+2026-11-15 17:39:11 ablation_force_law: start
+2026-11-15 17:44:54 ablation_force_law: done
+2026-11-15 17:44:54 ablation_force_law_lazy: start
+2026-11-15 17:50:22 ablation_force_law_lazy: done
+2026-11-15 17:50:22 ablation_charge_radius: start
+2026-11-15 17:55:28 ablation_charge_radius: done
+2026-11-15 17:55:28 ablation_charge_radius_lazy: start
+2026-11-15 18:00:24 ablation_charge_radius_lazy: done
+2026-11-15 18:00:24 ablation_retry: start
+2026-11-15 18:06:29 ablation_retry: done
+2026-11-15 18:06:29 ablation_waypoint_margin: start
+2026-11-15 18:12:07 ablation_waypoint_margin: done
+2026-11-15 18:12:07 ablation_waypoint_margin_lazy: start
+2026-11-15 18:17:31 ablation_waypoint_margin_lazy: done
+2026-11-15 18:17:31 ablation_comfort_cost: start
+2026-11-15 18:17:31 ablation_comfort_cost: done
+2026-11-15 18:17:31 ablation_fallback_budget: start
+2026-11-15 18:23:48 ablation_fallback_budget: done
+2026-11-15 18:23:48 ablation_grid_search_weight: start
+2026-11-15 18:29:29 ablation_grid_search_weight: done
+2026-11-15 18:29:29 ablation_smoothing: start
+2026-11-15 18:35:49 ablation_smoothing: done
+2026-11-15 18:35:49 ablations: done
+2026-11-15 18:35:49 driving_rpp: start
+2026-11-15 18:39:52   lcp_01: lcp: reached 15/15 goals, sim time 209.7 s, travelled 42.84 m, closest obstacle 0.244 m, recoveries 37
+2026-11-15 18:43:36   navfn_01: navfn: reached 14/15 goals, sim time 193.0 s, travelled 43.29 m, closest obstacle 0.261 m, recoveries 16
+2026-11-15 18:47:56   smac2d_01: smac2d: reached 11/15 goals, sim time 227.1 s, travelled 33.78 m, closest obstacle 0.206 m, recoveries 68
+2026-11-15 18:52:19   theta_01: theta: reached 12/15 goals, sim time 230.5 s, travelled 40.93 m, closest obstacle 0.191 m, recoveries 56
+2026-11-15 18:56:18   lcp_02: lcp: reached 14/15 goals, sim time 206.5 s, travelled 39.35 m, closest obstacle 0.186 m, recoveries 40
+2026-11-15 18:59:50   navfn_02: navfn: reached 15/15 goals, sim time 179.7 s, travelled 43.81 m, closest obstacle 0.208 m, recoveries 5
+2026-11-15 19:04:27   smac2d_02: smac2d: reached 11/15 goals, sim time 243.8 s, travelled 33.53 m, closest obstacle 0.219 m, recoveries 80
+2026-11-15 19:08:26   theta_02: theta: reached 14/15 goals, sim time 207.1 s, travelled 43.07 m, closest obstacle 0.274 m, recoveries 29
+2026-11-15 19:12:03   lcp_03: lcp: reached 15/15 goals, sim time 184.8 s, travelled 41.71 m, closest obstacle 0.202 m, recoveries 16
+2026-11-15 19:15:21   navfn_03: navfn: reached 15/15 goals, sim time 165.0 s, travelled 43.89 m, closest obstacle 0.277 m, recoveries 0
+2026-11-15 19:19:51   smac2d_03: smac2d: reached 11/15 goals, sim time 237.8 s, travelled 34.90 m, closest obstacle 0.236 m, recoveries 73
+2026-11-15 19:24:28   theta_03: theta: reached 12/15 goals, sim time 245.1 s, travelled 40.82 m, closest obstacle 0.218 m, recoveries 61
+2026-11-15 19:29:25   lcp_04: lcp: reached 12/15 goals, sim time 263.2 s, travelled 39.99 m, closest obstacle 0.207 m, recoveries 75
+2026-11-15 19:33:07   navfn_04: navfn: reached 14/15 goals, sim time 191.4 s, travelled 43.89 m, closest obstacle 0.274 m, recoveries 18
+2026-11-15 19:37:13   smac2d_04: smac2d: reached 13/15 goals, sim time 212.5 s, travelled 38.56 m, closest obstacle 0.261 m, recoveries 49
+2026-11-15 19:41:16   theta_04: theta: reached 12/15 goals, sim time 211.6 s, travelled 38.81 m, closest obstacle 0.243 m, recoveries 56
+2026-11-15 19:45:46   lcp_05: lcp: reached 14/15 goals, sim time 237.7 s, travelled 39.60 m, closest obstacle 0.220 m, recoveries 59
+2026-11-15 19:49:33   navfn_05: navfn: reached 15/15 goals, sim time 194.9 s, travelled 44.13 m, closest obstacle 0.204 m, recoveries 9
+2026-11-15 19:54:30   smac2d_05: smac2d: reached 9/15 goals, sim time 265.4 s, travelled 31.15 m, closest obstacle 0.241 m, recoveries 96
+2026-11-15 19:58:47   theta_05: theta: reached 12/15 goals, sim time 224.4 s, travelled 40.12 m, closest obstacle 0.216 m, recoveries 47
+2026-11-15 20:02:16   lcp_06: lcp: reached 14/15 goals, sim time 176.2 s, travelled 37.89 m, closest obstacle 0.247 m, recoveries 16
+2026-11-15 20:05:54   navfn_06: navfn: reached 15/15 goals, sim time 185.7 s, travelled 43.98 m, closest obstacle 0.185 m, recoveries 15
+2026-11-15 20:10:27   smac2d_06: smac2d: reached 10/15 goals, sim time 240.3 s, travelled 31.90 m, closest obstacle 0.222 m, recoveries 81
+2026-11-15 20:14:57   theta_06: theta: reached 13/15 goals, sim time 238.1 s, travelled 40.61 m, closest obstacle 0.228 m, recoveries 64
+2026-11-15 20:19:02   lcp_07: /home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/sim/run_sim.sh: line 94: unexpected EOF while looking for matching `"'
+2026-11-15 20:22:49   navfn_07: navfn: reached 14/15 goals, sim time 196.2 s, travelled 43.58 m, closest obstacle 0.262 m, recoveries 16
+2026-11-15 20:27:07   smac2d_07: smac2d: reached 12/15 goals, sim time 226.7 s, travelled 36.55 m, closest obstacle 0.222 m, recoveries 61
+2026-11-15 20:31:57   theta_07: theta: reached 12/15 goals, sim time 257.6 s, travelled 38.66 m, closest obstacle 0.226 m, recoveries 79
+2026-11-15 20:35:22   lcp_08: lcp: reached 15/15 goals, sim time 172.2 s, travelled 42.17 m, closest obstacle 0.241 m, recoveries 5
+2026-11-15 20:38:46   navfn_08: navfn: reached 15/15 goals, sim time 171.7 s, travelled 43.56 m, closest obstacle 0.234 m, recoveries 3
+2026-11-15 20:42:53   smac2d_08: smac2d: reached 13/15 goals, sim time 215.1 s, travelled 38.38 m, closest obstacle 0.237 m, recoveries 46
+2026-11-15 20:46:58   theta_08: theta: reached 12/15 goals, sim time 212.4 s, travelled 40.17 m, closest obstacle 0.246 m, recoveries 49
+2026-11-15 20:51:18   lcp_09: lcp: reached 15/15 goals, sim time 228.4 s, travelled 42.93 m, closest obstacle 0.238 m, recoveries 44
+2026-11-15 20:55:02   navfn_09: navfn: reached 15/15 goals, sim time 191.7 s, travelled 43.71 m, closest obstacle 0.264 m, recoveries 5
+2026-11-15 20:59:13   smac2d_09: smac2d: reached 12/15 goals, sim time 217.6 s, travelled 35.40 m, closest obstacle 0.204 m, recoveries 63
+2026-11-15 21:02:32   theta_09: attempt 1 failed: theta: run did not complete
+2026-11-15 21:06:31   theta_09: theta: reached 14/15 goals, sim time 195.6 s, travelled 43.50 m, closest obstacle 0.260 m, recoveries 27
+2026-11-15 21:10:12   lcp_10: lcp: reached 15/15 goals, sim time 188.5 s, travelled 41.71 m, closest obstacle 0.196 m, recoveries 22
+2026-11-15 21:13:53   navfn_10: navfn: reached 15/15 goals, sim time 188.2 s, travelled 44.15 m, closest obstacle 0.265 m, recoveries 12
+2026-11-15 21:17:55   smac2d_10: smac2d: reached 12/15 goals, sim time 210.5 s, travelled 35.05 m, closest obstacle 0.250 m, recoveries 56
+2026-11-15 21:22:25   theta_10: theta: reached 12/15 goals, sim time 237.1 s, travelled 40.28 m, closest obstacle 0.251 m, recoveries 63
+2026-11-15 21:22:25 driving_rpp: done
+2026-11-15 21:22:25 driving_mppi: start
+2026-11-15 21:26:10   lcp_01: lcp: reached 15/15 goals, sim time 192.2 s, travelled 47.20 m, closest obstacle 0.243 m, recoveries 0
+2026-11-15 21:31:08   navfn_01: navfn: reached 15/15 goals, sim time 263.6 s, travelled 49.47 m, closest obstacle 0.298 m, recoveries 5
+2026-11-15 21:36:41   smac2d_01: smac2d: reached 14/15 goals, sim time 299.9 s, travelled 46.47 m, closest obstacle 0.202 m, recoveries 13
+2026-11-15 21:40:43   theta_01: theta: reached 15/15 goals, sim time 209.8 s, travelled 48.10 m, closest obstacle 0.232 m, recoveries 2
+2026-11-15 21:44:23   lcp_02: lcp: reached 15/15 goals, sim time 186.3 s, travelled 46.78 m, closest obstacle 0.255 m, recoveries 0
+2026-11-15 21:48:22   navfn_02: navfn: reached 15/15 goals, sim time 205.4 s, travelled 49.48 m, closest obstacle 0.297 m, recoveries 0
+2026-11-15 21:52:06   smac2d_02: smac2d: reached 15/15 goals, sim time 191.1 s, travelled 46.72 m, closest obstacle 0.224 m, recoveries 0
+2026-11-15 21:55:54   theta_02: theta: reached 15/15 goals, sim time 195.7 s, travelled 48.19 m, closest obstacle 0.210 m, recoveries 2
+2026-11-15 21:59:27   lcp_03: lcp: reached 15/15 goals, sim time 180.0 s, travelled 47.09 m, closest obstacle 0.215 m, recoveries 0
+2026-11-15 22:03:37   navfn_03: navfn: reached 15/15 goals, sim time 217.5 s, travelled 49.12 m, closest obstacle 0.292 m, recoveries 1
+2026-11-15 22:07:19   smac2d_03: smac2d: reached 15/15 goals, sim time 189.8 s, travelled 46.70 m, closest obstacle 0.220 m, recoveries 0
+2026-11-15 22:11:57   theta_03: theta: reached 14/15 goals, sim time 244.9 s, travelled 47.16 m, closest obstacle 0.201 m, recoveries 29
+2026-11-15 22:15:35   lcp_04: lcp: reached 15/15 goals, sim time 185.2 s, travelled 47.67 m, closest obstacle 0.243 m, recoveries 0
+2026-11-15 22:20:21   navfn_04: navfn: reached 15/15 goals, sim time 252.3 s, travelled 49.75 m, closest obstacle 0.289 m, recoveries 5
+2026-11-15 22:24:03   smac2d_04: /home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/sim/run_sim.sh: line 125: unexpected EOF while looking for matching `"'
+2026-11-15 22:27:50   theta_04: theta: reached 15/15 goals, sim time 194.4 s, travelled 47.61 m, closest obstacle 0.207 m, recoveries 3
+2026-11-15 22:31:25   lcp_05: lcp: reached 15/15 goals, sim time 181.4 s, travelled 46.63 m, closest obstacle 0.234 m, recoveries 0
+2026-11-15 22:36:57   navfn_05: navfn: reached 15/15 goals, sim time 299.8 s, travelled 49.48 m, closest obstacle 0.289 m, recoveries 10
+2026-11-15 22:40:42   smac2d_05: smac2d: reached 15/15 goals, sim time 192.5 s, travelled 47.15 m, closest obstacle 0.227 m, recoveries 0
+2026-11-15 22:45:26   theta_05: theta: reached 15/15 goals, sim time 250.6 s, travelled 48.88 m, closest obstacle 0.241 m, recoveries 6
+2026-11-15 22:45:26 driving_mppi: done
+2026-11-15 22:45:26 ALL DONE
+2026-11-15 22:45:53 ablation_comfort_cost (rerun): start
+2026-11-15 22:52:12 ablation_comfort_cost (rerun): done
+2026-11-15 22:52:12 RERUN DONE
+2026-11-15 22:52:47 driving_worlds_rpp: smoke test
+2026-11-15 22:52:47   density_10/lcp: attempt 1 failed: 
+2026-11-15 22:52:57   density_10/lcp: attempt 2 failed: 
+2026-11-15 22:53:07 driving_worlds_rpp: smoke test FAILED, stopping
+2026-11-15 22:53:07 WORLDS STOPPED
+2026-11-15 22:53:12 driving_moving_rpp: smoke test
+2026-11-15 22:53:12   moving/open/5hz/lcp: attempt 1 failed: 
+2026-11-15 22:53:23   moving/open/5hz/lcp: attempt 2 failed: 
+2026-11-15 22:53:33 driving_moving_rpp: smoke test FAILED, stopping
+2026-11-15 22:53:33 MOVING STOPPED
+2026-11-15 22:58:31 driving_worlds_rpp: smoke test
+2026-11-15 22:59:42   density_10/lcp: lcp: reached 2/2 goals, sim time 39.4 s, travelled 13.76 m, closest obstacle 0.540 m, recoveries 0
+2026-11-15 22:59:42 driving_worlds_rpp: start
+2026-11-15 23:04:35   open/lcp_01: lcp: reached 10/10 goals, sim time 259.4 s, travelled 90.87 m, closest obstacle 0.964 m, recoveries 0
+2026-11-15 23:09:26   open/navfn_01: navfn: reached 10/10 goals, sim time 259.2 s, travelled 91.25 m, closest obstacle 0.975 m, recoveries 0
+2026-11-15 23:14:30   open/smac2d_01: smac2d: reached 10/10 goals, sim time 269.5 s, travelled 93.96 m, closest obstacle 1.000 m, recoveries 0
+2026-11-15 23:19:23   open/theta_01: theta: reached 10/10 goals, sim time 260.0 s, travelled 91.49 m, closest obstacle 0.953 m, recoveries 0
+2026-11-15 23:25:25   density_10/lcp_01: lcp: reached 10/10 goals, sim time 329.2 s, travelled 120.25 m, closest obstacle 0.304 m, recoveries 0
+2026-11-15 23:31:36   density_10/navfn_01: navfn: reached 10/10 goals, sim time 339.2 s, travelled 120.32 m, closest obstacle 0.523 m, recoveries 0
+2026-11-15 23:37:16   density_10/smac2d_01: smac2d: reached 8/10 goals, sim time 308.5 s, travelled 102.91 m, closest obstacle 0.221 m, recoveries 13
+2026-11-15 23:43:27   density_10/theta_01: theta: reached 10/10 goals, sim time 338.5 s, travelled 119.64 m, closest obstacle 0.374 m, recoveries 1
+2026-11-15 23:45:03   density_20/lcp_01: lcp: reached 0/10 goals, sim time 62.6 s, travelled 11.66 m, closest obstacle 0.200 m, recoveries 22
+2026-11-15 23:50:41 driving_worlds_rpp: STOPPED by hand: AMCL mislocalised the robot among identical cylinders (density_20/lcp_01); switching these worlds to ground-truth localisation and starting again
+2026-11-15 23:51:05 driving_worlds_rpp: smoke test
+2026-11-15 23:52:12   density_10/lcp: lcp: reached 2/2 goals, sim time 38.4 s, travelled 13.40 m, closest obstacle 0.544 m, recoveries 0
+2026-11-15 23:52:12 driving_worlds_rpp: start
+2026-11-15 23:56:56   open/lcp_01: lcp: reached 10/10 goals, sim time 256.0 s, travelled 89.84 m, closest obstacle 1.008 m, recoveries 0
+2026-11-16 00:01:42   open/navfn_01: navfn: reached 10/10 goals, sim time 257.1 s, travelled 90.23 m, closest obstacle 0.986 m, recoveries 0
+2026-11-16 00:06:35   open/smac2d_01: smac2d: reached 10/10 goals, sim time 266.2 s, travelled 92.70 m, closest obstacle 1.025 m, recoveries 0
+2026-11-16 00:11:19   open/theta_01: theta: reached 10/10 goals, sim time 256.6 s, travelled 90.15 m, closest obstacle 0.993 m, recoveries 0
+2026-11-16 00:17:07   density_10/lcp_01: lcp: reached 10/10 goals, sim time 318.5 s, travelled 116.39 m, closest obstacle 0.300 m, recoveries 0
+2026-11-16 00:23:03   density_10/navfn_01: navfn: reached 10/10 goals, sim time 327.2 s, travelled 117.99 m, closest obstacle 0.464 m, recoveries 0
+2026-11-16 00:29:02   density_10/smac2d_01: smac2d: reached 10/10 goals, sim time 332.0 s, travelled 119.97 m, closest obstacle 0.448 m, recoveries 0
+2026-11-16 00:34:58   density_10/theta_01: theta: reached 10/10 goals, sim time 327.0 s, travelled 119.21 m, closest obstacle 0.487 m, recoveries 0
+2026-11-16 00:43:27   density_20/lcp_01: lcp: reached 8/10 goals, sim time 479.3 s, travelled 158.52 m, closest obstacle 0.224 m, recoveries 34
+2026-11-16 00:52:52   density_20/navfn_01: navfn: reached 10/10 goals, sim time 537.5 s, travelled 193.31 m, closest obstacle 0.280 m, recoveries 1
+2026-11-16 01:00:20   density_20/smac2d_01: smac2d: reached 10/10 goals, sim time 420.5 s, travelled 151.36 m, closest obstacle 0.270 m, recoveries 6
+2026-11-16 01:08:59   density_20/theta_01: theta: reached 7/10 goals, sim time 490.6 s, travelled 150.11 m, closest obstacle 0.207 m, recoveries 50
+2026-11-16 01:15:48   density_30/lcp_01: lcp: reached 4/10 goals, sim time 380.9 s, travelled 60.51 m, closest obstacle 0.190 m, recoveries 145
+2026-11-16 01:22:37   density_30/navfn_01: navfn: reached 7/10 goals, sim time 381.5 s, travelled 108.44 m, closest obstacle 0.207 m, recoveries 61
+2026-11-16 01:29:22   density_30/smac2d_01: smac2d: reached 7/10 goals, sim time 376.2 s, travelled 107.59 m, closest obstacle 0.224 m, recoveries 56
+2026-11-16 01:35:34   density_30/theta_01: theta: reached 6/10 goals, sim time 344.3 s, travelled 90.72 m, closest obstacle 0.206 m, recoveries 65
+2026-11-16 01:41:35   shape_u/lcp_01: lcp: reached 10/10 goals, sim time 332.6 s, travelled 121.73 m, closest obstacle 0.280 m, recoveries 0
+2026-11-16 01:47:46   shape_u/navfn_01: navfn: reached 10/10 goals, sim time 343.5 s, travelled 124.95 m, closest obstacle 0.491 m, recoveries 0
+2026-11-16 01:53:55   shape_u/smac2d_01: smac2d: reached 10/10 goals, sim time 341.2 s, travelled 124.67 m, closest obstacle 0.403 m, recoveries 0
+2026-11-16 02:00:02   shape_u/theta_01: theta: reached 10/10 goals, sim time 338.2 s, travelled 123.65 m, closest obstacle 0.354 m, recoveries 0
+2026-11-16 02:07:22   corridor_1.2/lcp_01: lcp: reached 10/10 goals, sim time 412.1 s, travelled 134.56 m, closest obstacle 0.202 m, recoveries 18
+2026-11-16 02:14:23   corridor_1.2/navfn_01: navfn: reached 9/10 goals, sim time 393.0 s, travelled 131.12 m, closest obstacle 0.238 m, recoveries 24
+2026-11-16 02:21:28   corridor_1.2/smac2d_01: smac2d: reached 6/10 goals, sim time 397.2 s, travelled 109.57 m, closest obstacle 0.190 m, recoveries 66
+2026-11-16 02:28:31   corridor_1.2/theta_01: theta: reached 7/10 goals, sim time 394.1 s, travelled 132.18 m, closest obstacle 0.259 m, recoveries 33
+2026-11-16 02:33:15   open/lcp_02: lcp: reached 10/10 goals, sim time 255.9 s, travelled 89.81 m, closest obstacle 1.007 m, recoveries 0
+2026-11-16 02:38:01   open/navfn_02: navfn: reached 10/10 goals, sim time 258.0 s, travelled 90.23 m, closest obstacle 0.998 m, recoveries 0
+2026-11-16 02:42:56   open/smac2d_02: smac2d: reached 10/10 goals, sim time 266.3 s, travelled 92.76 m, closest obstacle 1.025 m, recoveries 0
+2026-11-16 02:47:40   open/theta_02: theta: reached 10/10 goals, sim time 256.7 s, travelled 90.18 m, closest obstacle 1.008 m, recoveries 0
+2026-11-16 02:53:28   density_10/lcp_02: lcp: reached 10/10 goals, sim time 319.8 s, travelled 116.78 m, closest obstacle 0.362 m, recoveries 0
+2026-11-16 02:59:23   density_10/navfn_02: navfn: reached 10/10 goals, sim time 327.9 s, travelled 118.10 m, closest obstacle 0.462 m, recoveries 0
+2026-11-16 03:05:22   density_10/smac2d_02: smac2d: reached 10/10 goals, sim time 331.5 s, travelled 119.80 m, closest obstacle 0.444 m, recoveries 0
+2026-11-16 03:11:17   density_10/theta_02: theta: reached 10/10 goals, sim time 327.6 s, travelled 119.30 m, closest obstacle 0.456 m, recoveries 0
+2026-11-16 03:19:12   density_20/lcp_02: lcp: reached 9/10 goals, sim time 446.8 s, travelled 155.11 m, closest obstacle 0.251 m, recoveries 23
+2026-11-16 03:28:18   density_20/navfn_02: navfn: reached 10/10 goals, sim time 516.8 s, travelled 189.91 m, closest obstacle 0.235 m, recoveries 0
+2026-11-16 03:35:39   density_20/smac2d_02: smac2d: reached 10/10 goals, sim time 413.4 s, travelled 151.08 m, closest obstacle 0.257 m, recoveries 0
+2026-11-16 03:43:26   density_20/theta_02: theta: reached 8/10 goals, sim time 438.9 s, travelled 146.38 m, closest obstacle 0.260 m, recoveries 41
+2026-11-16 03:49:06   density_30/lcp_02: lcp: reached 7/10 goals, sim time 311.9 s, travelled 85.22 m, closest obstacle 0.203 m, recoveries 45
+2026-11-16 03:54:44   density_30/navfn_02: navfn: reached 6/10 goals, sim time 309.5 s, travelled 77.24 m, closest obstacle 0.214 m, recoveries 67
+2026-11-16 04:01:29   density_30/smac2d_02: smac2d: reached 5/10 goals, sim time 377.0 s, travelled 91.83 m, closest obstacle 0.218 m, recoveries 87
+2026-11-16 04:08:17   density_30/theta_02: theta: reached 8/10 goals, sim time 379.3 s, travelled 108.43 m, closest obstacle 0.205 m, recoveries 51
+2026-11-16 04:14:26   shape_u/lcp_02: lcp: reached 10/10 goals, sim time 341.7 s, travelled 124.17 m, closest obstacle 0.301 m, recoveries 0
+2026-11-16 04:20:37   shape_u/navfn_02: navfn: reached 10/10 goals, sim time 342.6 s, travelled 124.88 m, closest obstacle 0.492 m, recoveries 0
+2026-11-16 04:26:46   shape_u/smac2d_02: smac2d: reached 10/10 goals, sim time 341.6 s, travelled 124.69 m, closest obstacle 0.397 m, recoveries 0
+2026-11-16 04:28:20   shape_u/theta_02: attempt 1 failed: theta: localisation did not start, see /home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-15_v2.1.0/driving_worlds_rpp/shape_u/theta_02/theta.launch.log
+2026-11-16 04:34:37   shape_u/theta_02: theta: reached 10/10 goals, sim time 338.7 s, travelled 123.74 m, closest obstacle 0.358 m, recoveries 0
+2026-11-16 04:41:33   corridor_1.2/lcp_02: lcp: reached 6/10 goals, sim time 388.5 s, travelled 98.61 m, closest obstacle 0.187 m, recoveries 78
+2026-11-16 04:48:26   corridor_1.2/navfn_02: navfn: reached 10/10 goals, sim time 384.7 s, travelled 136.75 m, closest obstacle 0.240 m, recoveries 0
+2026-11-16 04:51:45   corridor_1.2/smac2d_02: smac2d: reached 3/10 goals, sim time 171.7 s, travelled 49.59 m, closest obstacle 0.226 m, recoveries 25
+2026-11-16 04:59:40   corridor_1.2/theta_02: theta: reached 6/10 goals, sim time 446.6 s, travelled 131.09 m, closest obstacle 0.223 m, recoveries 77
+2026-11-16 05:04:23   open/lcp_03: lcp: reached 10/10 goals, sim time 256.2 s, travelled 89.85 m, closest obstacle 1.007 m, recoveries 0
+2026-11-16 05:09:07   open/navfn_03: navfn: reached 10/10 goals, sim time 256.5 s, travelled 90.20 m, closest obstacle 0.984 m, recoveries 0
+2026-11-16 05:14:00   open/smac2d_03: smac2d: reached 10/10 goals, sim time 265.8 s, travelled 92.74 m, closest obstacle 1.030 m, recoveries 0
+2026-11-16 05:18:45   open/theta_03: theta: reached 10/10 goals, sim time 256.4 s, travelled 90.20 m, closest obstacle 1.001 m, recoveries 0
+2026-11-16 05:24:34   density_10/lcp_03: lcp: reached 10/10 goals, sim time 319.6 s, travelled 116.94 m, closest obstacle 0.418 m, recoveries 0
+2026-11-16 05:30:31   density_10/navfn_03: navfn: reached 10/10 goals, sim time 328.2 s, travelled 118.12 m, closest obstacle 0.438 m, recoveries 0
+2026-11-16 05:36:27   density_10/smac2d_03: smac2d: reached 10/10 goals, sim time 329.0 s, travelled 119.71 m, closest obstacle 0.543 m, recoveries 0
+2026-11-16 05:42:23   density_10/theta_03: theta: reached 10/10 goals, sim time 328.8 s, travelled 119.40 m, closest obstacle 0.455 m, recoveries 0
+2026-11-16 05:50:41   density_20/lcp_03: lcp: reached 8/10 goals, sim time 469.4 s, travelled 150.33 m, closest obstacle 0.249 m, recoveries 41
+2026-11-16 05:59:59   density_20/navfn_03: navfn: reached 10/10 goals, sim time 529.8 s, travelled 190.65 m, closest obstacle 0.191 m, recoveries 6
+2026-11-16 06:07:21   density_20/smac2d_03: smac2d: reached 10/10 goals, sim time 413.1 s, travelled 151.26 m, closest obstacle 0.267 m, recoveries 0
+2026-11-16 06:15:13   density_20/theta_03: theta: reached 8/10 goals, sim time 443.9 s, travelled 146.87 m, closest obstacle 0.272 m, recoveries 43
+2026-11-16 06:22:27   density_30/lcp_03: lcp: reached 7/10 goals, sim time 406.2 s, travelled 103.03 m, closest obstacle 0.219 m, recoveries 72
+2026-11-16 06:30:31   density_30/navfn_03: navfn: reached 7/10 goals, sim time 455.9 s, travelled 138.31 m, closest obstacle 0.191 m, recoveries 57
+2026-11-16 06:37:58   density_30/smac2d_03: smac2d: reached 7/10 goals, sim time 418.1 s, travelled 131.73 m, closest obstacle 0.211 m, recoveries 40
+2026-11-16 06:44:34   density_30/theta_03: theta: reached 6/10 goals, sim time 367.6 s, travelled 102.15 m, closest obstacle 0.188 m, recoveries 54
+2026-11-16 06:50:52   shape_u/lcp_03: lcp: reached 10/10 goals, sim time 350.9 s, travelled 122.73 m, closest obstacle 0.251 m, recoveries 11
+2026-11-16 06:57:04   shape_u/navfn_03: navfn: reached 10/10 goals, sim time 344.5 s, travelled 124.93 m, closest obstacle 0.493 m, recoveries 0
+2026-11-16 07:03:13   shape_u/smac2d_03: smac2d: reached 10/10 goals, sim time 342.0 s, travelled 124.84 m, closest obstacle 0.402 m, recoveries 0
+2026-11-16 07:09:20   shape_u/theta_03: theta: reached 10/10 goals, sim time 339.1 s, travelled 123.68 m, closest obstacle 0.399 m, recoveries 0
+2026-11-16 07:17:10   corridor_1.2/lcp_03: lcp: reached 8/10 goals, sim time 442.6 s, travelled 135.94 m, closest obstacle 0.208 m, recoveries 54
+2026-11-16 07:24:41   corridor_1.2/navfn_03: navfn: reached 9/10 goals, sim time 421.6 s, travelled 132.77 m, closest obstacle 0.230 m, recoveries 35
+2026-11-16 07:31:07   corridor_1.2/smac2d_03: smac2d: reached 5/10 goals, sim time 358.4 s, travelled 87.39 m, closest obstacle 0.189 m, recoveries 91
+2026-11-16 07:36:40   corridor_1.2/theta_03: theta: reached 2/10 goals, sim time 305.0 s, travelled 55.40 m, closest obstacle 0.241 m, recoveries 120
+2026-11-16 07:36:41 driving_worlds_rpp: done
+2026-11-16 07:36:41 WORLDS DONE
+2026-11-16 07:36:41 driving_moving_rpp: on hold (HOLD_MOVING present), not started
+2026-11-16 07:36:41 NIGHT2 DONE

@@ -1,0 +1,9 @@
+[1/8] base (49 s): Navfn 100/100 14.4ms, noretry 97/100 0.5ms, recent50 97/100 0.4ms, shortest25 95/100 0.4ms, shortest50 97/100 0.4ms, shortest100 98/100 0.5ms, shortest300 100/100 0.4ms
+[2/8] density_20 (48 s): Navfn 94/94 13.3ms, noretry 70/94 0.8ms, recent50 71/94 0.7ms, shortest25 51/94 0.6ms, shortest50 71/94 0.8ms, shortest100 77/94 0.9ms, shortest300 87/94 1.1ms
+[3/8] density_30 (48 s): Navfn 84/84 13.6ms, noretry 33/84 1.0ms, recent50 33/84 1.0ms, shortest25 22/84 0.7ms, shortest50 33/84 0.9ms, shortest100 41/84 1.0ms, shortest300 53/84 2.1ms
+[4/8] shape_u (48 s): Navfn 93/93 13.3ms, noretry 39/93 0.6ms, recent50 40/93 0.6ms, shortest25 32/93 0.4ms, shortest50 40/93 0.6ms, shortest100 43/93 0.6ms, shortest300 55/93 0.8ms
+[5/8] corridor_1.2 (48 s): Navfn 100/100 7.4ms, noretry 87/100 0.6ms, recent50 87/100 0.6ms, shortest25 59/100 0.4ms, shortest50 87/100 0.6ms, shortest100 99/100 0.6ms, shortest300 99/100 0.7ms
+[6/8] maze (43 s): Navfn 100/100 2.8ms, noretry 52/100 0.3ms, recent50 58/100 0.3ms, shortest25 51/100 0.2ms, shortest50 58/100 0.3ms, shortest100 73/100 0.5ms, shortest300 90/100 0.8ms
+[7/8] house (40 s): Navfn 57/57 1.3ms, noretry 50/57 0.1ms, recent50 50/57 0.1ms, shortest25 50/57 0.1ms, shortest50 52/57 0.1ms, shortest100 53/57 0.2ms, shortest300 56/57 0.2ms
+[8/8] event_venue (40 s): Navfn 54/54 2.0ms, noretry 43/54 0.2ms, recent50 43/54 0.2ms, shortest25 41/54 0.2ms, shortest50 43/54 0.2ms, shortest100 44/54 0.2ms, shortest300 49/54 0.3ms
+SUITE DONE

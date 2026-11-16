@@ -1,0 +1,22 @@
+[1/21] density_00 (69 s): Navfn 100/100 11.1ms, Smac2d 100/100 9.3ms, ThetaStar 100/100 11.2ms, LCP 100/100 0.1ms, LCP_lazy 100/100 0.1ms
+[2/21] density_02 (70 s): Navfn 100/100 14.1ms, Smac2d 100/100 14.4ms, ThetaStar 100/100 10.7ms, LCP 100/100 0.2ms, LCP_lazy 99/100 0.2ms
+[3/21] density_05 (72 s): Navfn 100/100 14.8ms, Smac2d 100/100 13.5ms, ThetaStar 99/100 12.1ms, LCP 100/100 0.2ms, LCP_lazy 99/100 0.2ms
+[4/21] base (72 s): Navfn 100/100 14.3ms, Smac2d 100/100 15.8ms, ThetaStar 100/100 13.3ms, LCP 100/100 0.4ms, LCP_lazy 98/100 0.4ms
+[5/21] density_15 (74 s): Navfn 99/99 15.7ms, Smac2d 98/99 17.9ms, ThetaStar 98/99 14.8ms, LCP 99/99 0.6ms, LCP_lazy 89/99 0.6ms
+[6/21] density_20 (74 s): Navfn 94/94 14.3ms, Smac2d 89/94 15.3ms, ThetaStar 89/94 13.0ms, LCP 94/94 1.3ms, LCP_lazy 71/94 0.8ms
+[7/21] density_25 (78 s): Navfn 81/81 13.1ms, Smac2d 68/81 14.9ms, ThetaStar 70/81 12.8ms, LCP 81/81 3.0ms, LCP_lazy 41/81 0.9ms
+[8/21] density_30 (79 s): Navfn 84/84 13.5ms, Smac2d 66/84 18.3ms, ThetaStar 63/84 14.9ms, LCP 84/84 3.4ms, LCP_lazy 33/84 1.0ms
+[9/21] density_35 (84 s): Navfn 57/57 16.3ms, Smac2d 38/57 20.0ms, ThetaStar 31/57 17.4ms, LCP 57/57 4.4ms, LCP_lazy 11/57 1.5ms
+[10/21] density_40 (84 s): Navfn 52/52 18.0ms, Smac2d 42/52 18.0ms, ThetaStar 29/52 15.7ms, LCP 52/52 5.9ms, LCP_lazy 11/52 0.9ms
+[11/21] density_45 (77 s): Navfn 15/15 14.3ms, Smac2d 11/15 10.5ms, ThetaStar 9/15 10.8ms, LCP 15/15 5.2ms, LCP_lazy 4/15 1.6ms
+[12/21] size_010 (47 s): Navfn 100/100 0.8ms, Smac2d 100/100 1.5ms, ThetaStar 100/100 0.9ms, LCP 100/100 0.1ms, LCP_lazy 100/100 0.1ms
+[13/21] size_025 (53 s): Navfn 100/100 4.1ms, Smac2d 100/100 4.8ms, ThetaStar 100/100 3.9ms, LCP 100/100 0.2ms, LCP_lazy 98/100 0.2ms
+[14/21] size_100 (145 s): Navfn 100/100 54.1ms, Smac2d 100/100 54.1ms, ThetaStar 100/100 42.4ms, LCP 100/100 0.8ms, LCP_lazy 98/100 0.7ms
+[15/21] size_200 (484 s): Navfn 100/100 286.4ms, Smac2d 58/100 135.0ms, ThetaStar 100/100 221.4ms, LCP 100/100 3.0ms, LCP_lazy 73/100 2.4ms
+[16/21] shape_square (71 s): Navfn 100/100 13.1ms, Smac2d 100/100 11.7ms, ThetaStar 100/100 10.6ms, LCP 100/100 0.3ms, LCP_lazy 100/100 0.3ms
+[17/21] shape_u (77 s): Navfn 93/93 13.2ms, Smac2d 92/93 17.9ms, ThetaStar 92/93 16.5ms, LCP 93/93 2.3ms, LCP_lazy 40/93 0.6ms
+[18/21] corridor_0.8 (67 s): Navfn 99/99 4.2ms, Smac2d 53/99 9.5ms, ThetaStar 99/99 13.1ms, LCP 99/99 1.6ms, LCP_lazy 63/99 1.2ms
+[19/21] corridor_1.2 (72 s): Navfn 100/100 7.3ms, Smac2d 100/100 13.2ms, ThetaStar 100/100 12.5ms, LCP 100/100 0.7ms, LCP_lazy 87/100 0.6ms
+[20/21] corridor_2.0 (73 s): Navfn 100/100 7.4ms, Smac2d 100/100 11.2ms, ThetaStar 100/100 13.8ms, LCP 100/100 0.5ms, LCP_lazy 97/100 0.5ms
+[21/21] corridor_3.0 (68 s): Navfn 100/100 9.2ms, Smac2d 100/100 10.9ms, ThetaStar 100/100 11.2ms, LCP 100/100 0.3ms, LCP_lazy 100/100 0.3ms
+SUITE DONE

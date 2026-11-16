@@ -39,6 +39,10 @@ if 'planners_file' in suite:
     )
 shutil.copy(planners_file, os.path.join(out_dir, 'planners.yaml'))
 planners = suite['planners']
+# YAML reads bare names such as `off`, `no` or `on` as booleans; insist on strings.
+bad = [p for p in planners if not isinstance(p, str)]
+if bad:
+    sys.exit(f'{suite_file}: planner names must be strings, quote these: {bad}')
 env = dict(os.environ, LCP_BENCH_REPEATS=str(suite.get('repeats', 1)))
 
 

@@ -34,7 +34,8 @@ import yaml
 
 map_yaml, out_csv, label, n_goals = sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4])
 start = (float(sys.argv[5]), float(sys.argv[6]))
-CLEARANCE, MIN_LEG, LEG_TIMEOUT = 0.3, 1.5, 120.0
+CLEARANCE, MIN_LEG = 0.3, 1.5
+LEG_TIMEOUT = float(os.environ.get('LCP_SIM_LEG_TIMEOUT', '120'))   # simulated seconds per leg
 
 meta = yaml.safe_load(open(map_yaml))
 img = np.array(Image.open(os.path.join(os.path.dirname(map_yaml), meta['image'])))
@@ -131,8 +132,11 @@ nav.create_subscription(Twist, 'cmd_vel', on_cmd, 10)
 nav.create_subscription(Log, 'rosout', on_log, 100)
 # -----------------------------------------------------------------------------
 
-nav.setInitialPose(pose(nav, *start))
-nav.waitUntilNav2Active()
+if os.environ.get('LCP_SIM_LOCALIZATION') == 'odometry':
+    nav.waitUntilNav2Active(localizer='map_server')   # no AMCL, no initial pose needed
+else:
+    nav.setInitialPose(pose(nav, *start))
+    nav.waitUntilNav2Active()
 time.sleep(3.0)
 
 rows_out, here = [], start

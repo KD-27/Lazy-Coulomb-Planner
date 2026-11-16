@@ -1,0 +1,15 @@
+# Ablation: Extra push of a waypoint past the obstacle edge (m).
+pairs: 100
+repeats: 3
+planners_file: waypoint_margin_planners.yaml
+planners: [Navfn, m0p0, m0p25, m0p5, m0p75, m1p0]
+
+maps:
+  - {name: base,         group: generated, size: 50, shape: circle, density: 0.10}
+  - {name: density_20,   group: generated, size: 50, shape: circle, density: 0.20}
+  - {name: density_30,   group: generated, size: 50, shape: circle, density: 0.30}
+  - {name: shape_u,      group: generated, size: 50, shape: u,      density: 0.10}
+  - {name: corridor_1.2, group: generated, size: 50, shape: blocks, block: 4.0, corridor: 1.2}
+  - {name: maze,         group: indoor, file: maps/maze.yaml}
+  - {name: house,        group: indoor, file: maps/house.yaml}
+  - {name: event_venue,  group: indoor, file: maps/event_venue.yaml}

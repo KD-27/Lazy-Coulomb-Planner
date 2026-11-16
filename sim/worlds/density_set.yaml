@@ -1,0 +1,10 @@
+# Driving-test worlds built from generated maps, 20 m square, TurtleBot3.
+# One factor at a time, like the planner benchmark: obstacle density, concave
+# obstacles and corridors.
+worlds:
+  - {name: open,         size: 20, shape: circle, density: 0.0}
+  - {name: density_10,   size: 20, shape: circle, density: 0.10}
+  - {name: density_20,   size: 20, shape: circle, density: 0.20}
+  - {name: density_30,   size: 20, shape: circle, density: 0.30}
+  - {name: shape_u,      size: 20, shape: u,      density: 0.10}
+  - {name: corridor_1.2, size: 20, shape: blocks, block: 4.0, corridor: 1.2}

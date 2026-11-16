@@ -1,0 +1,18 @@
+           map routable |                  Navfn |                  probe |                     r1 |                     r2 |                r1_free |                r2_free
+                          solved insc leth fail |  solved insc leth fail |  solved insc leth fail |  solved insc leth fail |  solved insc leth fail |  solved insc leth fail
+          base      100 |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0  
+    density_20      100 |     94    6    0    0   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0  
+    density_30       94 |     84   10    0    0   |     94    0    0    0   |     94    0    0    0   |     94    0    0    0   |     94    0    0    0   |     94    0    0    0  
+       shape_u       98 |     93    5    0    0   |     98    0    0    0   |     98    0    0    0   |     98    0    0    0   |     98    0    0    0   |     98    0    0    0  
+  corridor_1.2      100 |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0  
+          maze      100 |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0  
+         house       57 |     57    0    0    0   |     57    0    0    0   |     57    0    0    0   |     57    0    0    0   |     57    0    0    0   |     57    0    0    0  
+   event_venue       55 |     54    1    0    0   |     55    0    0    0   |     55    0    0    0   |     55    0    0    0   |     55    0    0    0   |     55    0    0    0  
+
+Pairs with no route: clean path returned / bad path returned / correctly refused
+     Navfn: 0 / 1 / 95
+     probe: 0 / 0 / 96
+        r1: 0 / 0 / 96
+        r2: 0 / 0 / 96
+   r1_free: 0 / 0 / 96
+   r2_free: 0 / 0 / 96

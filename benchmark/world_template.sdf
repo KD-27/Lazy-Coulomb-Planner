@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!-- Gazebo world for the driving test on a generated map. Same plugins, light,
+     ground and physics as Nav2's tb3_sandbox world (headless); the obstacles are
+     filled in by generate_map.py (option sdf). -->
+<sdf version="1.6">
+  <world name="default">
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"/>
+    <light name="sun" type="directional">
+      <cast_shadows>0</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.8 0.8 0.8 1</specular>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+    <model name="ground_plane">
+      <static>1</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><plane><normal>0 0 1</normal><size>GROUND_SIZE GROUND_SIZE</size></plane></geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name="visual">
+          <geometry><plane><normal>0 0 1</normal><size>GROUND_SIZE GROUND_SIZE</size></plane></geometry>
+          <material><ambient>0.8 0.8 0.8 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <scene><shadows>0</shadows></scene>
+    <physics name="3ms" type="ode">
+      <max_step_size>0.003</max_step_size>
+      <real_time_factor>1</real_time_factor>
+    </physics>
+    <model name="obstacles">
+      <static>1</static>
+      <link name="link">
+<!-- OBSTACLES -->
+      </link>
+    </model>
+  </world>
+</sdf>

@@ -16,6 +16,21 @@ export ROS_DOMAIN_ID=${LCP_ROS_DOMAIN_ID:-87}
 # several simulations on one network cannot see each other.
 export GZ_PARTITION=lcp_sim_${ROS_DOMAIN_ID}
 planner=$1; goals=$2; out=${3:-$here/results}
+# Another world: LCP_SIM_WORLD (SDF), LCP_SIM_MAP (its map YAML) and
+# LCP_SIM_START ("x y", where the robot is spawned). Default: Nav2's sandbox.
+world=${LCP_SIM_WORLD:-}
+map=${LCP_SIM_MAP:-$here/maps/tb3_sandbox.yaml}
+read -r start_x start_y <<< "${LCP_SIM_START:--2.0 -0.5}"
+if [ -n "$world" ] && [ -z "${LCP_SIM_MAP:-}" ]; then
+  echo "LCP_SIM_WORLD needs LCP_SIM_MAP and LCP_SIM_START as well"; exit 2
+fi
+export LCP_SIM_WORLD=$world
+# LCP_SIM_MOVERS: prefix of a world with moving obstacles (add_moving_obstacles.py);
+# its .sdf replaces LCP_SIM_WORLD. LCP_SIM_REPLAN_HZ: how often the behaviour tree
+# replans while driving (Nav2's default is 1 Hz).
+if [ -n "${LCP_SIM_MOVERS:-}" ]; then
+  export LCP_SIM_WORLD=$LCP_SIM_MOVERS.sdf LCP_SIM_MOVERS
+fi
 case $planner in
   lcp)   plugin="lazy_coulomb_planner::LazyCoulombPlanner" ;;
   navfn) plugin="nav2_navfn_planner::NavfnPlanner" ;;
@@ -44,16 +59,29 @@ params=$(mktemp --suffix=.yaml)
 sed "s|plugin: .*nav2_navfn_planner::NavfnPlanner.*|plugin: \"$plugin\"|" \
   "$here/config/nav2_sim_params${LCP_SIM_CONTROLLER:+_$LCP_SIM_CONTROLLER}.yaml" > "$params"
 grep -q "$plugin" "$params" || { echo "failed to set planner plugin"; exit 1; }
+if [ -n "${LCP_SIM_REPLAN_HZ:-}" ]; then
+  bt=$(mktemp --suffix=.xml)
+  sed "s|<RateController hz=\"1.0\">|<RateController hz=\"$LCP_SIM_REPLAN_HZ\">|" \
+    "$(ros2 pkg prefix nav2_bt_navigator)/share/nav2_bt_navigator/behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml" > "$bt"
+  grep -q "hz=\"$LCP_SIM_REPLAN_HZ\"" "$bt" || { echo "failed to set the replanning rate"; exit 1; }
+  python3 - "$params" "$bt" <<'PY'
+import sys, yaml
+params, bt = sys.argv[1], sys.argv[2]
+d = yaml.safe_load(open(params))
+d['bt_navigator']['ros__parameters']['default_nav_to_pose_bt_xml'] = bt
+yaml.safe_dump(d, open(params, 'w'), sort_keys=False)
+PY
+fi
 
 setsid ros2 launch "$here/launch/tb3_sim.launch.py" params_file:="$params" \
-  map:="$here/maps/tb3_sandbox.yaml" > "$out/$planner.launch.log" 2>&1 &
+  map:="$map" x_pose:="$start_x" y_pose:="$start_y" > "$out/$planner.launch.log" 2>&1 &
 launch_pid=$!
 # Stop every simulation and navigation process on any exit, including Ctrl-C or a timeout.
 cleanup() {
   kill -INT -- "-$launch_pid" 2>/dev/null
   sleep 3
   kill -KILL -- "-$launch_pid" 2>/dev/null
-  rm -f "$params"
+  rm -f "$params" "${bt:-}"
 }
 trap cleanup EXIT
 trap 'exit 1' INT TERM
@@ -71,7 +99,6 @@ if grep -q "gz-.*process has died" "$out/$planner.launch.log"; then
   echo "$planner: the simulator did not start, see $out/$planner.launch.log"
   exit 1
 fi
-# The robot spawns at (-2.0, -0.5) in the tb3_sandbox world.
 # Navigation must come up soon after the driver sets the initial pose. If it has
 # not after 3 minutes the start-up has failed: stop the driver so the run ends.
 ( sleep 180
@@ -80,9 +107,20 @@ fi
 watchdog=$!
 # A healthy run takes a few minutes; the limit only catches a hung simulation.
 # -k: the driver does not always exit on SIGTERM, so follow up with SIGKILL.
-timeout -k 10 1200 python3 "$here/drive.py" "$here/maps/tb3_sandbox.yaml" "$out/$planner.csv" "$planner" \
-  "$goals" -2.0 -0.5 2>&1 | grep -v "^\[INFO\]"
+# CPU time used by the planner server while the robot drives (user + system, s).
+cpu_of_planner() {
+  local pid
+  pid=$(pgrep -f "nav2_planner/planner_server" | head -1)
+  [ -n "$pid" ] && awk '{print ($14 + $15) / 100}' "/proc/$pid/stat" 2>/dev/null
+}
+cpu_before=$(cpu_of_planner)
+timeout -k 10 "${LCP_SIM_TIMEOUT:-1200}" python3 "$here/drive.py" "$map" "$out/$planner.csv" \
+  "$planner" "$goals" "$start_x" "$start_y" 2>&1 | grep -v "^\[INFO\]"
 status=${PIPESTATUS[0]}
+cpu_after=$(cpu_of_planner)
+if [ -n "$cpu_before" ] && [ -n "$cpu_after" ]; then
+  awk -v a="$cpu_before" -v b="$cpu_after" 'BEGIN {printf "%.2f\n", b - a}' > "$out/planner_cpu_s.txt"
+fi
 kill "$watchdog" 2>/dev/null
 [ "$status" -eq 0 ] || { echo "$planner: run did not complete"; exit 1; }
 exit 0

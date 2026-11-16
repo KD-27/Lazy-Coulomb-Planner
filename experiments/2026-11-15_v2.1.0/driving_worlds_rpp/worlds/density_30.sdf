@@ -1,0 +1,360 @@
+<?xml version="1.0"?>
+<!-- Gazebo world for the driving test on a generated map. Same plugins, light,
+     ground and physics as Nav2's tb3_sandbox world (headless); the obstacles are
+     filled in by generate_map.py (option sdf). -->
+<sdf version="1.6">
+  <world name="default">
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"/>
+    <light name="sun" type="directional">
+      <cast_shadows>0</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.8 0.8 0.8 1</specular>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+    <model name="ground_plane">
+      <static>1</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><plane><normal>0 0 1</normal><size>60 60</size></plane></geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name="visual">
+          <geometry><plane><normal>0 0 1</normal><size>60 60</size></plane></geometry>
+          <material><ambient>0.8 0.8 0.8 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <scene><shadows>0</shadows></scene>
+    <physics name="3ms" type="ode">
+      <max_step_size>0.003</max_step_size>
+      <real_time_factor>1</real_time_factor>
+    </physics>
+    <model name="obstacles">
+      <static>1</static>
+      <link name="link">
+        <collision name="c0"><pose>15.1250 19.0250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c0"><pose>15.1250 19.0250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c1"><pose>16.4750 18.9750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c1"><pose>16.4750 18.9750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c2"><pose>17.3750 8.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c2"><pose>17.3750 8.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c3"><pose>5.1250 8.1750 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c3"><pose>5.1250 8.1750 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c4"><pose>1.7250 0.5750 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c4"><pose>1.7250 0.5750 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c5"><pose>16.7750 10.7750 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c5"><pose>16.7750 10.7750 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c6"><pose>9.0750 15.7750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c6"><pose>9.0750 15.7750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c7"><pose>2.4750 9.0750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c7"><pose>2.4750 9.0750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c8"><pose>7.6750 8.0750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c8"><pose>7.6750 8.0750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c9"><pose>10.0250 5.2250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c9"><pose>10.0250 5.2250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c10"><pose>1.2250 5.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c10"><pose>1.2250 5.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c11"><pose>2.3250 19.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c11"><pose>2.3250 19.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c12"><pose>1.8250 14.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.8001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c12"><pose>1.8250 14.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.8001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c13"><pose>18.4750 5.5250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c13"><pose>18.4750 5.5250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c14"><pose>6.4750 19.3750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c14"><pose>6.4750 19.3750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c15"><pose>5.8750 2.3250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c15"><pose>5.8750 2.3250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c16"><pose>9.1250 15.5250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c16"><pose>9.1250 15.5250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c17"><pose>15.4750 18.3250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c17"><pose>15.4750 18.3250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c18"><pose>14.3750 10.5750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c18"><pose>14.3750 10.5750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c19"><pose>7.3750 1.2250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c19"><pose>7.3750 1.2250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c20"><pose>15.4250 17.0750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c20"><pose>15.4250 17.0750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c21"><pose>16.0750 5.2250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c21"><pose>16.0750 5.2250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c22"><pose>11.6250 10.1750 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c22"><pose>11.6250 10.1750 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c23"><pose>19.6250 15.0750 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c23"><pose>19.6250 15.0750 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c24"><pose>10.9250 16.3750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c24"><pose>10.9250 16.3750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c25"><pose>15.1750 15.7250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c25"><pose>15.1750 15.7250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c26"><pose>11.1250 16.0250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c26"><pose>11.1250 16.0250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c27"><pose>9.5750 1.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c27"><pose>9.5750 1.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c28"><pose>13.3750 17.2250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c28"><pose>13.3750 17.2250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c29"><pose>6.2250 9.4250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c29"><pose>6.2250 9.4250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c30"><pose>18.3750 0.1250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c30"><pose>18.3750 0.1250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c31"><pose>5.0750 14.3750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c31"><pose>5.0750 14.3750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c32"><pose>19.9750 5.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c32"><pose>19.9750 5.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c33"><pose>13.8750 12.7750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c33"><pose>13.8750 12.7750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c34"><pose>19.5250 19.2750 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c34"><pose>19.5250 19.2750 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c35"><pose>0.8250 9.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c35"><pose>0.8250 9.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c36"><pose>15.9250 8.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.7501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c36"><pose>15.9250 8.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.7501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c37"><pose>17.8250 0.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c37"><pose>17.8250 0.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c38"><pose>9.0750 18.3750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c38"><pose>9.0750 18.3750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c39"><pose>9.2750 17.7250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c39"><pose>9.2750 17.7250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c40"><pose>5.3750 4.9250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c40"><pose>5.3750 4.9250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c41"><pose>17.7750 4.2250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c41"><pose>17.7750 4.2250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c42"><pose>6.2750 1.2750 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c42"><pose>6.2750 1.2750 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c43"><pose>9.2250 3.2750 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c43"><pose>9.2250 3.2750 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c44"><pose>15.1250 6.3250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c44"><pose>15.1250 6.3250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c45"><pose>14.8750 3.5750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c45"><pose>14.8750 3.5750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c46"><pose>10.0250 0.1250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c46"><pose>10.0250 0.1250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c47"><pose>11.0750 8.4250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c47"><pose>11.0750 8.4250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c48"><pose>7.2750 12.6750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c48"><pose>7.2750 12.6750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c49"><pose>0.4750 14.5250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c49"><pose>0.4750 14.5250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c50"><pose>3.1750 8.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c50"><pose>3.1750 8.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c51"><pose>6.3250 12.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c51"><pose>6.3250 12.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c52"><pose>5.3750 6.8250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c52"><pose>5.3750 6.8250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c53"><pose>17.4750 3.9250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c53"><pose>17.4750 3.9250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c54"><pose>1.5250 4.8750 0.25 0 0 0</pose><geometry><cylinder><radius>0.8001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c54"><pose>1.5250 4.8750 0.25 0 0 0</pose><geometry><cylinder><radius>0.8001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c55"><pose>6.2250 1.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c55"><pose>6.2250 1.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c56"><pose>18.4250 15.2750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c56"><pose>18.4250 15.2750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c57"><pose>15.4750 2.5750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c57"><pose>15.4750 2.5750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c58"><pose>1.3750 8.4250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c58"><pose>1.3750 8.4250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c59"><pose>11.4250 9.1250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c59"><pose>11.4250 9.1250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c60"><pose>9.1250 16.7750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c60"><pose>9.1250 16.7750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c61"><pose>11.4250 7.3250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c61"><pose>11.4250 7.3250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c62"><pose>11.4250 7.3750 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c62"><pose>11.4250 7.3750 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c63"><pose>0.8750 4.0750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c63"><pose>0.8750 4.0750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c64"><pose>3.5250 6.2750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c64"><pose>3.5250 6.2750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c65"><pose>18.3750 11.5250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c65"><pose>18.3750 11.5250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c66"><pose>17.6250 15.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.8001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c66"><pose>17.6250 15.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.8001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c67"><pose>14.0250 15.1750 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c67"><pose>14.0250 15.1750 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c68"><pose>6.8250 18.3750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c68"><pose>6.8250 18.3750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c69"><pose>7.1750 10.0250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c69"><pose>7.1750 10.0250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c70"><pose>1.7750 9.7750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c70"><pose>1.7750 9.7750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c71"><pose>5.2750 2.6750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c71"><pose>5.2750 2.6750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c72"><pose>5.4750 15.7250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c72"><pose>5.4750 15.7250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c73"><pose>17.9750 15.3750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c73"><pose>17.9750 15.3750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c74"><pose>18.2250 2.9750 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c74"><pose>18.2250 2.9750 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c75"><pose>9.8250 8.0250 0.25 0 0 0</pose><geometry><cylinder><radius>0.8001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c75"><pose>9.8250 8.0250 0.25 0 0 0</pose><geometry><cylinder><radius>0.8001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c76"><pose>12.7250 16.9250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c76"><pose>12.7250 16.9250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c77"><pose>19.3750 14.6750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c77"><pose>19.3750 14.6750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c78"><pose>18.4750 7.8250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c78"><pose>18.4750 7.8250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c79"><pose>1.8750 16.8250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c79"><pose>1.8750 16.8250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c80"><pose>19.5250 19.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c80"><pose>19.5250 19.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c81"><pose>16.1750 13.8750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c81"><pose>16.1750 13.8750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c82"><pose>10.6750 6.1750 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c82"><pose>10.6750 6.1750 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c83"><pose>13.9250 18.8250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c83"><pose>13.9250 18.8250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c84"><pose>0.5750 19.7750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c84"><pose>0.5750 19.7750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c85"><pose>16.2750 7.1750 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c85"><pose>16.2750 7.1750 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c86"><pose>12.8750 7.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c86"><pose>12.8750 7.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c87"><pose>14.2750 10.0750 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c87"><pose>14.2750 10.0750 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c88"><pose>3.8750 9.8750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c88"><pose>3.8750 9.8750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c89"><pose>15.5750 5.7250 0.25 0 0 0</pose><geometry><cylinder><radius>0.8001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c89"><pose>15.5750 5.7250 0.25 0 0 0</pose><geometry><cylinder><radius>0.8001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c90"><pose>17.6750 8.8750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c90"><pose>17.6750 8.8750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c91"><pose>9.1750 18.1250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c91"><pose>9.1750 18.1250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c92"><pose>15.7750 6.0750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c92"><pose>15.7750 6.0750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c93"><pose>7.7250 5.2250 0.25 0 0 0</pose><geometry><cylinder><radius>0.8001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c93"><pose>7.7250 5.2250 0.25 0 0 0</pose><geometry><cylinder><radius>0.8001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c94"><pose>4.2750 12.1250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c94"><pose>4.2750 12.1250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c95"><pose>14.3750 12.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c95"><pose>14.3750 12.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c96"><pose>18.9750 15.2250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c96"><pose>18.9750 15.2250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c97"><pose>2.5750 8.9250 0.25 0 0 0</pose><geometry><cylinder><radius>0.3001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c97"><pose>2.5750 8.9250 0.25 0 0 0</pose><geometry><cylinder><radius>0.3001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c98"><pose>19.6750 9.5250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c98"><pose>19.6750 9.5250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c99"><pose>7.4750 4.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c99"><pose>7.4750 4.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c100"><pose>2.8250 7.7750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c100"><pose>2.8250 7.7750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c101"><pose>11.1750 12.1250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c101"><pose>11.1750 12.1250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c102"><pose>3.6750 14.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c102"><pose>3.6750 14.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c103"><pose>5.0250 5.7750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c103"><pose>5.0250 5.7750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c104"><pose>15.7750 5.0250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c104"><pose>15.7750 5.0250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c105"><pose>17.8250 19.2750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c105"><pose>17.8250 19.2750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c106"><pose>10.7250 15.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c106"><pose>10.7250 15.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c107"><pose>16.8750 12.2250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c107"><pose>16.8750 12.2250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c108"><pose>18.4750 3.7250 0.25 0 0 0</pose><geometry><cylinder><radius>0.3001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c108"><pose>18.4750 3.7250 0.25 0 0 0</pose><geometry><cylinder><radius>0.3001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c109"><pose>9.2250 11.4250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c109"><pose>9.2250 11.4250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c110"><pose>0.2750 19.0250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c110"><pose>0.2750 19.0250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c111"><pose>13.4250 10.2250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c111"><pose>13.4250 10.2250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c112"><pose>14.0250 14.3250 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c112"><pose>14.0250 14.3250 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c113"><pose>8.6250 2.6750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c113"><pose>8.6250 2.6750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c114"><pose>8.9750 3.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c114"><pose>8.9750 3.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c115"><pose>12.5250 10.7250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c115"><pose>12.5250 10.7250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c116"><pose>19.9750 19.1250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c116"><pose>19.9750 19.1250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c117"><pose>4.3750 15.9250 0.25 0 0 0</pose><geometry><cylinder><radius>0.8001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c117"><pose>4.3750 15.9250 0.25 0 0 0</pose><geometry><cylinder><radius>0.8001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c118"><pose>13.0250 16.9250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c118"><pose>13.0250 16.9250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c119"><pose>17.5750 0.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.7501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c119"><pose>17.5750 0.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.7501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c120"><pose>12.9250 7.2250 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c120"><pose>12.9250 7.2250 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c121"><pose>18.3250 11.9750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c121"><pose>18.3250 11.9750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c122"><pose>13.1250 5.2750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c122"><pose>13.1250 5.2750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c123"><pose>12.6250 1.9750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c123"><pose>12.6250 1.9750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c124"><pose>10.7750 13.0250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c124"><pose>10.7750 13.0250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c125"><pose>9.1250 0.6750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c125"><pose>9.1250 0.6750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c126"><pose>14.4250 13.7250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c126"><pose>14.4250 13.7250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c127"><pose>5.0250 7.7250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c127"><pose>5.0250 7.7250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c128"><pose>7.2750 1.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.3001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c128"><pose>7.2750 1.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.3001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c129"><pose>7.6750 8.2750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c129"><pose>7.6750 8.2750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c130"><pose>18.1750 17.6750 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c130"><pose>18.1750 17.6750 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c131"><pose>13.1250 0.4250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c131"><pose>13.1250 0.4250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c132"><pose>15.7250 1.2250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c132"><pose>15.7250 1.2250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c133"><pose>10.0250 19.2750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c133"><pose>10.0250 19.2750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c134"><pose>15.0750 6.7750 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c134"><pose>15.0750 6.7750 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c135"><pose>2.7250 7.7250 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c135"><pose>2.7250 7.7250 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c136"><pose>9.4250 17.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c136"><pose>9.4250 17.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c137"><pose>12.7250 1.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c137"><pose>12.7250 1.6250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c138"><pose>0.4250 12.4250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c138"><pose>0.4250 12.4250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c139"><pose>3.0250 2.2750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c139"><pose>3.0250 2.2750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c140"><pose>19.1250 1.8250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c140"><pose>19.1250 1.8250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c141"><pose>10.7250 12.3250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c141"><pose>10.7250 12.3250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c142"><pose>12.3750 16.1250 0.25 0 0 0</pose><geometry><cylinder><radius>0.3001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c142"><pose>12.3750 16.1250 0.25 0 0 0</pose><geometry><cylinder><radius>0.3001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c143"><pose>9.2250 18.3250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c143"><pose>9.2250 18.3250 0.25 0 0 0</pose><geometry><cylinder><radius>0.7001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c144"><pose>10.2750 13.8750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c144"><pose>10.2750 13.8750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c145"><pose>15.5750 0.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c145"><pose>15.5750 0.4750 0.25 0 0 0</pose><geometry><cylinder><radius>0.4001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c146"><pose>4.9250 19.2750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c146"><pose>4.9250 19.2750 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c147"><pose>19.0750 18.9250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c147"><pose>19.0750 18.9250 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c148"><pose>19.8750 15.1250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c148"><pose>19.8750 15.1250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c149"><pose>12.9750 3.3250 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c149"><pose>12.9750 3.3250 0.25 0 0 0</pose><geometry><cylinder><radius>0.3501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c150"><pose>8.9250 11.0250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c150"><pose>8.9250 11.0250 0.25 0 0 0</pose><geometry><cylinder><radius>0.4501</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c151"><pose>16.1250 9.9750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c151"><pose>16.1250 9.9750 0.25 0 0 0</pose><geometry><cylinder><radius>0.6001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c152"><pose>15.8750 11.5250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c152"><pose>15.8750 11.5250 0.25 0 0 0</pose><geometry><cylinder><radius>0.5001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="c153"><pose>5.0750 9.1750 0.25 0 0 0</pose><geometry><cylinder><radius>0.8001</radius><length>0.5</length></cylinder></geometry></collision>
+        <visual name="c153"><pose>5.0750 9.1750 0.25 0 0 0</pose><geometry><cylinder><radius>0.8001</radius><length>0.5</length></cylinder></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b0"><pose>10.0000 0.0500 0.25 0 0 0</pose><geometry><box><size>20.0000 0.1000 0.5</size></box></geometry></collision>
+        <visual name="b0"><pose>10.0000 0.0500 0.25 0 0 0</pose><geometry><box><size>20.0000 0.1000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b1"><pose>0.0500 10.0000 0.25 0 0 0</pose><geometry><box><size>0.1000 19.8000 0.5</size></box></geometry></collision>
+        <visual name="b1"><pose>0.0500 10.0000 0.25 0 0 0</pose><geometry><box><size>0.1000 19.8000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b2"><pose>19.9500 10.0000 0.25 0 0 0</pose><geometry><box><size>0.1000 19.8000 0.5</size></box></geometry></collision>
+        <visual name="b2"><pose>19.9500 10.0000 0.25 0 0 0</pose><geometry><box><size>0.1000 19.8000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+        <collision name="b3"><pose>10.0000 19.9500 0.25 0 0 0</pose><geometry><box><size>20.0000 0.1000 0.5</size></box></geometry></collision>
+        <visual name="b3"><pose>10.0000 19.9500 0.25 0 0 0</pose><geometry><box><size>20.0000 0.1000 0.5</size></box></geometry><material><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+      </link>
+    </model>
+  </world>
+</sdf>
