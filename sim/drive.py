@@ -162,6 +162,15 @@ for i, g in enumerate(goals):
     result = nav.getResult()
     sim_s = (nav.get_clock().now() - t0).nanoseconds / 1e9
     reached = result == TaskResult.SUCCEEDED
+    if reached and sim_s < 0.5 and math.hypot(g[0] - here[0], g[1] - here[1]) > 0.3:
+        # A goal metres away "reached" in no simulated time: the navigation stack has
+        # gone down (seen when collision_monitor crashed). Write no CSV so the run
+        # counts as incomplete and the batch script retries it.
+        print(f'{label}: leg {i} reported reached after {sim_s:.2f} s sim time; '
+              'navigation stack is down, aborting run without results', flush=True)
+        trace.close()
+        rclpy.shutdown()
+        sys.exit(3)
     rows_out.append({
         'planner': label, 'leg': i, 'goal_x': round(g[0], 3), 'goal_y': round(g[1], 3),
         'straight_m': round(math.hypot(g[0] - here[0], g[1] - here[1]), 3),

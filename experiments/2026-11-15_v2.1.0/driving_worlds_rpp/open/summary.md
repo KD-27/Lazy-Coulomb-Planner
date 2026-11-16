@@ -1,4 +1,4 @@
-| Planner | Runs | Goals reached (of 15), mean ± sd | Runs with all goals | Sim time (s) | Recoveries | Median recoveries | Distance (m) | Closest obstacle (m) |
+| Planner | Runs | Goals reached (of 10), mean ± sd | Runs with all goals | Sim time (s) | Recoveries | Median recoveries | Distance (m) | Closest obstacle (m) |
 |---|---|---|---|---|---|---|---|---|
 | lcp | 3 | 10.0 ± 0.0 | 3 | 256.0 ± 0.2 | 0.0 ± 0.0 | 0 | 89.8 ± 0.0 | 1.01 |
 | navfn | 3 | 10.0 ± 0.0 | 3 | 257.2 ± 0.8 | 0.0 ± 0.0 | 0 | 90.2 ± 0.0 | 0.99 |

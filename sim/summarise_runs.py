@@ -47,8 +47,10 @@ def spread(values):
     return f'{statistics.mean(values):.1f} ± {sd:.1f}'
 
 
+goal_counts = sorted({r['goals'] for r in runs})
+goals_label = '/'.join(str(g) for g in goal_counts)
 print(
-    '| Planner | Runs | Goals reached (of 15), mean ± sd | Runs with all goals | '
+    f'| Planner | Runs | Goals reached (of {goals_label}), mean ± sd | Runs with all goals | '
     'Sim time (s) | Recoveries | Median recoveries | Distance (m) | Closest obstacle (m) |'
 )
 print('|---|---|---|---|---|---|---|---|---|')

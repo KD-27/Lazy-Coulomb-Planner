@@ -199,3 +199,65 @@
 2026-11-16 07:36:41 WORLDS DONE
 2026-11-16 07:36:41 driving_moving_rpp: on hold (HOLD_MOVING present), not started
 2026-11-16 07:36:41 NIGHT2 DONE
+2026-11-16 09:44:52 driving_moving_rpp: smoke test
+2026-11-16 09:46:05   moving/open/5hz/lcp: lcp: reached 2/2 goals, sim time 39.2 s, travelled 13.16 m, closest obstacle 0.934 m, recoveries 0 cpu 2.41 s
+2026-11-16 09:46:05 driving_moving_rpp: start
+2026-11-16 09:51:18   moving/open/1hz/lcp_01: lcp: reached 10/10 goals, sim time 280.3 s, travelled 93.68 m, closest obstacle 0.159 m, recoveries 9 cpu 15.06 s
+2026-11-16 09:56:22   moving/open/1hz/navfn_01: navfn: reached 10/10 goals, sim time 271.9 s, travelled 92.71 m, closest obstacle 0.119 m, recoveries 0 cpu 13.01 s
+2026-11-16 09:59:41   moving/open/1hz/smac2d_01: attempt 1 failed: smac2d: run did not complete
+2026-11-16 10:05:04   moving/open/1hz/smac2d_01: smac2d: reached 10/10 goals, sim time 279.9 s, travelled 94.65 m, closest obstacle 0.163 m, recoveries 4 cpu 15.73 s
+2026-11-16 10:10:09   moving/open/1hz/theta_01: theta: reached 10/10 goals, sim time 272.5 s, travelled 92.17 m, closest obstacle 0.124 m, recoveries 4 cpu 14.39 s
+2026-11-16 10:15:13   moving/open/5hz/lcp_01: lcp: reached 10/10 goals, sim time 272.4 s, travelled 91.73 m, closest obstacle 0.119 m, recoveries 6 cpu 14.75 s
+2026-11-16 10:20:34   moving/open/5hz/navfn_01: navfn: reached 10/10 goals, sim time 289.3 s, travelled 94.62 m, closest obstacle 0.152 m, recoveries 4 cpu 17.60 s
+2026-11-16 10:25:45   moving/open/5hz/smac2d_01: smac2d: reached 10/10 goals, sim time 278.2 s, travelled 94.41 m, closest obstacle 0.279 m, recoveries 3 cpu 21.39 s
+2026-11-16 10:30:57   moving/open/5hz/theta_01: theta: reached 10/10 goals, sim time 279.4 s, travelled 92.18 m, closest obstacle 0.130 m, recoveries 12 cpu 16.61 s
+2026-11-16 10:36:28   moving/density_10/1hz/lcp_01: lcp: reached 9/10 goals, sim time 298.8 s, travelled 102.09 m, closest obstacle 0.113 m, recoveries 6 cpu 14.92 s
+2026-11-16 10:42:48   moving/density_10/1hz/navfn_01: navfn: reached 10/10 goals, sim time 347.1 s, travelled 123.22 m, closest obstacle 0.117 m, recoveries 1 cpu 19.59 s
+2026-11-16 10:47:43   moving/density_10/1hz/smac2d_01: smac2d: reached 7/10 goals, sim time 263.1 s, travelled 89.50 m, closest obstacle 0.120 m, recoveries 6 cpu 12.57 s
+2026-11-16 10:54:16   moving/density_10/1hz/theta_01: theta: reached 10/10 goals, sim time 361.5 s, travelled 123.13 m, closest obstacle 0.121 m, recoveries 2 cpu 20.63 s
+2026-11-16 11:00:27   moving/density_10/5hz/lcp_01: lcp: reached 10/10 goals, sim time 339.1 s, travelled 120.05 m, closest obstacle 0.127 m, recoveries 8 cpu 16.97 s
+2026-11-16 11:06:43   moving/density_10/5hz/navfn_01: navfn: reached 10/10 goals, sim time 343.8 s, travelled 123.02 m, closest obstacle 0.230 m, recoveries 0 cpu 20.09 s
+2026-11-16 11:13:01   moving/density_10/5hz/smac2d_01: smac2d: reached 10/10 goals, sim time 345.2 s, travelled 122.71 m, closest obstacle 0.118 m, recoveries 6 cpu 20.39 s
+2026-11-16 11:19:15   moving/density_10/5hz/theta_01: theta: reached 9/10 goals, sim time 341.8 s, travelled 114.87 m, closest obstacle 0.122 m, recoveries 10 cpu 23.50 s
+2026-11-16 11:24:31   moving/open/1hz/lcp_02: lcp: reached 10/10 goals, sim time 283.5 s, travelled 93.53 m, closest obstacle 0.181 m, recoveries 8 cpu 15.48 s
+2026-11-16 11:29:43   moving/open/1hz/navfn_02: navfn: reached 10/10 goals, sim time 279.5 s, travelled 93.94 m, closest obstacle 0.130 m, recoveries 4 cpu 16.70 s
+2026-11-16 11:34:53   moving/open/1hz/smac2d_02: smac2d: reached 10/10 goals, sim time 277.9 s, travelled 94.63 m, closest obstacle 0.162 m, recoveries 3 cpu 14.48 s
+2026-11-16 11:39:57   moving/open/1hz/theta_02: theta: reached 10/10 goals, sim time 270.8 s, travelled 92.41 m, closest obstacle 0.142 m, recoveries 7 cpu 15.94 s
+2026-11-16 11:45:03   moving/open/5hz/lcp_02: lcp: reached 10/10 goals, sim time 273.8 s, travelled 93.53 m, closest obstacle 0.325 m, recoveries 3 cpu 13.81 s
+2026-11-16 11:50:07   moving/open/5hz/navfn_02: navfn: reached 10/10 goals, sim time 272.3 s, travelled 92.92 m, closest obstacle 0.118 m, recoveries 4 cpu 15.36 s
+2026-11-16 11:55:17   moving/open/5hz/smac2d_02: smac2d: reached 10/10 goals, sim time 278.1 s, travelled 95.24 m, closest obstacle 0.220 m, recoveries 3 cpu 17.18 s
+2026-11-16 12:00:30   moving/open/5hz/theta_02: theta: reached 10/10 goals, sim time 279.5 s, travelled 93.39 m, closest obstacle 0.175 m, recoveries 6 cpu 16.31 s
+2026-11-16 12:07:50   moving/density_10/1hz/lcp_02: lcp: reached 10/10 goals, sim time 407.6 s, travelled 127.75 m, closest obstacle 0.115 m, recoveries 32 cpu 18.82 s
+2026-11-16 12:14:09   moving/density_10/1hz/navfn_02: navfn: reached 10/10 goals, sim time 346.1 s, travelled 123.24 m, closest obstacle 0.152 m, recoveries 0 cpu 19.15 s
+2026-11-16 12:20:29   moving/density_10/1hz/smac2d_02: smac2d: reached 10/10 goals, sim time 348.0 s, travelled 121.91 m, closest obstacle 0.118 m, recoveries 4 cpu 18.84 s
+2026-11-16 12:26:45   moving/density_10/1hz/theta_02: theta: reached 10/10 goals, sim time 342.7 s, travelled 122.32 m, closest obstacle 0.120 m, recoveries 2 cpu 17.06 s
+2026-11-16 12:32:55   moving/density_10/5hz/lcp_02: lcp: reached 10/10 goals, sim time 338.2 s, travelled 121.85 m, closest obstacle 0.124 m, recoveries 4 cpu 18.86 s
+2026-11-16 12:39:15   moving/density_10/5hz/navfn_02: navfn: reached 10/10 goals, sim time 347.8 s, travelled 123.09 m, closest obstacle 0.123 m, recoveries 3 cpu 21.65 s
+2026-11-16 12:45:31   moving/density_10/5hz/smac2d_02: smac2d: reached 10/10 goals, sim time 343.7 s, travelled 122.21 m, closest obstacle 0.114 m, recoveries 3 cpu 21.28 s
+2026-11-16 12:51:09   moving/density_10/5hz/theta_02: theta: reached 9/10 goals, sim time 305.0 s, travelled 106.70 m, closest obstacle 0.129 m, recoveries 1 cpu 19.87 s
+2026-11-16 12:54:29   moving/open/1hz/lcp_03: attempt 1 failed: lcp: run did not complete
+2026-11-16 12:59:43   moving/open/1hz/lcp_03: lcp: reached 10/10 goals, sim time 272.0 s, travelled 91.79 m, closest obstacle 0.116 m, recoveries 2 cpu 15.31 s
+2026-11-16 13:04:56   moving/open/1hz/navfn_03: navfn: reached 10/10 goals, sim time 280.8 s, travelled 93.73 m, closest obstacle 0.143 m, recoveries 0 cpu 13.75 s
+2026-11-16 13:10:09   moving/open/1hz/smac2d_03: smac2d: reached 10/10 goals, sim time 281.9 s, travelled 95.10 m, closest obstacle 0.192 m, recoveries 9 cpu 16.22 s
+2026-11-16 13:11:51   moving/open/1hz/theta_03: theta: reached 9/10 goals, sim time 68.3 s, travelled 22.31 m, closest obstacle 0.231 m, recoveries 0 cpu 3.84 s
+2026-11-16 13:17:02   moving/open/5hz/lcp_03: lcp: reached 10/10 goals, sim time 279.2 s, travelled 92.47 m, closest obstacle 0.117 m, recoveries 8 cpu 16.04 s
+2026-11-16 13:18:37   moving/open/5hz/navfn_03: attempt 1 failed: navfn: localisation did not start, see /home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-15_v2.1.0/driving_moving_rpp/open/5hz/navfn_03/navfn.launch.log
+2026-11-16 13:24:13   moving/open/5hz/navfn_03: navfn: reached 10/10 goals, sim time 293.6 s, travelled 96.15 m, closest obstacle 0.120 m, recoveries 4 cpu 19.17 s
+2026-11-16 13:29:24   moving/open/5hz/smac2d_03: smac2d: reached 10/10 goals, sim time 279.1 s, travelled 94.61 m, closest obstacle 0.169 m, recoveries 4 cpu 18.59 s
+2026-11-16 13:34:45   moving/open/5hz/theta_03: theta: reached 10/10 goals, sim time 289.5 s, travelled 93.92 m, closest obstacle 0.122 m, recoveries 16 cpu 16.65 s
+2026-11-16 13:41:18   moving/density_10/1hz/lcp_03: lcp: reached 10/10 goals, sim time 358.3 s, travelled 123.03 m, closest obstacle 0.116 m, recoveries 9 cpu 18.75 s
+2026-11-16 13:47:39   moving/density_10/1hz/navfn_03: navfn: reached 10/10 goals, sim time 348.6 s, travelled 123.23 m, closest obstacle 0.115 m, recoveries 4 cpu 20.19 s
+2026-11-16 13:50:58   moving/density_10/1hz/smac2d_03: attempt 1 failed: smac2d: run did not complete
+2026-11-16 13:57:35   moving/density_10/1hz/smac2d_03: smac2d: reached 10/10 goals, sim time 354.3 s, travelled 122.35 m, closest obstacle 0.121 m, recoveries 11 cpu 21.43 s
+2026-11-16 14:04:02   moving/density_10/1hz/theta_03: theta: reached 10/10 goals, sim time 353.9 s, travelled 122.43 m, closest obstacle 0.109 m, recoveries 9 cpu 21.51 s
+2026-11-16 14:10:36   moving/density_10/5hz/lcp_03: lcp: reached 10/10 goals, sim time 360.9 s, travelled 120.86 m, closest obstacle 0.121 m, recoveries 17 cpu 23.17 s
+2026-11-16 14:16:55   moving/density_10/5hz/navfn_03: navfn: reached 10/10 goals, sim time 346.7 s, travelled 122.56 m, closest obstacle 0.122 m, recoveries 1 cpu 21.11 s
+2026-11-16 14:22:55   moving/density_10/5hz/smac2d_03: smac2d: reached 8/10 goals, sim time 326.4 s, travelled 107.09 m, closest obstacle 0.123 m, recoveries 15 cpu 19.38 s
+2026-11-16 14:28:37   moving/density_10/5hz/theta_03: theta: reached 9/10 goals, sim time 308.7 s, travelled 106.12 m, closest obstacle 0.114 m, recoveries 6 cpu 16.71 s
+2026-11-16 14:28:37 driving_moving_rpp: done
+2026-11-16 14:28:37 MOVING DONE
+2026-11-16 14:29:15 driving_moving_rpp: smoke test
+2026-11-16 14:29:15 driving_moving_rpp: start
+2026-11-16 14:34:29   moving/open/1hz/theta_03: theta: reached 10/10 goals, sim time 281.5 s, travelled 92.87 m, closest obstacle 0.122 m, recoveries 7 cpu 16.54 s
+2026-11-16 14:34:30 driving_moving_rpp: done
+2026-11-16 14:34:30 MOVING DONE

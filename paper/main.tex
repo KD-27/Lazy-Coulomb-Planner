@@ -35,7 +35,7 @@
 \author{
 \IEEEauthorblockN{Kaveesha Dhananjaya}
 \IEEEauthorblockA{\pending{Affiliation}\\\pending{e-mail}}
-% \pending{Further authors, for example the supervisor, to be agreed.}
+% Single author. The supervisor will proof-read at the end (acknowledgement).
 }
 
 \maketitle
@@ -570,8 +570,15 @@ by odometry. \pending{No real-robot experiments yet.}
 \SI{1}{Hz}, a faster planner does not make the robot arrive sooner. The speed
 matters when plans are frequent or maps large: fast replanning around moving
 obstacles, multi-robot systems, or exploration with many short requests.
-\pending{A moving-obstacle experiment with faster replanning is prepared but not
-yet run.}
+In a test with six cylinders crossing the arena at \SI{0.3}{m/s} and
+replanning at \SI{1}{Hz} or \SI{5}{Hz} (two worlds, three runs each), every
+planner reached 9 to 10 of 10 goals and the faster rate did not shorten the
+drive. At \SI{5}{Hz} in the open world the planner server used least CPU with
+\lcp{} (\SI{14.9}{s} over the run against 16.5 to \SI{19.1}{s}), and unlike the
+grid planners its CPU did not rise from \SI{1}{Hz}; with static clutter the
+difference was within the spread, and with three runs none of these differences
+is significant. \pending{Localisation in this test was AMCL, not odometry; decide
+whether to rerun with odometry before quoting it.}
 
 % ---------------------------------------------------------------------------
 \section{Conclusion}
@@ -581,8 +588,8 @@ moderately cluttered space this is one to two orders of magnitude faster than th
 Nav2 grid planners, and the gap grows with the size of the map; with a weighted
 A\textsuperscript{*} fallback it is complete on the costmap and never returns a
 path through an inflated obstacle cell. \pending{Future work: real-robot
-validation, centring paths in free space, moving obstacles, and an extension to
-3D for exploration with aerial robots.}
+validation, centring paths in free space, denser and faster moving obstacles, and
+an extension to 3D for exploration with aerial robots.}
 
 \section*{Acknowledgment}
 \pending{To be written.}

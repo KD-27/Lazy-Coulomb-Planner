@@ -1,0 +1,13 @@
+run,planner,goals,reached,sim_time_s,travelled_m,recoveries,closest_obstacle_m
+lcp_01,lcp,10,10,280.3,93.68,9,0.159
+lcp_02,lcp,10,10,283.5,93.53,8,0.181
+lcp_03,lcp,10,10,272.0,91.79,2,0.116
+navfn_01,navfn,10,10,271.9,92.71,0,0.119
+navfn_02,navfn,10,10,279.5,93.94,4,0.13
+navfn_03,navfn,10,10,280.8,93.73,0,0.143
+smac2d_01,smac2d,10,10,279.9,94.65,4,0.163
+smac2d_02,smac2d,10,10,277.9,94.63,3,0.162
+smac2d_03,smac2d,10,10,281.9,95.1,9,0.192
+theta_01,theta,10,10,272.5,92.17,4,0.124
+theta_02,theta,10,10,270.8,92.41,7,0.142
+theta_03,theta,10,10,281.5,92.87,7,0.122
