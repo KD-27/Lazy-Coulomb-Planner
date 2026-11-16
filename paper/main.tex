@@ -583,14 +583,20 @@ by odometry. \pending{No real-robot experiments yet.}
 matters when plans are frequent or maps large: fast replanning around moving
 obstacles, multi-robot systems, or exploration with many short requests.
 In a test with six cylinders crossing the arena at \SI{0.3}{m/s} and
-replanning at \SI{1}{Hz} or \SI{5}{Hz} (two worlds, three runs each), every
-planner reached 9 to 10 of 10 goals and the faster rate did not shorten the
-drive. At \SI{5}{Hz} in the open world the planner server used least CPU with
-\lcp{} (\SI{14.9}{s} over the run against 16.5 to \SI{19.1}{s}), and unlike the
-grid planners its CPU did not rise from \SI{1}{Hz}; with static clutter the
-difference was within the spread, and with three runs none of these differences
-is significant. \pending{Localisation in this test was AMCL, not odometry; decide
-whether to rerun with odometry before quoting it.}
+replanning at \SI{1}{Hz} or \SI{5}{Hz} (two worlds, four planners, three runs
+each, repeated with AMCL and with wheel-odometry localisation: 96 runs), no
+planner was separated from the others on success or travel time: every planner
+reached 9 to 10 of 10 goals in most conditions, and the misses came from single
+runs that went wrong for every planner (15 of 96 runs; 9 of them for
+Theta\textsuperscript{*}), and the faster rate did not shorten the drive. With
+static clutter and \SI{5}{Hz} replanning the planner server used least CPU with
+\lcp{} (\SI{19.2}{s} over the run against 22.3 to \SI{31.5}{s} with odometry,
+\SI{19.7}{s} against 20.0 to \SI{20.9}{s} with AMCL), but with three runs none of
+these differences is significant. The test also exposed a cost of the fallback:
+in two runs \lcp{} found a goal enclosed by obstacle marks on the costmap and
+searched the whole map before refusing it, which took about \SI{1}{s} per plan.
+A grid planner pays this search on every request; \lcp{} pays it only when the
+goal is unreachable, but then in full.
 
 % ---------------------------------------------------------------------------
 \section{Conclusion}
