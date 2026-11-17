@@ -1,0 +1,3 @@
+# Superseded: any-angle baselines with a 0.22 m blocked radius
+
+First run of `benchmark/anyangle/run_anyangle.sh` on 17 November 2026 (12:00 to 12:07). `export_grid.py` then blocked cells within 0.22 m of an obstacle, while LCP's costmap (and `benchmark/routability.py`) block within 0.224 m. So the Java planners saw a slightly more open map and returned paths for pairs that have no route for the robot (Anya 100 against 94 routable at 30 % density, 85 against 71 at 35 %). Timings and length ratios are within noise of the corrected run. Use `../anyangle_controlled/` instead; this one is kept because it was run.

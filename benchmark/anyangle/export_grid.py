@@ -2,13 +2,14 @@
 """
 Export a benchmark map and its start/goal pairs for AnyAngleBench.java.
 
-Usage: export_grid.py <map.yaml> <bench.csv> <out_prefix> [robot_radius_m]
+Usage: export_grid.py <map.yaml> <bench.csv> <out_prefix> [blocked_radius_m]
 Writes <out_prefix>.grid.txt and <out_prefix>.queries.csv.
 
 The grid reproduces what LCP plans on: a tile is blocked when the Nav2 costmap
 would give it cost 253 or more, i.e. it is an obstacle or unknown cell, or its
-centre is within the robot radius (inscribed radius, 0.22 m in the benchmark)
-of an obstacle cell centre. Start and goal are the pairs of the benchmark CSV,
+centre is within the inscribed radius of an obstacle cell centre. The default,
+0.224 m, is the value routability.py uses for the benchmark's 0.22 m robot (Nav2's
+inflation also marks cells 4.47 cells away as inscribed). Start and goal are the pairs of the benchmark CSV,
 rounded to the nearest grid vertex (the any-angle planners work on cell corners).
 """
 import csv
@@ -20,7 +21,7 @@ from scipy.ndimage import distance_transform_edt
 import yaml
 
 map_yaml, bench_csv, prefix = sys.argv[1:4]
-radius = float(sys.argv[4]) if len(sys.argv) > 4 else 0.22
+radius = float(sys.argv[4]) if len(sys.argv) > 4 else 0.224
 
 meta = yaml.safe_load(open(map_yaml))
 res = float(meta['resolution'])

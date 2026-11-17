@@ -1,0 +1,43 @@
+/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-17_v2.1.0/anyangle_controlled/grids/base: 1000x1000 tiles, 20.5 % blocked, 100 pairs
+12:50:10 base done
+/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-17_v2.1.0/anyangle_controlled/grids/corridor_0.8: 1000x1000 tiles, 83.6 % blocked, 100 pairs
+12:50:19 corridor_0.8 done
+/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-17_v2.1.0/anyangle_controlled/grids/corridor_1.2: 1000x1000 tiles, 71.2 % blocked, 100 pairs
+12:50:32 corridor_1.2 done
+/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-17_v2.1.0/anyangle_controlled/grids/corridor_2.0: 1000x1000 tiles, 51.9 % blocked, 100 pairs
+12:50:48 corridor_2.0 done
+/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-17_v2.1.0/anyangle_controlled/grids/corridor_3.0: 1000x1000 tiles, 40.3 % blocked, 100 pairs
+12:51:01 corridor_3.0 done
+/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-17_v2.1.0/anyangle_controlled/grids/density_00: 1000x1000 tiles, 2.4 % blocked, 100 pairs
+12:51:07 density_00 done
+/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-17_v2.1.0/anyangle_controlled/grids/density_02: 1000x1000 tiles, 7.0 % blocked, 100 pairs
+12:51:13 density_02 done
+/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-17_v2.1.0/anyangle_controlled/grids/density_05: 1000x1000 tiles, 11.6 % blocked, 100 pairs
+12:51:20 density_05 done
+/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-17_v2.1.0/anyangle_controlled/grids/density_15: 1000x1000 tiles, 28.8 % blocked, 100 pairs
+12:51:30 density_15 done
+/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-17_v2.1.0/anyangle_controlled/grids/density_20: 1000x1000 tiles, 36.5 % blocked, 100 pairs
+12:51:40 density_20 done
+/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-17_v2.1.0/anyangle_controlled/grids/density_25: 1000x1000 tiles, 44.0 % blocked, 100 pairs
+12:51:53 density_25 done
+/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-17_v2.1.0/anyangle_controlled/grids/density_30: 1000x1000 tiles, 51.2 % blocked, 100 pairs
+12:52:09 density_30 done
+/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-17_v2.1.0/anyangle_controlled/grids/density_35: 1000x1000 tiles, 57.8 % blocked, 100 pairs
+12:52:33 density_35 done
+/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-17_v2.1.0/anyangle_controlled/grids/density_40: 1000x1000 tiles, 63.7 % blocked, 100 pairs
+12:52:57 density_40 done
+/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-17_v2.1.0/anyangle_controlled/grids/density_45: 1000x1000 tiles, 69.3 % blocked, 100 pairs
+12:53:22 density_45 done
+/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-17_v2.1.0/anyangle_controlled/grids/shape_square: 1000x1000 tiles, 19.4 % blocked, 100 pairs
+12:53:29 shape_square done
+/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-17_v2.1.0/anyangle_controlled/grids/shape_u: 1000x1000 tiles, 27.2 % blocked, 100 pairs
+12:53:46 shape_u done
+/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-17_v2.1.0/anyangle_controlled/grids/size_010: 200x200 tiles, 30.7 % blocked, 100 pairs
+12:53:46 size_010 done
+/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-17_v2.1.0/anyangle_controlled/grids/size_025: 500x500 tiles, 22.1 % blocked, 100 pairs
+12:53:49 size_025 done
+/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-17_v2.1.0/anyangle_controlled/grids/size_100: 2000x2000 tiles, 19.2 % blocked, 100 pairs
+12:54:16 size_100 done
+/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-17_v2.1.0/anyangle_controlled/grids/size_200: 4000x4000 tiles, 18.7 % blocked, 100 pairs
+12:56:15 size_200 done
+ANYANGLE DONE

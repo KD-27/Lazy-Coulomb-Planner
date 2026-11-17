@@ -1,0 +1,17 @@
+# Ablation: clearance after each post-processing stage of LCP, against the Nav2
+# grid planners, on the eight ablation maps. Needs lcp_bench.py with the
+# clearance columns (2026-11-17).
+pairs: 100
+repeats: 3
+planners_file: clearance_stages_planners.yaml
+planners: [Navfn, Smac2d, ThetaStar, s0_insert, s1_simplify, s2_clearance, s3_smooth, LCP]
+
+maps:
+  - {name: base,         group: generated, size: 50, shape: circle, density: 0.10}
+  - {name: density_20,   group: generated, size: 50, shape: circle, density: 0.20}
+  - {name: density_30,   group: generated, size: 50, shape: circle, density: 0.30}
+  - {name: shape_u,      group: generated, size: 50, shape: u,      density: 0.10}
+  - {name: corridor_1.2, group: generated, size: 50, shape: blocks, block: 4.0, corridor: 1.2}
+  - {name: maze,         group: indoor, file: maps/maze.yaml}
+  - {name: house,        group: indoor, file: maps/house.yaml}
+  - {name: event_venue,  group: indoor, file: maps/event_venue.yaml}

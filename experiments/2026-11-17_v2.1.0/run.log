@@ -1,0 +1,11 @@
+2026-11-17 12:00:15 planner: v2.1.0-7-gc863ee0
+2026-11-17 12:00:15 anyangle_controlled: start
+2026-11-17 12:06:48 anyangle_controlled: ANYANGLE DONE
+2026-11-17 12:06:48 ablation_line_then_astar: start
+2026-11-17 12:41:51 ablation_line_then_astar: done
+2026-11-17 12:41:51 ablation_clearance_stages: start
+2026-11-17 12:49:56 ablation_clearance_stages: done
+2026-11-17 12:49:56 CHAIN DONE
+2026-11-17 12:50:02 anyangle_controlled (radius 0.224): start
+2026-11-17 12:56:15 anyangle_controlled (radius 0.224): ANYANGLE DONE
+2026-11-17 12:56:15 AFTER DONE

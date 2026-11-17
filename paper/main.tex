@@ -56,9 +56,13 @@ paths that never touch an inflated obstacle cell, and refused all 666 pairs
 without a route. On a \SI{50}{m} map it plans 66 times faster than the fastest of
 NavFn, Smac~2D and Theta\textsuperscript{*} at 2.5\,\% obstacle density, 31 times
 at 10\,\%, and 2.6 times at 40\,\%; on \SI{100}{m} maps the advantage reaches 56
-times. Ablations show that the speed comes from the lazy structure and that the
-Coulomb-like side choice raises the share of requests solved without the fallback
-from 64\,\% to 69\,\%. In simulated driving with a TurtleBot3 and the MPPI
+times. Most of this advantage already comes from checking the straight line and
+running a weighted A\textsuperscript{*} on the costmap when it is blocked: the lazy
+correction adds a further factor of 1.3 to 2.7 on sparse and large maps and costs up
+to 2.6 on dense ones, and the Coulomb-like side choice makes it 1.7 to 2 times faster
+than a fixed side. Jump point search and the optimal any-angle planner Anya, which
+are not available in Nav2, are faster than \lcp{} on the same grids except on
+nearly empty maps. In simulated driving with a TurtleBot3 and the MPPI
 controller, \lcp{} reached every goal in every run without a single recovery
 behaviour; with Regulated Pure Pursuit it reached as many goals as NavFn but
 triggered more recoveries, because its paths run closer to obstacles.
@@ -101,8 +105,10 @@ to repair the obvious one? This paper answers it with a planner that
 The contributions are: (i) the planner and its open-source Nav2 implementation;
 (ii) a controlled benchmark that varies obstacle density, map size, obstacle
 shape and corridor width one at a time, with ground-truth routability, against
-the three Nav2 grid planners; (iii) ablations of every design choice; and (iv)
-simulated driving experiments with two path-following controllers.
+the three Nav2 grid planners; (iii) ablations of every design choice, including
+a comparison with the heuristic of checking the straight line and otherwise
+running A\textsuperscript{*}, and with jump point search and Anya outside Nav2;
+and (iv) simulated driving experiments with two path-following controllers.
 
 % ---------------------------------------------------------------------------
 \section{Related work}
@@ -134,8 +140,9 @@ free area, and they return optimal paths. We do not claim this property as new.
 margin rather than on polygons or binary grids, in committing to one side per
 obstacle greedily instead of exploring both, and in bounding its worst case with
 a grid search; it gives up optimality in return.
-\pending{A direct comparison with R2+ or RayScan on the same maps is not yet
-done.}
+We found no public implementation of R2, R2+ or RayScan and do not compare with
+them; we compare with Anya and jump point search on the same maps instead
+(Section~\ref{sec:outside}).
 
 \emph{Straight-line-first repair.} Starting from the straight line and inserting
 intermediate goals where it is blocked is an old idea: Lozano-P{\'e}rez and
@@ -150,9 +157,8 @@ the deterministic perpendicular push with a margin on the costmap, the
 repulsion-based side choice, bounded backtracking over sides, and the grid
 fallback, which makes it resolution-complete on the costmap. The simplest member of this
 family, ``check the straight line, otherwise run A\textsuperscript{*}'', is a
-widely used heuristic for which we found no primary source.
-\pending{How much of \lcp{}'s speed this heuristic already explains: ablation
-prepared, not yet run.}
+widely used heuristic for which we found no primary source; Section~\ref{sec:outside}
+measures how much of \lcp{}'s speed it already explains.
 
 \emph{Lazy search.} Lazy planners assume edges are free and check them only on
 the candidate path, repairing it when a check fails~\cite{bohlin2000lazy,mandalika2019gls}.
@@ -534,8 +540,10 @@ whichever side reaches free space sooner. Letting the force reverse the waypoint
 at every step is worse than either and two to three times slower. The exponent
 matters little ($1/r$ and $1/r^2$ solve the same number). With the fallback on,
 the simple rule is the fastest overall, because each step is cheaper. The
-repulsion therefore improves how often the lazy correction succeeds by itself; it
-is not the source of the speed, which comes from the lazy structure.
+repulsion therefore improves how often the lazy correction succeeds by itself.
+Against a fixed side (always left first, with backtracking and the fallback
+unchanged) it makes the whole planner 1.7 to 2 times faster on most of the 21
+controlled maps (Section~\ref{sec:outside}).
 
 \emph{Margin.} Pushing a waypoint past the obstacle edge is the strongest single
 lever: without it the lazy search solves 305 pairs, with \SI{0.5}{m} 489.
@@ -557,6 +565,62 @@ Chaikin passes bring it to 11.
 \emph{Clearance.} The clearance steps halve the average costmap cost along the
 path (78 to 39) for 3\,\% more length; the effect saturates at a comfort cost of
 60. Even so, \lcp{} paths stay closer to obstacles than NavFn's (39 against 15).
+Measured in metres from the map's obstacle cells, over the 641 pairs every
+planner solved, the clearance is lost by the lazy correction itself, not by the
+simplification: the margin keeps each inserted waypoint clear, but the segments
+joining it to its neighbours need only avoid the inscribed zone and graze the
+obstacles (median smallest clearance \SI{0.225}{m}, the robot radius being
+\SI{0.22}{m}; 30\,\% of the path nearer than \SI{0.5}{m}). The clearance step
+raises this to \SI{0.356}{m} and 6\,\%, close to Smac~2D (\SI{0.378}{m}) and
+Theta\textsuperscript{*} (\SI{0.399}{m}) and below NavFn (\SI{0.425}{m}).
+
+\subsection{Against the straight-line heuristic and planners outside Nav2}
+\label{sec:outside}
+
+\begin{table}[t]
+\centering
+\caption{Median planning time (ms) on the controlled maps. ``Line, else A*'':
+\lcp{} with no correction budget, so the first blocked segment goes to its
+weighted A\textsuperscript{*} (weight 3) with the same post-processing. Anya and
+JPS (with post-smoothing) are the Java implementations of~\cite{harabor2016anya}
+and~\cite{harabor2011jps} timed on the same blocked grid and pairs, search only.}
+\label{tab:outside}
+\begin{tabular}{lrrrrr}
+\toprule
+Map & NavFn & Line, else A* & \lcp{} & Anya & JPS \\
+\midrule
+empty            & 11.0 & 0.07 & \textbf{0.07} & 0.19 & 1.50 \\
+2.5\,\%          & 15.0 & 0.42 & 0.16 & \textbf{0.13} & 0.21 \\
+10\,\%           & 14.1 & 0.67 & 0.43 & 0.37 & \textbf{0.12} \\
+20\,\%           & 13.6 & 0.90 & 1.17 & 0.34 & \textbf{0.10} \\
+30\,\%           & 13.6 & 1.47 & 3.83 & 0.69 & \textbf{0.12} \\
+\SI{100}{m} map  & 52.2 & 2.01 & 0.73 & 0.43 & \textbf{0.24} \\
+\SI{200}{m} map  & 304  & 4.64 & 3.29 & 1.79 & \textbf{0.82} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:outside} separates the parts of \lcp{}'s speed. Checking the
+straight line and otherwise running \lcp{}'s weighted A\textsuperscript{*}, with
+the same post-processing, is already 4 to 65 times faster than NavFn and Smac~2D on
+every controlled map. The lazy correction adds a factor of 1.3 to 2.7 on sparse
+and large maps (2.6 at 2.5\,\% density, 2.7 on the \SI{100}{m} map) and in
+corridors of \SI{1.2}{m} and wider, but from 20\,\% density, with U-shaped
+obstacles and in \SI{0.8}{m} corridors it is slower than the heuristic, by up to
+2.6 times at 30\,\%. Against an unweighted A\textsuperscript{*} after the line
+check \lcp{} is 7 to 31 times faster on open and large maps and on par at 40 to
+45\,\%. Path lengths of the two are the same.
+
+Outside Nav2, jump point search with post-smoothing is faster than \lcp{} on every
+map except the two emptiest, and Anya, which returns optimal paths, on every map
+except the empty one; on the \SI{200}{m} map Anya takes \SI{1.8}{ms} and JPS
+\SI{0.8}{ms} against \SI{3.0}{ms}. These times are from Java and cover the search
+only, while \lcp{}'s include post-processing and building the ROS message (about
+\SI{0.07}{ms}, its time on the empty map), so they are indicative. \lcp{}'s paths
+are within 2.5\,\% of Anya's optimal length on open and large maps and 5 to 10\,\%
+longer at 20 to 45\,\% density, like Smac~2D and Theta\textsuperscript{*}. Anya
+solves exactly the routable pairs, as \lcp{} does; the Java JPS also passes
+diagonally between blocked cells that touch at a corner, which the robot cannot.
 
 \subsection{Driving}
 \label{sec:driving}
@@ -607,7 +671,17 @@ A\textsuperscript{*} fallback; above 20\,\% obstacle density the lazy correction
 alone solves fewer than three quarters, and at 40\,\% fewer than a fifth. \lcp{}
 remains faster there because the lazy attempts are cheap and the fallback is a
 narrow weighted search, but its speed in clutter should be credited to the
-combination, not to the correction alone.
+combination, not to the correction alone. Against the straight-line heuristic
+with the same weighted A\textsuperscript{*} the correction pays only below about
+15 to 20\,\% density; a rule that hands over to the fallback earlier when
+corrections keep failing could remove the loss on dense maps, but we have not
+tested it.
+
+\emph{Faster planners exist outside Nav2.} Jump point search and Anya are faster
+than \lcp{} on binarised grids. \lcp{}'s case is practical: it works on the live
+costmap and its inflation, never returns a path through the inscribed zone, solves
+every routable pair, and is available as a Nav2 plugin; neither of the other two
+is. A fair comparison would wrap them as Nav2 planners, which we leave open.
 
 \emph{Clearance.} \lcp{} keeps paths away from the obstacles it goes around but
 does not centre them in free space as NavFn does. With a follower that stops when
@@ -647,7 +721,10 @@ goal is unreachable, but then in full.
 moderately cluttered space this is one to two orders of magnitude faster than the
 Nav2 grid planners, and the gap grows with the size of the map; with a weighted
 A\textsuperscript{*} fallback it is complete on the costmap and never returns a
-path through an inflated obstacle cell. \pending{Future work: real-robot
+path through an inflated obstacle cell. Most of the speed comes from the line
+check and the weighted A\textsuperscript{*}, with the lazy correction adding to it
+on sparse and large maps; dedicated grid planners such as jump point search are
+faster still but are not available in Nav2. \pending{Future work: real-robot
 validation, centring paths in free space, denser and faster moving obstacles, and
 an extension to 3D for exploration with aerial robots.}
 

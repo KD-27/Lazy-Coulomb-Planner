@@ -1,0 +1,9 @@
+[1/8] base (63 s): Navfn 100/100 15.2ms, Smac2d 100/100 17.6ms, ThetaStar 100/100 14.7ms, s0_insert 100/100 0.1ms, s1_simplify 100/100 0.2ms, s2_clearance 100/100 0.3ms, s3_smooth 100/100 0.4ms, LCP 100/100 0.5ms
+[2/8] density_20 (69 s): Navfn 94/94 15.4ms, Smac2d 89/94 16.7ms, ThetaStar 89/94 14.4ms, s0_insert 94/94 0.8ms, s1_simplify 94/94 0.7ms, s2_clearance 94/94 1.1ms, s3_smooth 94/94 1.3ms, LCP 94/94 1.2ms
+[3/8] density_30 (73 s): Navfn 84/84 14.3ms, Smac2d 66/84 18.1ms, ThetaStar 63/84 15.6ms, s0_insert 84/84 3.0ms, s1_simplify 84/84 2.9ms, s2_clearance 84/84 3.7ms, s3_smooth 84/84 3.5ms, LCP 84/84 3.5ms
+[4/8] shape_u (70 s): Navfn 93/93 14.4ms, Smac2d 92/93 19.8ms, ThetaStar 92/93 16.8ms, s0_insert 93/93 2.3ms, s1_simplify 93/93 2.2ms, s2_clearance 93/93 2.5ms, s3_smooth 93/93 2.5ms, LCP 93/93 2.5ms
+[5/8] corridor_1.2 (63 s): Navfn 100/100 7.8ms, Smac2d 100/100 14.2ms, ThetaStar 100/100 13.6ms, s0_insert 100/100 0.4ms, s1_simplify 100/100 0.3ms, s2_clearance 100/100 0.5ms, s3_smooth 100/100 0.7ms, LCP 100/100 0.7ms
+[6/8] maze (52 s): Navfn 100/100 2.9ms, Smac2d 100/100 7.5ms, ThetaStar 100/100 6.7ms, s0_insert 100/100 1.5ms, s1_simplify 100/100 1.4ms, s2_clearance 100/100 1.5ms, s3_smooth 100/100 1.4ms, LCP 100/100 1.6ms
+[7/8] house (45 s): Navfn 57/57 1.4ms, Smac2d 54/57 2.2ms, ThetaStar 57/57 1.6ms, s0_insert 57/57 0.1ms, s1_simplify 57/57 0.1ms, s2_clearance 57/57 0.1ms, s3_smooth 57/57 0.2ms, LCP 57/57 0.2ms
+[8/8] event_venue (48 s): Navfn 54/54 2.0ms, Smac2d 54/54 3.4ms, ThetaStar 50/54 3.2ms, s0_insert 54/54 0.1ms, s1_simplify 54/54 0.1ms, s2_clearance 54/54 0.2ms, s3_smooth 54/54 0.3ms, LCP 54/54 0.3ms
+SUITE DONE

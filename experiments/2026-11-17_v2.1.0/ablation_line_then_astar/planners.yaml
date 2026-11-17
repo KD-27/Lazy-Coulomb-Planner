@@ -1,0 +1,50 @@
+# Ablation: is LCP more than "check the straight line, else A*"?
+# line_astar_w3 / line_astar_w1: max_iterations 0, so the first blocked segment goes
+# straight to LCP's own grid search (weight 3 = LCP's default, weight 1 = plain A*),
+# followed by the same simplification, clearance, smoothing and resampling as LCP.
+# fixed_left: the repulsion never decides; every push goes to the left of the segment
+# (force_balance_threshold so large that every force counts as balanced).
+# path_reuse_distance 0 everywhere: the benchmark measures planning from scratch.
+planner_server:
+  ros__parameters:
+    expected_planner_frequency: 20.0
+    planner_plugins: ["Navfn", "Smac2d", "LCP", "line_astar_w3", "line_astar_w1", "fixed_left"]
+    Navfn:
+      plugin: "nav2_navfn_planner::NavfnPlanner"
+    Smac2d:
+      plugin: "nav2_smac_planner::SmacPlanner2D"
+    LCP:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+    line_astar_w3:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      max_iterations: 0
+    line_astar_w1:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      max_iterations: 0
+      grid_search_weight: 1.0
+    fixed_left:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      force_balance_threshold: 1.0e9
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      update_frequency: 1.0
+      publish_frequency: 1.0
+      global_frame: map
+      robot_base_frame: base_link
+      robot_radius: 0.22
+      resolution: 0.05
+      track_unknown_space: true
+      always_send_full_costmap: true
+      plugins: ["static_layer", "inflation_layer"]
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: true
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.7
