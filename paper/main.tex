@@ -76,7 +76,7 @@ most navigation stacks, again about once a second while the robot drives. The
 planners shipped with Nav2~\cite{macenski2020marathon}, the standard navigation
 system of ROS~2, are grid searches: NavFn (a wavefront Dijkstra or
 A\textsuperscript{*} on the costmap), Smac~2D~\cite{macenski2024smac} and
-Theta\textsuperscript{*}~\cite{nash2007theta}. Their cost grows with the area they
+Theta\textsuperscript{*}~\cite{daniel2010theta}. Their cost grows with the area they
 have to explore, which is large when the map is large, even if the robot could
 almost drive straight to the goal.
 
@@ -108,44 +108,86 @@ simulated driving experiments with two path-following controllers.
 \section{Related work}
 \label{sec:related}
 
-\pending{To be completed with the supervisor; the following are starting points
-only, and the novelty of the method has to be argued against them carefully.}
+\emph{Grid and sampling planners.} Dijkstra's algorithm~\cite{dijkstra1959note}
+and A\textsuperscript{*}~\cite{hart1968formal} pay for every cell they expand,
+so their cost grows with path length on open maps and towards the map's area in
+clutter; weighted A\textsuperscript{*}~\cite{pohl1970heuristic}, which our
+fallback uses, trades optimality for fewer expansions. Jump point
+search~\cite{harabor2011jps}, extended to 3D in~\cite{liu2017sfc}, prunes
+symmetric grid paths without preprocessing but still expands outwards from the
+start. Sampling-based planners such as RRT-Connect~\cite{kuffner2000rrt} pay per
+sample instead. Nav2 ships NavFn, Smac~2D and
+Theta\textsuperscript{*}~\cite{macenski2020marathon,macenski2023survey,macenski2024smac};
+its maintainers report tens of milliseconds per plan on $100\times100$\,m maps
+and more than a second on a large warehouse map~\cite{macenski2024smac}.
 
-\emph{Grid search.} Dijkstra's algorithm~\cite{dijkstra1959note} and
-A\textsuperscript{*}~\cite{hart1968formal} underlie NavFn and Smac~2D;
-weighted A\textsuperscript{*}~\cite{pohl1970heuristic} trades optimality for
-speed, as our fallback does. Any-angle planners such as
-Theta\textsuperscript{*}~\cite{nash2007theta} remove the grid's heading
-restrictions. Jump point search~\cite{harabor2011jps}, extended to 3D
-in~\cite{liu2017sfc}, prunes symmetric grid paths and speeds up
-A\textsuperscript{*} considerably without losing optimality, but it still
-expands outwards from the start. All of them search free space whether or not
-it is needed.
+\emph{Any-angle and vector-based planners.}
+Theta\textsuperscript{*}~\cite{daniel2010theta} adds line-of-sight checks to a
+full A\textsuperscript{*} expansion, and Anya~\cite{harabor2016anya} finds
+optimal any-angle paths by searching over intervals; see~\cite{nash2013anyangle}
+for a survey and~\cite{uras2015comparison} for a comparison. Closest to our
+cost argument are the vector-based planners: RayScan~\cite{hechenberger2020rayscan}
+and R2~\cite{lai2024r2} cast a ray towards the goal and go round only what it
+hits, so their work, like ours, depends on the obstacles met rather than on the
+free area, and they return optimal paths. We do not claim this property as new.
+\lcp{} differs in working directly on an inflated Nav2 costmap with a clearance
+margin rather than on polygons or binary grids, in committing to one side per
+obstacle greedily instead of exploring both, and in bounding its worst case with
+a grid search; it gives up optimality in return.
+\pending{A direct comparison with R2+ or RayScan on the same maps is not yet
+done.}
 
-\emph{Potential fields.} Artificial potential fields~\cite{khatib1986real} steer a
-robot down the gradient of an attractive goal and repulsive obstacles and are
-prone to local minima. \lcp{} uses a repulsion only to decide on which side a
-single blocked point leaves its obstacle; the path itself is not a gradient
-descent, and local minima are handled by backtracking and the fallback.
+\emph{Straight-line-first repair.} Starting from the straight line and inserting
+intermediate goals where it is blocked is an old idea: Lozano-P{\'e}rez and
+Wesley~\cite{lozanoperez1979algorithm} describe Udupa's recursive scheme of this
+kind and criticise it for using only local information. RMPD~\cite{li2018rmpd}
+recursively displaces the midpoint of a blocked segment at random and does not
+backtrack, and APPATT~\cite{liu2022appatt} chooses between tangent points by
+rules. Bug algorithms~\cite{lumelsky1987path,kamon1998tangentbug} follow obstacle
+boundaries with local sensing, and FAR Planner~\cite{yang2022far} maintains a
+visibility graph. \lcp{} shares the recursive skeleton; its contributions are
+the deterministic perpendicular push with a margin on the costmap, the
+repulsion-based side choice, bounded backtracking over sides, and the grid
+fallback, which makes it resolution-complete on the costmap. The simplest member of this
+family, ``check the straight line, otherwise run A\textsuperscript{*}'', is a
+widely used heuristic for which we found no primary source.
+\pending{How much of \lcp{}'s speed this heuristic already explains: ablation
+prepared, not yet run.}
 
-\emph{Path deformation.} Elastic bands~\cite{quinlan1993elastic} deform an initial
-path under internal and external forces. \lcp{} likewise starts from a path and
-moves it away from obstacles, but it builds the path incrementally from the
-straight line, moves only the points that are blocked, and freezes them once
-clear. The distance map planner distributed with the jps3d
-library~\cite{jps3d} combines search and potential field in the opposite order
-to ours: it first finds a grid path with jump point search and then uses an
-artificial potential field around the obstacles to move that path to a safer
-one within a region around it, accepting a longer path for more clearance.
-In \lcp{} the repulsion produces the path and the grid search is only the
-fallback; a clearance pass of this kind over \lcp{}'s output is a natural
-remedy for the short clearances we report in Section~\ref{sec:driving}.
+\emph{Lazy search.} Lazy planners assume edges are free and check them only on
+the candidate path, repairing it when a check fails~\cite{bohlin2000lazy,mandalika2019gls}.
+That literature saves collision checks that are expensive; on a costmap a check
+is cheap, and \lcp{}'s laziness is about search work instead: it does not
+expand free space that the straight line already crosses.
 
-\emph{Lazy and reactive planning.} Lazy collision checking defers work until it
-is unavoidable~\cite{bohlin2000lazy}; bug algorithms~\cite{lumelsky1987path} and
-the vector field histogram~\cite{borenstein1991vfh} react to obstacles locally.
-Sampling-based planners such as RRT~\cite{lavalle1998rrt} explore randomly.
-\lcp{} is deterministic and does no exploration until the straight line fails.
+\emph{Potential fields and Coulomb planners.} Artificial potential
+fields~\cite{khatib1985real} steer down the gradient of an attractive goal and
+repulsive obstacles and suffer from local minima~\cite{koren1991potential};
+later work changed the potential functions~\cite{ge2000new}, made them free of
+local minima~\cite{rimon1992exact}, or modelled obstacles as electrostatic
+charges~\cite{valavanis2000electrostatic}. Coulomb's law has recently been used
+to shape the neighbour sets of sampling-based planners~\cite{zhang2024fdit}.
+We are not the first to use a Coulomb-like repulsion in planning. In \lcp{}
+the repulsion is not followed as a gradient: only its sign is used, to choose on
+which side a blocked waypoint leaves its obstacle, and a wrong choice is undone
+by backtracking or the fallback.
+
+\emph{Deformation, smoothing and clearance.} Elastic
+bands~\cite{quinlan1993elastic} and the timed elastic band~\cite{rosmann2017teb}
+deform a collision-free initial path; CHOMP~\cite{ratliff2009chomp},
+TrajOpt~\cite{schulman2014trajopt} and EGO-Planner~\cite{zhou2021ego} can start
+from a straight line that runs through obstacles and push it out by continuous
+optimisation. EGO-Planner is the closest modern analogue to \lcp{}: it also
+pushes colliding segments away with a safety distance, but by gradient
+descent, where \lcp{} makes one discrete push per obstacle. Shortcutting a path
+trades clearance for length~\cite{geraerts2007creating}, and paths of minimal
+length lie at the zero-clearance end of the spectrum between visibility graphs and
+Voronoi diagrams~\cite{wein2008planning}. This explains why \lcp{}'s simplified
+paths keep less clearance than NavFn's, which pays a cost for every cell near an
+obstacle. The distance map planner of the jps3d library~\cite{jps3d} works the
+other way round: it finds a grid path first and then moves it away from
+obstacles with a potential field. A clearance pass of this kind, or a
+cost-aware smoother, is a natural addition to \lcp{}'s output.
 
 % ---------------------------------------------------------------------------
 \section{Method}

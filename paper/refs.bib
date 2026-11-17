@@ -8,6 +8,11 @@
 % Added 2026-11-16 and verified by web search: harabor2011jps, liu2017sfc; jps3d is
 % a software citation (author first names in liu2017sfc expanded from memory).
 
+% 2026-11-17: entries below the line 'Related work (2026-11-17)' and the replaced
+% Smac, Theta*, Khatib and RRT entries were checked against Crossref records
+% (api.crossref.org) on 2026-11-17, except lai2024r2plus (arXiv abstract page,
+% checked by the literature review on 2026-11-16).
+
 @inproceedings{macenski2020marathon,
   author    = {Macenski, Steve and Mart{\'i}n, Francisco and White, Ruffin and Gin{\'e}s Clavero, Jonatan},
   title     = {The Marathon 2: A Navigation System},
@@ -17,27 +22,16 @@
   year      = {2020}
 }
 
-@article{macenski2024smac,
-  author  = {Macenski, Steve and Booker, Matthew and Wallace, Joshua and Fischer, Tobias},
-  title   = {Open-Source, Cost-Aware Kinematically Feasible Planning for Mobile and Surface Robotics},
-  journal = {arXiv preprint arXiv:2401.13078},
-  year    = {2024}
-}
 
-@inproceedings{nash2007theta,
-  author    = {Nash, Alex and Daniel, Kenny and Koenig, Sven and Felner, Ariel},
-  title     = {Theta*: Any-Angle Path Planning on Grids},
-  booktitle = {AAAI Conference on Artificial Intelligence},
-  pages     = {1177--1183},
-  year      = {2007}
-}
 
 @article{dijkstra1959note,
   author  = {Dijkstra, Edsger W.},
   title   = {A Note on Two Problems in Connexion with Graphs},
   journal = {Numerische Mathematik},
   volume  = {1},
+  number  = {1},
   pages   = {269--271},
+  doi     = {10.1007/BF01386390},
   year    = {1959}
 }
 
@@ -61,21 +55,14 @@
   year    = {1970}
 }
 
-@article{khatib1986real,
-  author  = {Khatib, Oussama},
-  title   = {Real-Time Obstacle Avoidance for Manipulators and Mobile Robots},
-  journal = {The International Journal of Robotics Research},
-  volume  = {5},
-  number  = {1},
-  pages   = {90--98},
-  year    = {1986}
-}
 
 @inproceedings{quinlan1993elastic,
   author    = {Quinlan, Sean and Khatib, Oussama},
   title     = {Elastic Bands: Connecting Path Planning and Control},
   booktitle = {IEEE International Conference on Robotics and Automation (ICRA)},
+  volume    = {2},
   pages     = {802--807},
+  doi       = {10.1109/ROBOT.1993.291936},
   year      = {1993}
 }
 
@@ -83,7 +70,9 @@
   author    = {Bohlin, Robert and Kavraki, Lydia E.},
   title     = {Path Planning Using Lazy {PRM}},
   booktitle = {IEEE International Conference on Robotics and Automation (ICRA)},
+  volume    = {1},
   pages     = {521--528},
+  doi       = {10.1109/ROBOT.2000.844107},
   year      = {2000}
 }
 
@@ -92,7 +81,9 @@
   title   = {Path-Planning Strategies for a Point Mobile Automaton Moving Amidst Unknown Obstacles of Arbitrary Shape},
   journal = {Algorithmica},
   volume  = {2},
+  number  = {1--4},
   pages   = {403--430},
+  doi     = {10.1007/BF01840369},
   year    = {1987}
 }
 
@@ -106,13 +97,6 @@
   year    = {1991}
 }
 
-@techreport{lavalle1998rrt,
-  author      = {LaValle, Steven M.},
-  title       = {Rapidly-Exploring Random Trees: A New Tool for Path Planning},
-  institution = {Computer Science Department, Iowa State University},
-  number      = {TR 98-11},
-  year        = {1998}
-}
 
 @inproceedings{amanatides1987fast,
   author    = {Amanatides, John and Woo, Andrew},
@@ -161,3 +145,282 @@
   note         = {Software, version 1.1}
 }
 
+
+% ---- Related work (2026-11-17), Crossref-checked -------------------------------
+
+@article{macenski2024smac,
+  author  = {Macenski, Steve and Booker, Matthew and Wallace, Joshua and Fischer, Tobias},
+  title   = {Cost-Aware Kinematically Feasible Planning for Mobile and Surface Robotics},
+  journal = {IEEE Robotics and Automation Practice},
+  volume  = {1},
+  pages   = {81--85},
+  doi     = {10.1109/RAP.2026.3684018},
+  year    = {2026},
+  note    = {Preprint arXiv:2401.13078; benchmark figures quoted from arXiv v2}
+}
+
+@article{macenski2023survey,
+  author  = {Macenski, Steve and Moore, Tom and Lu, David V. and Merzlyakov, Alexey and Ferguson, Michael},
+  title   = {From the Desks of {ROS} Maintainers: A Survey of Modern \& Capable Mobile Robotics Algorithms in the Robot Operating System 2},
+  journal = {Robotics and Autonomous Systems},
+  volume  = {168},
+  pages   = {104493},
+  doi     = {10.1016/j.robot.2023.104493},
+  year    = {2023}
+}
+
+@article{daniel2010theta,
+  author  = {Daniel, Kenny and Nash, Alex and Koenig, Sven and Felner, Ariel},
+  title   = {Theta*: Any-Angle Path Planning on Grids},
+  journal = {Journal of Artificial Intelligence Research},
+  volume  = {39},
+  pages   = {533--579},
+  doi     = {10.1613/jair.2994},
+  year    = {2010}
+}
+
+@article{harabor2016anya,
+  author  = {Harabor, Daniel Damir and Grastien, Alban and {\"O}z, Dindar and Aksakalli, Vural},
+  title   = {Optimal Any-Angle Pathfinding in Practice},
+  journal = {Journal of Artificial Intelligence Research},
+  volume  = {56},
+  pages   = {89--118},
+  doi     = {10.1613/jair.5007},
+  year    = {2016}
+}
+
+@article{nash2013anyangle,
+  author  = {Nash, Alex and Koenig, Sven},
+  title   = {Any-Angle Path Planning},
+  journal = {AI Magazine},
+  volume  = {34},
+  number  = {4},
+  pages   = {85--107},
+  doi     = {10.1609/aimag.v34i4.2512},
+  year    = {2013}
+}
+
+@inproceedings{uras2015comparison,
+  author    = {Uras, Tansel and Koenig, Sven},
+  title     = {An Empirical Comparison of Any-Angle Path-Planning Algorithms},
+  booktitle = {International Symposium on Combinatorial Search (SoCS)},
+  pages     = {206--210},
+  doi       = {10.1609/socs.v6i1.18382},
+  year      = {2015}
+}
+
+@inproceedings{hechenberger2020rayscan,
+  author    = {Hechenberger, Ryan and Stuckey, Peter J. and Harabor, Daniel and Le Bodic, Pierre and Cheema, Muhammad Aamir},
+  title     = {Online Computation of {E}uclidean Shortest Paths in Two Dimensions},
+  booktitle = {International Conference on Automated Planning and Scheduling (ICAPS)},
+  volume    = {30},
+  pages     = {134--142},
+  doi       = {10.1609/icaps.v30i1.6654},
+  year      = {2020}
+}
+
+@article{lai2024r2,
+  author  = {Lai, Yan Kai and Vadakkepat, Prahlad and Xiang, Cheng},
+  title   = {R2: Optimal Vector-Based and Any-Angle {2D} Path Planning with Non-Convex Obstacles},
+  journal = {Robotics and Autonomous Systems},
+  volume  = {172},
+  pages   = {104606},
+  doi     = {10.1016/j.robot.2023.104606},
+  year    = {2024}
+}
+
+@article{lozanoperez1979algorithm,
+  author  = {Lozano-P{\'e}rez, Tom{\'a}s and Wesley, Michael A.},
+  title   = {An Algorithm for Planning Collision-Free Paths Among Polyhedral Obstacles},
+  journal = {Communications of the ACM},
+  volume  = {22},
+  number  = {10},
+  pages   = {560--570},
+  doi     = {10.1145/359156.359164},
+  year    = {1979}
+}
+
+@inproceedings{li2018rmpd,
+  author    = {Li, Fangda and Manerikar, Ankit and Kak, Avinash},
+  title     = {{RMPD} -- A Recursive Mid-Point Displacement Algorithm for Path Planning},
+  booktitle = {International Conference on Automated Planning and Scheduling (ICAPS)},
+  volume    = {28},
+  pages     = {468--475},
+  doi       = {10.1609/icaps.v28i1.13921},
+  year      = {2018}
+}
+
+@article{liu2022appatt,
+  author  = {Liu, Huan and Li, Xiamiao and Fan, Mingfeng and Wu, Guohua and Pedrycz, Witold and Suganthan, Ponnuthurai Nagaratnam},
+  title   = {An Autonomous Path Planning Method for Unmanned Aerial Vehicle Based on a Tangent Intersection and Target Guidance Strategy},
+  journal = {IEEE Transactions on Intelligent Transportation Systems},
+  volume  = {23},
+  number  = {4},
+  pages   = {3061--3073},
+  doi     = {10.1109/TITS.2020.3030444},
+  year    = {2022}
+}
+
+@article{kamon1998tangentbug,
+  author  = {Kamon, Ishay and Rimon, Elon and Rivlin, Ehud},
+  title   = {{TangentBug}: A Range-Sensor-Based Navigation Algorithm},
+  journal = {The International Journal of Robotics Research},
+  volume  = {17},
+  number  = {9},
+  pages   = {934--953},
+  doi     = {10.1177/027836499801700903},
+  year    = {1998}
+}
+
+@inproceedings{yang2022far,
+  author    = {Yang, Fan and Cao, Chao and Zhu, Hongbiao and Oh, Jean and Zhang, Ji},
+  title     = {{FAR} Planner: Fast, Attemptable Route Planner using Dynamic Visibility Update},
+  booktitle = {IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+  pages     = {9--16},
+  doi       = {10.1109/IROS47612.2022.9981574},
+  year      = {2022}
+}
+
+@inproceedings{mandalika2019gls,
+  author    = {Mandalika, Aditya and Choudhury, Sanjiban and Salzman, Oren and Srinivasa, Siddhartha},
+  title     = {Generalized Lazy Search for Robot Motion Planning: Interleaving Search and Edge Evaluation via Event-Based Toggles},
+  booktitle = {International Conference on Automated Planning and Scheduling (ICAPS)},
+  volume    = {29},
+  pages     = {745--753},
+  doi       = {10.1609/icaps.v29i1.3543},
+  year      = {2019}
+}
+
+@inproceedings{khatib1985real,
+  author    = {Khatib, Oussama},
+  title     = {Real-Time Obstacle Avoidance for Manipulators and Mobile Robots},
+  booktitle = {IEEE International Conference on Robotics and Automation (ICRA)},
+  volume    = {2},
+  pages     = {500--505},
+  doi       = {10.1109/ROBOT.1985.1087247},
+  year      = {1985}
+}
+
+@inproceedings{koren1991potential,
+  author    = {Koren, Yoram and Borenstein, Johann},
+  title     = {Potential Field Methods and Their Inherent Limitations for Mobile Robot Navigation},
+  booktitle = {IEEE International Conference on Robotics and Automation (ICRA)},
+  pages     = {1398--1404},
+  doi       = {10.1109/ROBOT.1991.131810},
+  year      = {1991}
+}
+
+@article{ge2000new,
+  author  = {Ge, S. S. and Cui, Y. J.},
+  title   = {New Potential Functions for Mobile Robot Path Planning},
+  journal = {IEEE Transactions on Robotics and Automation},
+  volume  = {16},
+  number  = {5},
+  pages   = {615--620},
+  doi     = {10.1109/70.880813},
+  year    = {2000}
+}
+
+@article{rimon1992exact,
+  author  = {Rimon, Elon and Koditschek, Daniel E.},
+  title   = {Exact Robot Navigation Using Artificial Potential Functions},
+  journal = {IEEE Transactions on Robotics and Automation},
+  volume  = {8},
+  number  = {5},
+  pages   = {501--518},
+  doi     = {10.1109/70.163777},
+  year    = {1992}
+}
+
+@article{valavanis2000electrostatic,
+  author  = {Valavanis, K. P. and Hebert, T. and Kolluru, R. and Tsourveloudis, N.},
+  title   = {Mobile Robot Navigation in {2-D} Dynamic Environments Using an Electrostatic Potential Field},
+  journal = {IEEE Transactions on Systems, Man, and Cybernetics -- Part A: Systems and Humans},
+  volume  = {30},
+  number  = {2},
+  pages   = {187--196},
+  doi     = {10.1109/3468.833100},
+  year    = {2000}
+}
+
+@inproceedings{zhang2024fdit,
+  author    = {Zhang, Liding and Bing, Zhenshan and Zhang, Yu and Cai, Kuanqi and Chen, Lingyun and Wu, Fan and Haddadin, Sami and Knoll, Alois},
+  title     = {Elliptical K-Nearest Neighbors -- Path Optimization via {C}oulomb's Law and Invalid Vertices in {C}-space Obstacles},
+  booktitle = {IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+  pages     = {12032--12039},
+  doi       = {10.1109/IROS58592.2024.10802280},
+  year      = {2024}
+}
+
+@article{rosmann2017teb,
+  author  = {R{\"o}smann, Christoph and Hoffmann, Frank and Bertram, Torsten},
+  title   = {Integrated Online Trajectory Planning and Optimization in Distinctive Topologies},
+  journal = {Robotics and Autonomous Systems},
+  volume  = {88},
+  pages   = {142--153},
+  doi     = {10.1016/j.robot.2016.11.007},
+  year    = {2017}
+}
+
+@inproceedings{ratliff2009chomp,
+  author    = {Ratliff, Nathan and Zucker, Matt and Bagnell, J. Andrew and Srinivasa, Siddhartha},
+  title     = {{CHOMP}: Gradient Optimization Techniques for Efficient Motion Planning},
+  booktitle = {IEEE International Conference on Robotics and Automation (ICRA)},
+  pages     = {489--494},
+  doi       = {10.1109/ROBOT.2009.5152817},
+  year      = {2009}
+}
+
+@article{schulman2014trajopt,
+  author  = {Schulman, John and Duan, Yan and Ho, Jonathan and Lee, Alex and Awwal, Ibrahim and Bradlow, Henry and Pan, Jia and Patil, Sachin and Goldberg, Ken and Abbeel, Pieter},
+  title   = {Motion Planning with Sequential Convex Optimization and Convex Collision Checking},
+  journal = {The International Journal of Robotics Research},
+  volume  = {33},
+  number  = {9},
+  pages   = {1251--1270},
+  doi     = {10.1177/0278364914528132},
+  year    = {2014}
+}
+
+@article{zhou2021ego,
+  author  = {Zhou, Xin and Wang, Zhepei and Ye, Hongkai and Xu, Chao and Gao, Fei},
+  title   = {{EGO-Planner}: An {ESDF}-Free Gradient-Based Local Planner for Quadrotors},
+  journal = {IEEE Robotics and Automation Letters},
+  volume  = {6},
+  number  = {2},
+  pages   = {478--485},
+  doi     = {10.1109/LRA.2020.3047728},
+  year    = {2021}
+}
+
+@article{geraerts2007creating,
+  author  = {Geraerts, Roland and Overmars, Mark H.},
+  title   = {Creating High-Quality Paths for Motion Planning},
+  journal = {The International Journal of Robotics Research},
+  volume  = {26},
+  number  = {8},
+  pages   = {845--863},
+  doi     = {10.1177/0278364907079280},
+  year    = {2007}
+}
+
+@article{wein2008planning,
+  author  = {Wein, Ron and van den Berg, Jur and Halperin, Dan},
+  title   = {Planning High-Quality Paths and Corridors Amidst Obstacles},
+  journal = {The International Journal of Robotics Research},
+  volume  = {27},
+  number  = {11--12},
+  pages   = {1213--1231},
+  doi     = {10.1177/0278364908097213},
+  year    = {2008}
+}
+
+@inproceedings{kuffner2000rrt,
+  author    = {Kuffner, James J. and LaValle, Steven M.},
+  title     = {{RRT-Connect}: An Efficient Approach to Single-Query Path Planning},
+  booktitle = {IEEE International Conference on Robotics and Automation (ICRA)},
+  volume    = {2},
+  pages     = {995--1001},
+  doi       = {10.1109/ROBOT.2000.844730},
+  year      = {2000}
+}
