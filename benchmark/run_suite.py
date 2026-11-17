@@ -92,6 +92,13 @@ def summarise(spec, rows):
                 'total_turn_rad': round(median([float(r['turn_rad']) for r in valid]), 3),
                 'sharp_corner_paths': sum(float(r['sharpest_deg']) > 90.0 for r in valid),
                 'poses_median': round(median([float(r['poses']) for r in valid])),
+                # Clearance columns exist only in results from 2026-11-17 on.
+                'clear_min_m': round(
+                    median([float(r['clear_min_m']) for r in valid if 'clear_min_m' in r]), 3),
+                'clear_mean_m': round(
+                    median([float(r['clear_mean_m']) for r in valid if 'clear_mean_m' in r]), 3),
+                'near_frac': round(
+                    median([float(r['near_frac']) for r in valid if 'near_frac' in r]), 3),
             }
         )
     return out

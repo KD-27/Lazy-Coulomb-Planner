@@ -1,0 +1,66 @@
+# Ablation: where LCP loses clearance. Each LCP variant runs the post-processing
+# only up to one stage; the metric clearance is measured by lcp_bench.py from the
+# map's obstacle cells (distance transform), the same way for every planner.
+#   s0_insert:    lazy correction only (no simplification, clearance pass,
+#                 smoothing or resampling). A path from the grid fallback is
+#                 always shortcut once, so fallback paths are not "raw".
+#   s1_simplify:  + farthest-visible simplification
+#   s2_clearance: + clearance pass (comfort_cost 30, the default)
+#   s3_smooth:    + Chaikin smoothing
+#   LCP:          + even resampling = the default planner
+# comfort_cost 253 (= lethal threshold) switches the clearance pass off.
+# path_reuse_distance 0 everywhere: the benchmark measures planning from scratch.
+planner_server:
+  ros__parameters:
+    expected_planner_frequency: 20.0
+    planner_plugins: ["Navfn", "Smac2d", "ThetaStar", "s0_insert", "s1_simplify", "s2_clearance", "s3_smooth", "LCP"]
+    Navfn:
+      plugin: "nav2_navfn_planner::NavfnPlanner"
+    Smac2d:
+      plugin: "nav2_smac_planner::SmacPlanner2D"
+    ThetaStar:
+      plugin: "nav2_theta_star_planner::ThetaStarPlanner"
+    s0_insert:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      simplify_path: false
+      comfort_cost: 253.0
+      enable_smoothing: false
+      output_spacing: 0.0
+    s1_simplify:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      comfort_cost: 253.0
+      enable_smoothing: false
+      output_spacing: 0.0
+    s2_clearance:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      enable_smoothing: false
+      output_spacing: 0.0
+    s3_smooth:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      output_spacing: 0.0
+    LCP:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      update_frequency: 1.0
+      publish_frequency: 1.0
+      global_frame: map
+      robot_base_frame: base_link
+      robot_radius: 0.22
+      resolution: 0.05
+      track_unknown_space: true
+      always_send_full_costmap: true
+      plugins: ["static_layer", "inflation_layer"]
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: true
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.7

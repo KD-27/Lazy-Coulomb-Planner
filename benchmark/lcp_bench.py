@@ -5,6 +5,10 @@ Planner benchmark derived from Nav2's tools/planner_benchmarking/metrics.py.
 Differences from upstream: failures are recorded instead of discarded, every
 returned path is audited against the costmap at a tenth-of-a-cell spacing, and the map
 origin is respected. Usage:  lcp_bench.py <out.csv> <pairs> <planner> [<planner> ...]
+Clearance is measured in metres from the obstacle cells of the costmap (cost 254
+and above, i.e. the map's own obstacles, not the inflation), by a Euclidean
+distance transform sampled along the path at the same spacing: the distance from
+the path to the nearest edge of an obstacle cell, for the robot's centre line.
 The first planner is the reference for "a route exists" and for path length.
 Set LCP_BENCH_REPEATS to plan every pair that many times; the planning time
 reported is then the median of the repeats (the fastest and slowest are kept
@@ -23,9 +27,11 @@ from nav2_simple_commander.robot_navigator import BasicNavigator
 import numpy as np
 import rclpy
 from rclpy.action import ActionClient
+from scipy.ndimage import distance_transform_edt
 
 out_csv, n_pairs, planners = sys.argv[1], int(sys.argv[2]), sys.argv[3:]
 MAX_START_COST, MIN_DIST, OBSTACLE_COST = 210, 3.0, 253
+NEAR_M = 0.5  # a path sample closer than this to an obstacle counts as "near"
 REPEATS = max(1, int(os.environ.get('LCP_BENCH_REPEATS', '1')))
 
 rclpy.init()
@@ -36,6 +42,9 @@ res, ox, oy = cm.metadata.resolution, cm.metadata.origin.position.x, cm.metadata
 grid = np.asarray(cm.data, dtype=np.uint8).reshape(cm.metadata.size_y, cm.metadata.size_x)
 assert (grid >= 254).any(), 'costmap has no obstacles - map not loaded?'
 free_rows, free_cols = np.nonzero(grid < MAX_START_COST)
+# Distance from each cell centre to the nearest obstacle cell centre, less half a
+# cell: roughly the distance to that obstacle cell's edge.
+clear = np.maximum(distance_transform_edt(grid < 254) * res - 0.5 * res, 0.0)
 
 ac = ActionClient(nav, ComputePathToPose, 'compute_path_to_pose')
 assert ac.wait_for_server(timeout_sec=30.0)
@@ -70,9 +79,14 @@ def timed_plan(planner, s, g):
 
 
 def audit(pts):
-    """Path length, highest and mean cost touched, total and sharpest heading change (rad)."""
+    """Path length, costs, heading change (rad) and clearance (m) along a path.
+
+    Returns length, highest cost, total turn, sharpest turn, mean cost, smallest
+    clearance, mean clearance and the fraction of samples nearer than NEAR_M.
+    """
     length, worst, turn, sharpest, prev = 0.0, 0, 0.0, 0.0, None
     cost_sum, cost_n = 0.0, 0
+    clear_min, clear_sum, near_n = float('inf'), 0.0, 0
     for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
         d = math.hypot(x1 - x0, y1 - y0)
         if d < 1e-9:
@@ -94,7 +108,14 @@ def audit(pts):
         worst = max(worst, int(costs.max()))
         cost_sum += float(costs.sum())
         cost_n += len(costs)
-    return length, worst, turn, sharpest, cost_sum / max(cost_n, 1)
+        if len(costs):
+            d_clear = clear[r[inside], c[inside]]
+            clear_min = min(clear_min, float(d_clear.min()))
+            clear_sum += float(d_clear.sum())
+            near_n += int((d_clear < NEAR_M).sum())
+    n = max(cost_n, 1)
+    return (length, worst, turn, sharpest, cost_sum / n,
+            clear_min if cost_n else float('nan'), clear_sum / n, near_n / n)
 
 
 random.seed(33)
@@ -114,7 +135,8 @@ for pair in range(n_pairs):
         pts = [(p.pose.position.x, p.pose.position.y) for p in r.path.poses]
         ok = r.error_code == 0 and len(pts) >= 2
         nan = float('nan')
-        length, worst, turn, sharpest, mean_cost = audit(pts) if ok else (nan, -1, nan, nan, nan)
+        (length, worst, turn, sharpest, mean_cost, clear_min, clear_mean,
+         near_frac) = audit(pts) if ok else (nan, -1, nan, nan, nan, nan, nan, nan)
         rows.append({
             'pair': pair, 'planner': planner, 'sx': s[0], 'sy': s[1], 'gx': g[0], 'gy': g[1],
             'straight': math.hypot(g[0] - s[0], g[1] - s[1]), 'error_code': r.error_code,
@@ -123,7 +145,8 @@ for pair in range(n_pairs):
             'time_max_ms': max(times), 'repeats': REPEATS,
             'wall_ms': wall_ms, 'length': length, 'max_cost': worst, 'mean_cost': mean_cost,
             'turn_rad': turn,
-            'sharpest_deg': math.degrees(sharpest), 'poses': len(pts)})
+            'sharpest_deg': math.degrees(sharpest), 'poses': len(pts),
+            'clear_min_m': clear_min, 'clear_mean_m': clear_mean, 'near_frac': near_frac})
 
 with open(out_csv, 'w', newline='') as f:
     w = csv.DictWriter(f, fieldnames=list(rows[0]))
@@ -135,7 +158,7 @@ solvable = {p for p, r in ref.items() if r['valid']}
 print(f'\n{n_pairs} pairs, {len(solvable)} with a route according to {planners[0]}')
 header = 'planner'
 columns = ['valid', 'collide', 'failed', 'false+', 't_med', 't_p95', 't_max', 'failwall',
-           'len/ref', 'turn', 'corner', 'maxcost', 'meancost']
+           'len/ref', 'turn', 'corner', 'maxcost', 'meancost', 'clr_min', 'clr_mean']
 print(f'{header:>12} ' + ' '.join(f'{c:>8}' for c in columns))
 
 
@@ -162,6 +185,8 @@ for planner in planners:
              f'{np.median(t):.2f}', f'{np.percentile(t, 95):.2f}', f'{t.max():.2f}',
              f'{fail_wall:.1f}', f'{ratio:.3f}', f'{turn:.2f}', f'{corner:.1f}',
              f'{median([r["max_cost"] for r in valid]):.0f}',
-             f'{median([r["mean_cost"] for r in valid]):.1f}']
+             f'{median([r["mean_cost"] for r in valid]):.1f}',
+             f'{median([r["clear_min_m"] for r in valid]):.2f}',
+             f'{median([r["clear_mean_m"] for r in valid]):.2f}']
     print(f'{planner:>12} ' + ' '.join(f'{c:>8}' for c in cells))
 rclpy.shutdown()
