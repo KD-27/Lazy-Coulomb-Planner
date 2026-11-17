@@ -34,7 +34,7 @@
 
 \author{
 \IEEEauthorblockN{Kaveesha Dhananjaya}
-\IEEEauthorblockA{\pending{Affiliation}\\\pending{e-mail}}
+\IEEEauthorblockA{Senior Robotics Engineer, Hype Insight Global\\kaveeshadhananjaya2002@gmail.com}
 % Single author. The supervisor will proof-read at the end (acknowledgement).
 }
 
@@ -334,7 +334,9 @@ cell is moved to the nearest free cell within \SI{0.5}{m}.
 
 \lcp{} is a C++ plugin for the Nav2 planner server on ROS~2 Jazzy, about
 1{,}700 lines, with 18 unit tests. It is open source at
-\pending{repository URL}. All parameters have defaults; the values above are those
+\url{https://github.com/KD-27/Lazy-Coulomb-Planner/tree/jazzy}, together with
+the benchmark, the simulation tooling and the raw results of every experiment
+in this paper. All parameters have defaults; the values above are those
 defaults.
 
 % ---------------------------------------------------------------------------
@@ -467,18 +469,21 @@ obstacle cell, against obstacle density, \SI{50}{m} maps, five seeds.}
 \end{figure}
 
 Over all 69 maps \lcp{} solved every one of the 6{,}234 routable pairs with a clean
-path and refused every one of the 666 pairs without a route. The grid planners,
-at their defaults, return paths that pass through cells where the robot would be
-in contact with an obstacle on dense maps (Fig.~\ref{fig:clean}): NavFn 439 such
-paths, Smac~2D 499 and Theta\textsuperscript{*} 492; at 40\,\% density only about
-60\,\% of their paths are clean. They do so because they plan on the costmap's
-costs rather than treating inscribed cells as walls. Smac~2D also returned 49 paths
-for pairs without a route, slipping diagonally between two blocked cells that
-touch at a corner.
+path and refused every one of the 666 pairs without a route.
 
-\pending{Decide how to present this: it partly reflects the grid planners'
-default treatment of inscribed cells, and a reviewer may ask for a comparison
-with tuned settings.}
+The grid planners return more paths that touch the inscribed zone as the density
+grows (Fig.~\ref{fig:clean}): over all maps NavFn 439, Smac~2D 499 and
+Theta\textsuperscript{*} 492, and at 40\,\% density only about 60\,\% of their
+paths are clean. This is mainly an effect of their default configuration rather
+than of the algorithms. At their Nav2 defaults they plan on the costmap's costs
+and treat inscribed cells as very expensive but traversable, so on dense maps the
+cheapest path sometimes grazes an obstacle; \lcp{} treats the same cells as walls.
+We therefore do not count this
+against the grid planners' search, and report it to show what each planner
+returns out of the box on the same costmap. One case is not a matter of
+configuration: Smac~2D returned 49 paths for pairs without a route, slipping
+diagonally between two blocked cells that touch at a corner, which the robot
+cannot pass.
 
 \subsection{Obstacle shape and corridors}
 
@@ -692,7 +697,7 @@ best of the four planners.
 \emph{Scope of the evidence.} All results are from generated maps, three indoor
 maps and simulation, with one costmap configuration, the other planners at their
 default settings, and one machine. In the generated worlds the robot localised
-by odometry. \pending{No real-robot experiments yet.}
+by odometry. The planner has not yet been tested on a real robot.
 
 \emph{Planning speed while driving.} With Nav2's default replanning rate of
 \SI{1}{Hz}, a faster planner does not make the robot arrive sooner. The speed
@@ -724,12 +729,20 @@ A\textsuperscript{*} fallback it is complete on the costmap and never returns a
 path through an inflated obstacle cell. Most of the speed comes from the line
 check and the weighted A\textsuperscript{*}, with the lazy correction adding to it
 on sparse and large maps; dedicated grid planners such as jump point search are
-faster still but are not available in Nav2. \pending{Future work: real-robot
-validation, centring paths in free space, denser and faster moving obstacles, and
-an extension to 3D for exploration with aerial robots.}
+faster still but are not available in Nav2. Future work is validation on a real
+robot, keeping the clearance margin along whole segments rather than only at the
+inserted waypoints, so that paths stay away from obstacles on dense maps,
+switching between the lazy correction and the grid search according to how
+cluttered the map is, tests with denser and faster moving obstacles, and an
+extension to 3D for exploration with aerial robots.
 
 \section*{Acknowledgment}
-\pending{To be written.}
+The author thanks Dr.~Meysam Basiri (Institute for Systems and Robotics,
+Instituto Superior T{\'e}cnico, Universidade de Lisboa) for supervising this work
+and for proof-reading the manuscript. The author used Claude (Anthropic), an AI
+assistant, to help write benchmark and simulation scripts, run and summarise the
+experiments, and draft and edit parts of the text; all results were checked
+against the raw data, and the author takes full responsibility for the content.
 
 \bibliographystyle{IEEEtran}
 \bibliography{refs}
