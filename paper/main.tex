@@ -220,34 +220,25 @@ later. The pushed waypoint is locked, and scanning resumes with the new segment
 that ends at it. If $w$ cannot be cleared, lands on a neighbour, or makes the path
 longer than five times the straight-line distance, the branch has failed.
 
-\begin{figure}[t]
+\begin{figure*}[t]
 \centering
-\begin{tikzpicture}[scale=0.85, >=Stealth]
-  \fill[gray!35] (2.2,0.2) rectangle (3.6,1.7);
-  \fill[gray!35] (4.6,-0.9) circle (0.55);
-  \node[gray!80!black, font=\scriptsize] at (2.9,0.95) {obstacle};
-  \draw[dashed, gray] (0,0.6) -- (7,0.6);
-  \fill (0,0.6) circle (1.6pt) node[left] {$s$};
-  \fill (7,0.6) circle (1.6pt) node[right] {$g$};
-  \fill[red] (2.2,0.6) circle (1.4pt);
-  \node[red, font=\scriptsize, below left] at (2.25,0.6) {$w$};
-  \draw[->, red, thick] (2.2,0.6) -- (2.2,2.15);
-  \node[red, font=\scriptsize, left] at (2.2,1.5) {push along $\mathbf{n}$};
-  \fill[red] (2.2,2.15) circle (1.4pt);
-  \draw[thick, blue] (0,0.6) -- (2.2,2.15) -- (4.0,2.15) -- (7,0.6);
-  \fill[blue] (4.0,2.15) circle (1.4pt);
-  \foreach \x/\y in {2.5/0.35, 2.9/0.35, 3.3/0.35, 2.4/1.5, 3.4/1.5}
-    \draw[->, orange, thin] (\x,\y) -- ++(0,-0.25);
-  \node[orange!80!black, font=\scriptsize, align=center] at (5.5,1.75)
-    {repulsion of cells\\near $w$ picks the side};
-\end{tikzpicture}
-\caption{Lazy correction. The straight line from $s$ to $g$ (dashed) is blocked;
-a waypoint $w$ is placed where it enters the obstacle and pushed perpendicular to
-the segment, on the side chosen by the summed repulsion of the nearby obstacle
-cells. The cleared waypoint is locked and the next segment is checked the same
-way (blue). Only blocked segments cost any work.}
+\includegraphics[width=\textwidth]{figures/method_idea.pdf}
+\caption{Lazy correction on a costmap; cells in the inscribed zone count as
+obstacles. (a) The straight line from $s$ to $g$ is blocked; a waypoint $w$ is
+placed in the first blocked cell. Every blocked cell within $R$ repels $w$ (small
+arrows, thicker where stronger); the side is the sign of the summed
+repulsion $\mathbf{F}$ along the segment normal $\mathbf{n}$. Here $\mathbf{F}$
+points mostly backwards, but the mass of the obstacle below the line gives it an
+upward component, so $w$ leaves over the top. (b) $w$ is pushed along $\mathbf{n}$
+until it is free and then by a further margin $m$, and locked as $w_1$; the other
+side is stored for backtracking. The next blocked segment (dashed) is corrected
+the same way, and here the repulsion of the second obstacle sends $w_2$ the other
+way. Free space and the obstacles off the line cost no work. (c) Simplification and
+corner smoothing give the final path (the lazy path is shown faint). The geometry
+is computed with the method's rules on a toy grid
+(\texttt{paper/figures/make\_method\_figure.py}).}
 \label{fig:idea}
-\end{figure}
+\end{figure*}
 
 \subsection{Choosing the side with a Coulomb-like repulsion}
 
