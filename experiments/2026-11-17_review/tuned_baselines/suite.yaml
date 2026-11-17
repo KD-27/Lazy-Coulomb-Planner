@@ -1,0 +1,33 @@
+# Tuned grid baselines: the Nav2 grid planners with their traversal-cost terms off
+# (or NavFn with A*), against LCP and "line, else weighted A*", on the 21 controlled maps.
+pairs: 100
+repeats: 5
+planners_file: tuned_baselines_planners.yaml
+planners: [Navfn, Navfn_astar, Smac2d, Smac2d_nocost, ThetaStar, ThetaStar_nocost, LCP, line_astar_w3]
+
+maps:
+  # --- obstacle density, from empty to the point where free space falls apart ---
+  - {name: density_00, group: density, size: 50, shape: circle, density: 0.0}
+  - {name: density_02, group: density, size: 50, shape: circle, density: 0.025}
+  - {name: density_05, group: density, size: 50, shape: circle, density: 0.05}
+  - {name: base,       group: density, size: 50, shape: circle, density: 0.10}
+  - {name: density_15, group: density, size: 50, shape: circle, density: 0.15}
+  - {name: density_20, group: density, size: 50, shape: circle, density: 0.20}
+  - {name: density_25, group: density, size: 50, shape: circle, density: 0.25}
+  - {name: density_30, group: density, size: 50, shape: circle, density: 0.30}
+  - {name: density_35, group: density, size: 50, shape: circle, density: 0.35}
+  - {name: density_40, group: density, size: 50, shape: circle, density: 0.40}
+  - {name: density_45, group: density, size: 50, shape: circle, density: 0.45}
+  # --- map size at 10 % density --------------------------------------------
+  - {name: size_010, group: size, size: 10,  shape: circle, density: 0.10}
+  - {name: size_025, group: size, size: 25,  shape: circle, density: 0.10}
+  - {name: size_100, group: size, size: 100, shape: circle, density: 0.10}
+  - {name: size_200, group: size, size: 200, shape: circle, density: 0.10}
+  # --- obstacle shape at 50 m, 10 % ------------------------------------------
+  - {name: shape_square, group: shape, size: 50, shape: square, density: 0.10}
+  - {name: shape_u,      group: shape, size: 50, shape: u,      density: 0.10}
+  # --- corridor width between 4 m blocks -------------------------------------
+  - {name: corridor_0.8, group: corridor, size: 50, shape: blocks, block: 4.0, corridor: 0.8}
+  - {name: corridor_1.2, group: corridor, size: 50, shape: blocks, block: 4.0, corridor: 1.2}
+  - {name: corridor_2.0, group: corridor, size: 50, shape: blocks, block: 4.0, corridor: 2.0}
+  - {name: corridor_3.0, group: corridor, size: 50, shape: blocks, block: 4.0, corridor: 3.0}

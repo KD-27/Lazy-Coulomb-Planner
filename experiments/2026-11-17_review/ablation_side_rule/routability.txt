@@ -1,0 +1,20 @@
+           map routable |                  Navfn |                coulomb |             fixed_left |                  probe |           coulomb_lazy |        fixed_left_lazy |             probe_lazy |       coulomb_lazy_b10
+                          solved insc leth fail |  solved insc leth fail |  solved insc leth fail |  solved insc leth fail |  solved insc leth fail |  solved insc leth fail |  solved insc leth fail |  solved insc leth fail
+          base      100 |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |     97    0    0    3   |     96    0    0    4   |     93    0    0    7   |     63    0    0   37  
+    density_20      100 |     94    6    0    0   |    100    0    0    0   |     99    1    0    0   |    100    0    0    0   |     74    0    0   26   |     59    0    0   41   |     75    0    0   25   |     23    0    0   77  
+    density_30       94 |     84   10    0    0   |     94    0    0    0   |     93    1    0    0   |     94    0    0    0   |     35    0    0   59   |     14    0    0   80   |     26    0    0   68   |      8    0    0   86  
+       shape_u       98 |     93    5    0    0   |     98    0    0    0   |     98    0    0    0   |     98    0    0    0   |     43    0    0   55   |     33    0    0   65   |     30    0    0   68   |     20    0    0   78  
+  corridor_1.2      100 |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |     87    0    0   13   |     93    0    0    7   |     87    0    0   13   |     24    0    0   76  
+          maze      100 |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |    100    0    0    0   |     58    0    0   42   |     78    0    0   22   |     43    0    0   57   |     35    0    0   65  
+         house       57 |     57    0    0    0   |     57    0    0    0   |     57    0    0    0   |     57    0    0    0   |     52    0    0    5   |     44    0    0   13   |     49    0    0    8   |     44    0    0   13  
+   event_venue       55 |     54    1    0    0   |     55    0    0    0   |     55    0    0    0   |     55    0    0    0   |     43    0    0   12   |     23    0    0   32   |     46    0    0    9   |     32    0    0   23  
+
+Pairs with no route: clean path returned / bad path returned / correctly refused
+     Navfn: 0 / 1 / 95
+   coulomb: 0 / 0 / 96
+fixed_left: 0 / 0 / 96
+     probe: 0 / 0 / 96
+coulomb_lazy: 0 / 0 / 96
+fixed_left_lazy: 0 / 0 / 96
+probe_lazy: 0 / 0 / 96
+coulomb_lazy_b10: 0 / 0 / 96

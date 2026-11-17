@@ -1,0 +1,60 @@
+# Side rule in one run (review): fallback on (time) and off (*_lazy: what the lazy search
+# solves by itself). fixed_left: force_balance_threshold so large that every force counts
+# as balanced, so every push goes left first. probe: nearest free side.
+# coulomb_lazy_b10: lazy search alone with a budget of 10 (Table II budget row).
+# path_reuse_distance 0 everywhere: the benchmark measures planning from scratch.
+planner_server:
+  ros__parameters:
+    expected_planner_frequency: 20.0
+    planner_plugins: ["Navfn", "coulomb", "fixed_left", "probe", "coulomb_lazy", "fixed_left_lazy", "probe_lazy", "coulomb_lazy_b10"]
+    Navfn:
+      plugin: "nav2_navfn_planner::NavfnPlanner"
+    coulomb:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+    fixed_left:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      force_balance_threshold: 1.0e9
+    probe:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      force_model: "probe"
+    coulomb_lazy:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      grid_fallback: false
+    fixed_left_lazy:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      force_balance_threshold: 1.0e9
+      grid_fallback: false
+    probe_lazy:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      force_model: "probe"
+      grid_fallback: false
+    coulomb_lazy_b10:
+      plugin: "lazy_coulomb_planner::LazyCoulombPlanner"
+      path_reuse_distance: 0.0
+      grid_fallback: false
+      max_iterations: 10
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      update_frequency: 1.0
+      publish_frequency: 1.0
+      global_frame: map
+      robot_base_frame: base_link
+      robot_radius: 0.22
+      resolution: 0.05
+      track_unknown_space: true
+      always_send_full_costmap: true
+      plugins: ["static_layer", "inflation_layer"]
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: true
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.7

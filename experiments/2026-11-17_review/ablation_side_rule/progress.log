@@ -1,0 +1,9 @@
+[1/8] base (55 s): Navfn 100/100 14.1ms, coulomb 100/100 0.5ms, fixed_left 100/100 0.7ms, probe 100/100 0.4ms, coulomb_lazy 97/100 0.4ms, fixed_left_lazy 96/100 0.7ms, probe_lazy 93/100 0.3ms, coulomb_lazy_b10 63/100 0.3ms
+[2/8] density_20 (55 s): Navfn 94/94 14.3ms, coulomb 94/94 1.2ms, fixed_left 93/94 2.2ms, probe 94/94 0.7ms, coulomb_lazy 71/94 0.7ms, fixed_left_lazy 57/94 1.0ms, probe_lazy 71/94 0.5ms, coulomb_lazy_b10 21/94 0.3ms
+[3/8] density_30 (55 s): Navfn 84/84 13.7ms, coulomb 84/84 3.3ms, fixed_left 83/84 3.8ms, probe 84/84 2.0ms, coulomb_lazy 33/84 1.0ms, fixed_left_lazy 14/84 1.2ms, probe_lazy 24/84 0.4ms, coulomb_lazy_b10 8/84 0.2ms
+[4/8] shape_u (54 s): Navfn 93/93 13.7ms, coulomb 93/93 2.3ms, fixed_left 93/93 2.8ms, probe 93/93 1.5ms, coulomb_lazy 40/93 0.6ms, fixed_left_lazy 32/93 0.5ms, probe_lazy 29/93 0.2ms, coulomb_lazy_b10 19/93 0.2ms
+[5/8] corridor_1.2 (55 s): Navfn 100/100 7.7ms, coulomb 100/100 0.7ms, fixed_left 100/100 1.1ms, probe 100/100 0.4ms, coulomb_lazy 87/100 0.6ms, fixed_left_lazy 93/100 1.1ms, probe_lazy 87/100 0.3ms, coulomb_lazy_b10 24/100 0.2ms
+[6/8] maze (49 s): Navfn 100/100 2.9ms, coulomb 100/100 1.3ms, fixed_left 100/100 1.1ms, probe 100/100 1.2ms, coulomb_lazy 58/100 0.3ms, fixed_left_lazy 78/100 0.6ms, probe_lazy 43/100 0.1ms, coulomb_lazy_b10 35/100 0.1ms
+[7/8] house (45 s): Navfn 57/57 1.3ms, coulomb 57/57 0.2ms, fixed_left 57/57 0.3ms, probe 57/57 0.1ms, coulomb_lazy 52/57 0.1ms, fixed_left_lazy 44/57 0.1ms, probe_lazy 49/57 0.1ms, coulomb_lazy_b10 44/57 0.1ms
+[8/8] event_venue (45 s): Navfn 54/54 2.0ms, coulomb 54/54 0.3ms, fixed_left 54/54 1.5ms, probe 54/54 0.2ms, coulomb_lazy 43/54 0.2ms, fixed_left_lazy 22/54 0.1ms, probe_lazy 46/54 0.2ms, coulomb_lazy_b10 32/54 0.2ms
+SUITE DONE

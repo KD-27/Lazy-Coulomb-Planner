@@ -72,6 +72,19 @@ d['bt_navigator']['ros__parameters']['default_nav_to_pose_bt_xml'] = bt
 yaml.safe_dump(d, open(params, 'w'), sort_keys=False)
 PY
 fi
+# LCP_SIM_PLANNER_PARAMS: a YAML mapping merged into the global planner's parameters,
+# e.g. "{path_reuse_distance: 0.0}" to drive LCP without path reuse.
+if [ -n "${LCP_SIM_PLANNER_PARAMS:-}" ]; then
+  python3 - "$params" "$LCP_SIM_PLANNER_PARAMS" <<'PY' || { echo "failed to set planner parameters"; exit 1; }
+import sys, yaml
+params, extra = sys.argv[1], yaml.safe_load(sys.argv[2])
+assert isinstance(extra, dict) and extra
+d = yaml.safe_load(open(params))
+d['planner_server']['ros__parameters']['GridBased'].update(extra)
+yaml.safe_dump(d, open(params, 'w'), sort_keys=False)
+PY
+  echo "planner parameters: $LCP_SIM_PLANNER_PARAMS"
+fi
 
 setsid ros2 launch "$here/launch/tb3_sim.launch.py" params_file:="$params" \
   map:="$map" x_pose:="$start_x" y_pose:="$start_y" > "$out/$planner.launch.log" 2>&1 &

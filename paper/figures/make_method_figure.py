@@ -233,9 +233,11 @@ def label(ax, p, text, color, ha='center', va='center', size=8.5):
 
 
 def endpoints(ax):
-    for p, t, ha, dx in ((s, '$s$', 'right', -0.9), (g, '$g$', 'left', 0.9)):
+    # Labels sit above the points, inside the panel, so the border cannot clip them.
+    for p, t in ((s, '$s$'), (g, '$g$')):
         ax.plot(*p, 'o', color='black', ms=3.4, zorder=12)
-        ax.text(p[0] + dx, p[1], t, ha=ha, va='center', fontsize=9.5, zorder=12)
+        ax.text(p[0] + 0.3, p[1] + 1.0, t, ha='left', va='bottom', fontsize=9.5, zorder=12,
+                bbox={'fc': 'white', 'ec': 'none', 'pad': 0.3, 'alpha': 0.85})
 
 
 # (a) zoom on the first blocked cell: repulsion of the blocked cells within R
@@ -284,16 +286,16 @@ for idx, (_, _, entry, wp, tr, sk) in enumerate(pushes):
     label(ax, wp + np.array([0.0, 1.6 if up else -1.6]), '$w_%d$' % (idx + 1), C_PUSH,
           va='bottom' if up else 'top', size=9)
     # the other side, kept for backtracking
-    arrow(ax, entry, entry - 1.8 * (tr[1] - tr[0]) / np.linalg.norm(tr[1] - tr[0]), '#a0a0a0', lw=0.7, ms=4, z=8)
+    arrow(ax, entry, entry - 1.8 * (tr[1] - tr[0]) / np.linalg.norm(tr[1] - tr[0]), '#6a6a6a', lw=0.8, ms=4, z=8)
 e1 = pushes[0][2]
-label(ax, e1 + np.array([-2.2, -3.4]), 'other side\nstored', '#7a7a7a', ha='right', size=6.5)
+label(ax, e1 + np.array([-2.2, -3.4]), 'other side\nstored', '#3a3a3a', ha='right', size=7)
 tr1 = pushes[0][4]
 k = next(i for i, p in enumerate(tr1) if free(p))
 mx = tr1[k][0] - 1.2
 ax.annotate('', xy=(mx, tr1[-1][1]), xytext=(mx, tr1[k][1]),
             arrowprops=dict(arrowstyle='|-|', lw=0.5, color=C_PUSH, shrinkA=0, shrinkB=0,
                             mutation_scale=1.5), zorder=11)
-label(ax, (mx - 0.6, 0.5 * (tr1[k][1] + tr1[-1][1])), '$m$', C_PUSH, ha='right', size=8.5)
+label(ax, (mx - 0.6, 0.5 * (tr1[k][1] + tr1[-1][1])), r'$\mu$', C_PUSH, ha='right', size=8.5)
 endpoints(ax)
 
 # (c) post-processing

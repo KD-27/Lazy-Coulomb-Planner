@@ -1,0 +1,67 @@
+2026-11-17 15:53:29 planner: v2.1.0-10-g28e621c-dirty
+2026-11-17 15:53:29 tuned_baselines: start
+2026-11-17 16:11:40 tuned_baselines: done
+2026-11-17 16:11:40 driving_reuse_mppi: start
+2026-11-17 16:15:41   driving_reuse_mppi/reuse_off/lcp_01: 17 lines, planner parameters: {path_reuse_distance: 0.0} | lcp: reached 15/15 goals, sim time 207.8 s, travelled 47.61 m, closest obstacle 0.215 m, recoveries 0
+2026-11-17 16:19:27   driving_reuse_mppi/reuse_on/lcp_01: 16 lines,  | lcp: reached 15/15 goals, sim time 193.4 s, travelled 46.59 m, closest obstacle 0.244 m, recoveries 0
+2026-11-17 16:23:16   driving_reuse_mppi/reuse_off/lcp_02: 17 lines, planner parameters: {path_reuse_distance: 0.0} | lcp: reached 15/15 goals, sim time 196.3 s, travelled 47.22 m, closest obstacle 0.202 m, recoveries 0
+2026-11-17 16:28:50   driving_reuse_mppi/reuse_on/lcp_02: 16 lines,  | lcp: reached 14/15 goals, sim time 300.9 s, travelled 45.95 m, closest obstacle 0.210 m, recoveries 13
+2026-11-17 16:32:49   driving_reuse_mppi/reuse_off/lcp_03: 17 lines, planner parameters: {path_reuse_distance: 0.0} | lcp: reached 15/15 goals, sim time 206.4 s, travelled 47.47 m, closest obstacle 0.212 m, recoveries 1
+2026-11-17 16:36:31   driving_reuse_mppi/reuse_on/lcp_03: 16 lines,  | lcp: reached 15/15 goals, sim time 188.5 s, travelled 47.27 m, closest obstacle 0.224 m, recoveries 0
+2026-11-17 16:41:37   driving_reuse_mppi/reuse_off/lcp_04: 17 lines, planner parameters: {path_reuse_distance: 0.0} | lcp: reached 15/15 goals, sim time 273.0 s, travelled 48.50 m, closest obstacle 0.214 m, recoveries 6
+2026-11-17 16:47:32   driving_reuse_mppi/reuse_on/lcp_04: 16 lines,  | lcp: reached 14/15 goals, sim time 321.3 s, travelled 46.23 m, closest obstacle 0.215 m, recoveries 15
+2026-11-17 16:51:31   driving_reuse_mppi/reuse_off/lcp_05: 17 lines, planner parameters: {path_reuse_distance: 0.0} | lcp: reached 15/15 goals, sim time 206.0 s, travelled 47.59 m, closest obstacle 0.213 m, recoveries 0
+2026-11-17 16:57:17   driving_reuse_mppi/reuse_on/lcp_05: 16 lines,  | lcp: reached 15/15 goals, sim time 312.4 s, travelled 48.66 m, closest obstacle 0.228 m, recoveries 12
+2026-11-17 16:57:17 driving_reuse_mppi: done
+2026-11-17 16:57:17 driving_reuse_rpp: start
+2026-11-17 17:01:50   driving_reuse_rpp/reuse_off/lcp_01: 17 lines, planner parameters: {path_reuse_distance: 0.0} | lcp: reached 14/15 goals, sim time 240.1 s, travelled 40.24 m, closest obstacle 0.193 m, recoveries 65
+2026-11-17 17:05:38   driving_reuse_rpp/reuse_on/lcp_01: 16 lines,  | lcp: reached 15/15 goals, sim time 196.3 s, travelled 42.03 m, closest obstacle 0.235 m, recoveries 25
+2026-11-17 17:10:26   driving_reuse_rpp/reuse_off/lcp_02: 17 lines, planner parameters: {path_reuse_distance: 0.0} | lcp: reached 12/15 goals, sim time 255.8 s, travelled 39.53 m, closest obstacle 0.218 m, recoveries 73
+2026-11-17 17:14:11   driving_reuse_rpp/reuse_on/lcp_02: 16 lines,  | lcp: reached 15/15 goals, sim time 191.9 s, travelled 41.86 m, closest obstacle 0.246 m, recoveries 20
+2026-11-17 17:18:25   driving_reuse_rpp/reuse_off/lcp_03: 17 lines, planner parameters: {path_reuse_distance: 0.0} | lcp: reached 13/15 goals, sim time 221.2 s, travelled 39.63 m, closest obstacle 0.257 m, recoveries 50
+2026-11-17 17:21:54   driving_reuse_rpp/reuse_on/lcp_03: 16 lines,  | lcp: reached 15/15 goals, sim time 175.2 s, travelled 41.57 m, closest obstacle 0.257 m, recoveries 8
+2026-11-17 17:25:52   driving_reuse_rpp/reuse_off/lcp_04: 17 lines, planner parameters: {path_reuse_distance: 0.0} | lcp: reached 15/15 goals, sim time 205.5 s, travelled 41.68 m, closest obstacle 0.198 m, recoveries 29
+2026-11-17 17:30:00   driving_reuse_rpp/reuse_on/lcp_04: 16 lines,  | lcp: reached 14/15 goals, sim time 215.7 s, travelled 41.42 m, closest obstacle 0.223 m, recoveries 36
+2026-11-17 17:34:37   driving_reuse_rpp/reuse_off/lcp_05: 17 lines, planner parameters: {path_reuse_distance: 0.0} | lcp: reached 14/15 goals, sim time 244.6 s, travelled 41.44 m, closest obstacle 0.216 m, recoveries 52
+2026-11-17 17:39:05   driving_reuse_rpp/reuse_on/lcp_05: 16 lines,  | lcp: reached 14/15 goals, sim time 235.6 s, travelled 42.33 m, closest obstacle 0.218 m, recoveries 47
+2026-11-17 17:43:47   driving_reuse_rpp/reuse_off/lcp_06: 17 lines, planner parameters: {path_reuse_distance: 0.0} | lcp: reached 14/15 goals, sim time 249.9 s, travelled 41.34 m, closest obstacle 0.223 m, recoveries 50
+2026-11-17 17:47:56   driving_reuse_rpp/reuse_on/lcp_06: 17 lines,  | lcp: reached 14/15 goals, sim time 216.0 s, travelled 41.27 m, closest obstacle 0.184 m, recoveries 46
+2026-11-17 17:52:05   driving_reuse_rpp/reuse_off/lcp_07: 17 lines, planner parameters: {path_reuse_distance: 0.0} | lcp: reached 15/15 goals, sim time 217.2 s, travelled 43.36 m, closest obstacle 0.252 m, recoveries 34
+2026-11-17 17:56:49   driving_reuse_rpp/reuse_on/lcp_07: 16 lines,  | lcp: reached 13/15 goals, sim time 252.4 s, travelled 40.18 m, closest obstacle 0.197 m, recoveries 64
+2026-11-17 18:00:26   driving_reuse_rpp/reuse_off/lcp_08: 17 lines, planner parameters: {path_reuse_distance: 0.0} | lcp: reached 15/15 goals, sim time 184.5 s, travelled 41.72 m, closest obstacle 0.252 m, recoveries 20
+2026-11-17 18:04:57   driving_reuse_rpp/reuse_on/lcp_08: 16 lines,  | lcp: reached 14/15 goals, sim time 237.5 s, travelled 41.40 m, closest obstacle 0.212 m, recoveries 56
+2026-11-17 18:08:58   driving_reuse_rpp/reuse_off/lcp_09: 17 lines, planner parameters: {path_reuse_distance: 0.0} | lcp: reached 15/15 goals, sim time 209.3 s, travelled 42.70 m, closest obstacle 0.221 m, recoveries 29
+2026-11-17 18:12:55   driving_reuse_rpp/reuse_on/lcp_09: 16 lines,  | lcp: reached 15/15 goals, sim time 204.7 s, travelled 42.23 m, closest obstacle 0.188 m, recoveries 25
+2026-11-17 18:17:02   driving_reuse_rpp/reuse_off/lcp_10: 17 lines, planner parameters: {path_reuse_distance: 0.0} | lcp: reached 15/15 goals, sim time 214.2 s, travelled 41.73 m, closest obstacle 0.232 m, recoveries 25
+2026-11-17 18:20:53   driving_reuse_rpp/reuse_on/lcp_10: 16 lines,  | lcp: reached 15/15 goals, sim time 197.9 s, travelled 41.48 m, closest obstacle 0.263 m, recoveries 30
+2026-11-17 18:20:54 driving_reuse_rpp: done
+2026-11-17 18:20:54 CHAIN DONE
+2026-11-17 18:21:49 ablation_side_rule: start
+2026-11-17 18:28:43 ablation_side_rule: done
+2026-11-17 18:28:43 AFTER DONE
+2026-11-17 18:29:27 tuned_baselines (resume): start
+2026-11-17 19:08:17 tuned_baselines (resume): done
+2026-11-17 19:08:17 AFTER2 DONE
+2026-11-17 19:08:33 driving_mppi_extra: start
+2026-11-17 19:12:15   driving_mppi_extra/lcp_06: lcp: reached 15/15 goals, sim time 189.2 s, travelled 47.61 m, closest obstacle 0.235 m, recoveries 0
+2026-11-17 19:16:21   driving_mppi_extra/navfn_06: navfn: reached 15/15 goals, sim time 212.7 s, travelled 49.18 m, closest obstacle 0.279 m, recoveries 0
+2026-11-17 19:20:04   driving_mppi_extra/smac2d_06: smac2d: reached 15/15 goals, sim time 190.6 s, travelled 47.02 m, closest obstacle 0.214 m, recoveries 0
+2026-11-17 19:23:59   driving_mppi_extra/theta_06: theta: reached 15/15 goals, sim time 201.5 s, travelled 48.50 m, closest obstacle 0.229 m, recoveries 4
+2026-11-17 19:27:47   driving_mppi_extra/lcp_07: lcp: reached 15/15 goals, sim time 195.2 s, travelled 47.61 m, closest obstacle 0.219 m, recoveries 0
+2026-11-17 19:31:46   driving_mppi_extra/navfn_07: navfn: reached 15/15 goals, sim time 205.6 s, travelled 49.20 m, closest obstacle 0.267 m, recoveries 0
+2026-11-17 19:35:28   driving_mppi_extra/smac2d_07: smac2d: reached 15/15 goals, sim time 189.8 s, travelled 46.86 m, closest obstacle 0.236 m, recoveries 0
+2026-11-17 19:39:11   driving_mppi_extra/theta_07: theta: reached 15/15 goals, sim time 190.4 s, travelled 48.38 m, closest obstacle 0.233 m, recoveries 3
+2026-11-17 19:42:46   driving_mppi_extra/lcp_08: lcp: reached 15/15 goals, sim time 181.4 s, travelled 46.94 m, closest obstacle 0.243 m, recoveries 0
+2026-11-17 19:46:48   driving_mppi_extra/navfn_08: navfn: reached 15/15 goals, sim time 208.3 s, travelled 49.16 m, closest obstacle 0.299 m, recoveries 0
+2026-11-17 19:50:34   driving_mppi_extra/smac2d_08: smac2d: reached 15/15 goals, sim time 192.2 s, travelled 47.32 m, closest obstacle 0.210 m, recoveries 0
+2026-11-17 19:54:30   driving_mppi_extra/theta_08: theta: reached 15/15 goals, sim time 202.0 s, travelled 47.71 m, closest obstacle 0.220 m, recoveries 5
+2026-11-17 20:00:05   driving_mppi_extra/lcp_09: lcp: reached 14/15 goals, sim time 303.2 s, travelled 46.31 m, closest obstacle 0.201 m, recoveries 12
+2026-11-17 20:04:03   driving_mppi_extra/navfn_09: navfn: reached 15/15 goals, sim time 205.4 s, travelled 49.15 m, closest obstacle 0.275 m, recoveries 0
+2026-11-17 20:07:46   driving_mppi_extra/smac2d_09: smac2d: reached 15/15 goals, sim time 189.5 s, travelled 46.87 m, closest obstacle 0.232 m, recoveries 0
+2026-11-17 20:11:35   driving_mppi_extra/theta_09: theta: reached 15/15 goals, sim time 196.7 s, travelled 47.98 m, closest obstacle 0.244 m, recoveries 0
+2026-11-17 20:15:11   driving_mppi_extra/lcp_10: lcp: reached 15/15 goals, sim time 182.9 s, travelled 46.65 m, closest obstacle 0.212 m, recoveries 0
+2026-11-17 20:20:03   driving_mppi_extra/navfn_10: navfn: reached 15/15 goals, sim time 258.6 s, travelled 49.56 m, closest obstacle 0.299 m, recoveries 5
+2026-11-17 20:23:47   driving_mppi_extra/smac2d_10: smac2d: reached 15/15 goals, sim time 190.6 s, travelled 46.78 m, closest obstacle 0.218 m, recoveries 0
+2026-11-17 20:28:10   driving_mppi_extra/theta_10: theta: reached 14/15 goals, sim time 228.4 s, travelled 47.76 m, closest obstacle 0.205 m, recoveries 28
+2026-11-17 20:28:10 driving_mppi_extra: done
+2026-11-17 20:28:10 AFTER3 DONE

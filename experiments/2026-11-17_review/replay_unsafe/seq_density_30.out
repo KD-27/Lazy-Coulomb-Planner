@@ -1,0 +1,5 @@
+
+89 pairs, 84 with a route according to fixed_left
+     planner    valid  collide   failed   false+    t_med    t_p95    t_max failwall  len/ref     turn   corner  maxcost meancost  clr_min clr_mean
+  fixed_left    84/84        0        0        0     4.08     6.84     8.01     14.0    1.000     6.44     31.4      234    126.8     0.23     0.50
+     coulomb    84/84        0        0        0     3.78     6.59     8.40     14.2    1.050     9.07     34.0      234     73.2     0.23     0.63

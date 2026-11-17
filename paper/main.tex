@@ -22,6 +22,7 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{siunitx}
+\sisetup{group-minimum-digits=4}
 \usepackage{cite}
 \usepackage[hidelinks]{hyperref}
 
@@ -30,11 +31,11 @@
 
 \begin{document}
 
-\title{Lazy Coulomb Planner: Correcting a Straight Line\\Instead of Searching a Grid}
+\title{Lazy Coulomb Planner: Checking and Repairing\\the Straight Line Before Searching the Grid}
 
 \author{
 \IEEEauthorblockN{Kaveesha Dhananjaya}
-\IEEEauthorblockA{Senior Robotics Engineer, Hype Insight Global\\kaveeshadhananjaya2002@gmail.com}
+\IEEEauthorblockA{Senior Robotics Engineer, Hype Insight Global\\New South Wales, Australia\\kaveeshadhananjaya2002@gmail.com}
 % Single author. The supervisor will proof-read at the end (acknowledgement).
 }
 
@@ -42,30 +43,22 @@
 
 \begin{abstract}
 Grid-based global planners spend most of their time searching free space, even
-when the straight line from start to goal is almost clear. We present the Lazy
-Coulomb Planner (\lcp), a global planner for mobile robots that starts from the
-straight line and does work only where that line touches an obstacle. Each
-blocked point is pushed sideways, perpendicular to the path, in the direction
-chosen by a Coulomb-like repulsion summed over the nearby obstacle cells; the
-cleared point is locked and the search moves on. When this lazy correction runs
-out of a small attempt budget, a weighted A\textsuperscript{*} search on the same
-costmap takes over, which makes the planner complete. \lcp{} is implemented as a
-plugin for the ROS~2 Navigation stack (Nav2). On 69 generated maps with up to
-45\,\% obstacle density it solved all 6{,}234 routable start--goal pairs with
-paths that never touch an inflated obstacle cell, and refused all 666 pairs
-without a route. On a \SI{50}{m} map it plans 66 times faster than the fastest of
-NavFn, Smac~2D and Theta\textsuperscript{*} at 2.5\,\% obstacle density, 31 times
-at 10\,\%, and 2.6 times at 40\,\%; on \SI{100}{m} maps the advantage reaches 56
-times. Most of this advantage already comes from checking the straight line and
-running a weighted A\textsuperscript{*} on the costmap when it is blocked: the lazy
-correction adds a further factor of 1.3 to 2.7 on sparse and large maps and costs up
-to 2.6 on dense ones, and the Coulomb-like side choice makes it 1.7 to 2 times faster
-than a fixed side. Jump point search and the optimal any-angle planner Anya, which
-are not available in Nav2, are faster than \lcp{} on the same grids except on
-nearly empty maps. In simulated driving with a TurtleBot3 and the MPPI
-controller, \lcp{} reached every goal in every run without a single recovery
-behaviour; with Regulated Pure Pursuit it reached as many goals as NavFn but
-triggered more recoveries, because its paths run closer to obstacles.
+when the straight line from start to goal is almost clear. The Lazy Coulomb Planner
+(\lcp), a global planner for the ROS~2 Navigation stack (Nav2), checks the straight
+line on the costmap first; most of its speed comes from this check together with a
+weighted A\textsuperscript{*} when the line is blocked. Before that search, a lazy
+correction pushes each blocked point sideways within a small attempt budget,
+choosing the side with a Coulomb-like repulsion or a cheaper probe; both beat a
+fixed side. The correction makes the planner a further 1.3 to 2.7 times faster on
+sparse and large maps and up to 2.6 times slower from 20\,\% obstacle density on.
+On 69 generated maps \lcp{} solved all \num{6234} routable pairs without entering
+the inscribed zone and refused all 666 pairs without a route. On \SI{50}{m} maps it
+is 66 times faster than the fastest Nav2 grid planner at 2.5\,\% density and 2.6
+times at 40\,\%; against NavFn switched to A\textsuperscript{*}, the fastest tuned
+grid planner, it is 11 times faster at 10\,\% and as fast at 40\,\%. Jump point
+search and Anya, which Nav2 does not provide, are faster still. In simulated
+driving \lcp{} reached a similar number of goals to NavFn, with more recovery
+behaviours under Regulated Pure Pursuit and a similar number under MPPI.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -76,7 +69,7 @@ path planning, mobile robots, Nav2, ROS 2, lazy planning
 \section{Introduction}
 
 The global planner of a mobile robot is called whenever a goal is set and, in
-most navigation stacks, again about once a second while the robot drives. The
+Nav2's default behaviour tree, again once a second while the robot drives. The
 planners shipped with Nav2~\cite{macenski2020marathon}, the standard navigation
 system of ROS~2, are grid searches: NavFn (a wavefront Dijkstra or
 A\textsuperscript{*} on the costmap), Smac~2D~\cite{macenski2024smac} and
@@ -93,22 +86,30 @@ to repair the obvious one? This paper answers it with a planner that
 \item starts from the straight line and checks it against the costmap;
 \item where it is blocked, inserts a waypoint and pushes it sideways until it is
   clear, choosing the side with a repulsion summed over nearby obstacle cells, in
-  the spirit of Coulomb's law;
+  the spirit of Coulomb's law, or with a cheaper probe of both sides;
 \item locks the cleared waypoint and continues along the path, backing up to try
   the other side when a choice leads nowhere;
 \item hands the request to a weighted A\textsuperscript{*} search on the same
   costmap when the correction exceeds a small budget, so that a path is returned
   whenever one exists; and
-\item never returns a path that touches an inflated obstacle cell.
+\item never returns a path that enters the inscribed zone, where the robot's
+  body would touch an obstacle.
 \end{itemize}
+
+Our measurements show that most of the speed-up over Nav2's planners does not
+come from the correction. Checking the straight line and running a weighted
+A\textsuperscript{*} when it is blocked already gives most of it. The correction
+adds to it on sparse and large maps and costs time on dense ones.
 
 The contributions are: (i) the planner and its open-source Nav2 implementation;
 (ii) a controlled benchmark that varies obstacle density, map size, obstacle
 shape and corridor width one at a time, with ground-truth routability, against
-the three Nav2 grid planners; (iii) ablations of every design choice, including
-a comparison with the heuristic of checking the straight line and otherwise
-running A\textsuperscript{*}, and with jump point search and Anya outside Nav2;
-and (iv) simulated driving experiments with two path-following controllers.
+the three Nav2 grid planners at their defaults and with their cost terms switched
+off; (iii) ablations of the main design choices, including a comparison with the
+heuristic of checking the straight line and otherwise running
+A\textsuperscript{*}, and with jump point search and Anya outside Nav2; and (iv)
+simulated driving experiments with two path-following controllers, including one
+with \lcp{}'s path reuse switched off.
 
 % ---------------------------------------------------------------------------
 \section{Related work}
@@ -133,11 +134,13 @@ full A\textsuperscript{*} expansion, and Anya~\cite{harabor2016anya} finds
 optimal any-angle paths by searching over intervals; see~\cite{nash2013anyangle}
 for a survey and~\cite{uras2015comparison} for a comparison. Closest to our
 cost argument are the vector-based planners: RayScan~\cite{hechenberger2020rayscan}
-and R2~\cite{lai2024r2} cast a ray towards the goal and go round only what it
-hits, so their work, like ours, depends on the obstacles met rather than on the
-free area, and they return optimal paths. We do not claim this property as new.
-\lcp{} differs in working directly on an inflated Nav2 costmap with a clearance
-margin rather than on polygons or binary grids, in committing to one side per
+and R2~\cite{lai2024r2} with its successor R2+~\cite{lai2024r2plus} cast a ray
+towards the goal and go around only what the ray hits, so their work, like ours,
+depends on the obstacles met rather than on the free area, and they return optimal
+paths. We do not claim this property as new.
+\lcp{} differs in working directly on an inflated Nav2 costmap, which it thresholds
+at the inscribed cost, with a clearance margin and a cost-aware post-processing
+step, rather than on polygons, in committing to one side per
 obstacle greedily instead of exploring both, and in bounding its worst case with
 a grid search; it gives up optimality in return.
 We found no public implementation of R2, R2+ or RayScan and do not compare with
@@ -146,8 +149,8 @@ them; we compare with Anya and jump point search on the same maps instead
 
 \emph{Straight-line-first repair.} Starting from the straight line and inserting
 intermediate goals where it is blocked is an old idea: Lozano-P{\'e}rez and
-Wesley~\cite{lozanoperez1979algorithm} describe Udupa's recursive scheme of this
-kind and criticise it for using only local information. RMPD~\cite{li2018rmpd}
+Wesley~\cite{lozanoperez1979algorithm} describe Udupa's recursive
+scheme~\cite{udupa1977collision} of this kind and criticise it for using only local information. RMPD~\cite{li2018rmpd}
 recursively displaces the midpoint of a blocked segment at random and does not
 backtrack, and APPATT~\cite{liu2022appatt} chooses between tangent points by
 rules. Bug algorithms~\cite{lumelsky1987path,kamon1998tangentbug} follow obstacle
@@ -188,12 +191,13 @@ pushes colliding segments away with a safety distance, but by gradient
 descent, where \lcp{} makes one discrete push per obstacle. Shortcutting a path
 trades clearance for length~\cite{geraerts2007creating}, and paths of minimal
 length lie at the zero-clearance end of the spectrum between visibility graphs and
-Voronoi diagrams~\cite{wein2008planning}. This explains why \lcp{}'s simplified
-paths keep less clearance than NavFn's, which pays a cost for every cell near an
-obstacle. The distance map planner of the jps3d library~\cite{jps3d} works the
-other way round: it finds a grid path first and then moves it away from
-obstacles with a potential field. A clearance pass of this kind, or a
-cost-aware smoother, is a natural addition to \lcp{}'s output.
+Voronoi diagrams~\cite{wein2008planning}. \lcp{}'s paths are of this short kind
+and keep less clearance than NavFn's, which pays a cost for every cell near an
+obstacle; Section~\ref{sec:ablations} shows that in \lcp{} the clearance is lost
+by the correction itself, before any shortcutting. The distance map planner of
+the jps3d library~\cite{jps3d} works the other way round: it finds a grid path
+first and then moves it away from obstacles with a potential field. \lcp{}'s
+clearance step (Section~\ref{sec:method}) is of this kind.
 
 % ---------------------------------------------------------------------------
 \section{Method}
@@ -201,10 +205,12 @@ cost-aware smoother, is a natural addition to \lcp{}'s output.
 
 \subsection{Problem}
 
-Given a 2D costmap $C$ with resolution $r$, in which a cell is an obstacle if its
-cost is at least $c_\text{lethal}$ (the inscribed-inflation cost, 253 in Nav2),
-and a start $s$ and goal $g$ in free cells, find a polyline from $s$ to $g$ whose
-segments touch no obstacle cell, or report that none exists. Segments are checked
+Given a 2D costmap $C$, in which a cell is treated as an obstacle if its cost is at
+least $c_\text{insc}$ (253, Nav2's \texttt{INSCRIBED\_INFLATED\_OBSTACLE}; lethal
+cells have 254), and a start $s$ and goal $g$ in free cells, find a polyline from
+$s$ to $g$ whose segments touch no obstacle cell, or report that none exists.
+Cells with lower inflation costs are free; \lcp{} may cross them and uses their
+cost only in post-processing. Segments are checked
 with an exact grid traversal~\cite{amanatides1987fast} that visits every cell a
 segment touches; a segment through the corner shared by four cells counts as
 touching all of them.
@@ -213,12 +219,14 @@ touching all of them.
 
 The path starts as $[s, g]$. Segments are scanned in order; the first segment
 that touches an obstacle gets a new waypoint $w$ in the first obstacle cell it
-enters (Fig.~\ref{fig:idea}). $w$ is pushed along the unit normal $\mathbf{n}$ of
-that segment until it reaches free space, and then a further margin $m$
-(\SI{0.5}{m}) as long as the way is free, which leaves room to round the corner
-later. The pushed waypoint is locked, and scanning resumes with the new segment
-that ends at it. If $w$ cannot be cleared, lands on a neighbour, or makes the path
-longer than five times the straight-line distance, the branch has failed.
+enters (Fig.~\ref{fig:idea}). The waypoint $w$ is pushed along the unit normal
+$\mathbf{n}$ of that segment until it reaches free space, and then a further
+margin $\mu$ (\SI{0.5}{m}) as long as the way is free and the cost does not rise,
+which leaves room to round the corner later. The pushed waypoint is locked, and
+scanning resumes with the new segment that ends at it. The branch fails if $w$ is
+not free after 400 push steps, if it ends within half a cell of either end of the
+segment it was inserted into (the same correction would then repeat), or if the
+path becomes longer than five times the straight-line distance plus 20 cells.
 
 \begin{figure*}[t]
 \centering
@@ -230,31 +238,40 @@ arrows, thicker where stronger); the side is the sign of the summed
 repulsion $\mathbf{F}$ along the segment normal $\mathbf{n}$. Here $\mathbf{F}$
 points mostly backwards, but the mass of the obstacle below the line gives it an
 upward component, so $w$ leaves over the top. (b) $w$ is pushed along $\mathbf{n}$
-until it is free and then by a further margin $m$, and locked as $w_1$; the other
+until it is free and then by a further margin $\mu$, and locked as $w_1$; the other
 side is stored for backtracking. The next blocked segment (dashed) is corrected
 the same way, and here the repulsion of the second obstacle sends $w_2$ the other
 way. Free space and the obstacles off the line cost no work. (c) Simplification and
 corner smoothing give the final path (the lazy path is shown faint). The geometry
-is computed with the method's rules on a toy grid
-(\texttt{paper/figures/make\_method\_figure.py}).}
+is computed with the method's rules on a toy grid.}
 \label{fig:idea}
 \end{figure*}
 
 \subsection{Choosing the side with a Coulomb-like repulsion}
 
-On which side $w$ should leave is the decision that matters. Every obstacle cell
+The key decision is on which side $w$ leaves the obstacle. Every obstacle cell
 $c$ within a charge radius $R$ (\SI{1}{m}) of $w$ contributes
 \begin{equation}
-\mathbf{F}(w) = \sum_{c:\,\|w-c\|\le R} \frac{w - c}{\|w - c\|^{\,n+1}},
-\qquad n = 2,
+\mathbf{F}(w) = \sum_{c:\,\|w-c\|\le R} \frac{w - c}{\max(\|w - c\|,\tfrac12)^{\,p+1}},
+\qquad p = 2,
 \end{equation}
-a repulsion of magnitude $1/\|w-c\|^{n}$ pointing away from $c$, with distances in
-cells and softened below half a cell. The sign of
-$\mathbf{F}\cdot\mathbf{n}$ selects the side; its magnitude sets the step length,
-capped at one cell. If the force is balanced (below a threshold) the waypoint goes
-left. The side chosen on the first step is kept for the whole push: letting the
-force reverse the waypoint at every step makes it oscillate between obstacles
-(Section~\ref{sec:ablations}).
+a repulsion of magnitude $1/\|w-c\|^{p}$ pointing away from $c$, with distances in
+cells and softened below half a cell. The sign of $\mathbf{F}\cdot\mathbf{n}$
+selects the side, where $\mathbf{n}$ is the left normal of the segment; if
+$|\mathbf{F}\cdot\mathbf{n}| < 0.05$ the force counts as balanced and $w$ goes
+left. While $\mathbf{F}\cdot\mathbf{n}$ points to the chosen side, its magnitude
+sets the step length, clamped between a quarter of a cell and one cell; otherwise
+the step is one cell, so the push cannot stall where the force vanishes. The side
+chosen on the first step is kept for the whole push: letting the force reverse
+the waypoint at every step makes it oscillate between obstacles
+(Section~\ref{sec:ablations}). The exponent matters little; $p = 1$ performs the
+same (Section~\ref{sec:ablations}).
+
+The side rule is a parameter of \lcp{}. Besides the Coulomb rule, which is the
+default, it offers a cheaper \emph{probe} rule: step from $w$ along $+\mathbf{n}$
+and $-\mathbf{n}$ and take the side that reaches free space in fewer steps (left on a tie). The
+rest of the method is the same for both. Section~\ref{sec:ablations} compares
+them with each other and with a fixed side.
 
 \subsection{Backtracking to the other side}
 
@@ -266,13 +283,17 @@ total number of placement attempts, retries included, is limited to a budget $B$
 
 \subsection{Fallback and early refusal}
 
-After $B/2$ attempts a breadth-first search grown from both the start and the
-goal, capped at \num{20000} cells, checks whether either is sealed inside a small
-pocket; if so, the request is refused at once. When the budget is used up, a
-weighted A\textsuperscript{*} search (heuristic weight 3, each cell expanded once)
-over the free cells of the same costmap finds a route or proves there is none. The
-route is then treated like a lazy path. This makes \lcp{} complete on the
-costmap; Section~\ref{sec:results} reports how much of the work the fallback does.
+After 25 attempts (half the default budget; this count is fixed and does not
+change with $B$) a breadth-first search grown from both the start and the goal,
+capped at \num{20000} cells, checks whether either is sealed inside a small
+pocket; if so, the request is refused at once. With a budget below 25 this check
+never runs. When the budget is used up, a weighted A\textsuperscript{*} search
+(heuristic weight 3, each cell expanded once) over the free cells of the same
+costmap finds a route or proves there is none. Both searches are 8-connected and
+never move diagonally between two obstacle cells that touch at a corner. The
+route is then treated like a lazy path. This makes \lcp{} resolution-complete on
+the costmap; Section~\ref{sec:results} reports how much of the work the fallback
+does.
 
 \subsection{Post-processing}
 
@@ -280,7 +301,9 @@ The waypoints are simplified by joining each to the farthest later waypoint it c
 reach in a straight line; this removes the back-and-forth tangles the lazy search
 can leave around a single obstacle. A clearance step then moves waypoints and
 inserts new ones along the repulsion while the costmap cost keeps falling, until
-a comfort cost is reached, keeping every change collision-free. Corners are rounded
+a comfort cost of 30 is reached, by at most \SI{1}{m} (an inserted point also by
+less than 0.35 of its distance to the neighbouring waypoints), keeping every
+change collision-free. Corners are rounded
 with Chaikin's corner cutting~\cite{chaikin1974algorithm}, five passes, where each
 cut is kept only if the new chord is clear; this makes the smoothed path
 collision-free by construction. Finally the path is resampled to poses
@@ -295,7 +318,9 @@ steers the follower towards the obstacle. When a request has the same goal as th
 previous one and the robot is within \SI{0.5}{m} of the previous path, \lcp{}
 keeps that path while it is still collision-free, and switches to a fresh plan
 only if it is at least 15\,\% shorter. A start or goal that lies on an occupied
-cell is moved to the nearest free cell within \SI{0.5}{m}.
+cell is moved to the nearest free cell within \SI{0.5}{m}. Path reuse is off in
+every planner benchmark (each request is planned from scratch) and on in the
+driving tests, where Section~\ref{sec:driving} also measures \lcp{} without it.
 
 \begin{algorithm}[t]
 \caption{Lazy correction with backtracking}
@@ -310,10 +335,14 @@ cell is moved to the nearest free cell within \SI{0.5}{m}.
   \State store $(P, i, w, -\sigma)$ in $A$
   \Repeat
     \State $k \gets k + 1$; \textbf{if} $k > B$ \textbf{then return} fallback$(s, g)$
+    \If{$k = 25$ \textbf{and} $s$ or $g$ is sealed in a pocket (BFS, \num{20000} cells)}
+      \State \Return no path
+    \EndIf
     \State try to push $w$ on side $\sigma$ and insert it after $P_i$
+    \Statex \hspace{\algorithmicindent}\hspace{\algorithmicindent}(fails if not cleared, on a neighbour, or $\operatorname{len}(P) > 5\,\|g-s\|$)
     \If{failed}
       \If{$A = \emptyset$} \Return fallback$(s, g)$ \EndIf
-      \State $(P, i, w, \sigma) \gets$ entry of $A$ with the shortest path
+      \State remove the entry of $A$ with the shortest path and set $(P, i, w, \sigma)$ to it
     \EndIf
   \Until{inserted}
 \EndWhile
@@ -324,8 +353,8 @@ cell is moved to the nearest free cell within \SI{0.5}{m}.
 \subsection{Implementation}
 
 \lcp{} is a C++ plugin for the Nav2 planner server on ROS~2 Jazzy, about
-1{,}700 lines, with 18 unit tests. It is open source at
-\url{https://github.com/KD-27/Lazy-Coulomb-Planner/tree/jazzy}, together with
+\num{1700} lines, with 18 unit tests. It is open source at
+\url{https://github.com/KD-27/Lazy-Coulomb-Planner/tree/paper-v1}, together with
 the benchmark, the simulation tooling and the raw results of every experiment
 in this paper. All parameters have defaults; the values above are those
 defaults.
@@ -341,38 +370,51 @@ with random circular obstacles of radius \SIrange{0.3}{0.8}{m} placed until a
 target fraction of cells is occupied (0 to 45\,\%; at higher densities the free
 space falls apart), maps from \SI{10}{m} to \SI{200}{m} at 10\,\%, maps with
 square or concave U-shaped obstacles, and regular grids of \SI{4}{m} blocks with
-corridors of \SIrange{0.8}{3}{m}. The density, size and U-shape configurations
-are repeated with five seeds (69 maps in all). The costmap is Nav2's static layer
-plus inflation (robot radius \SI{0.22}{m}, inflation radius \SI{0.7}{m}).
+corridors of \SIrange{0.8}{3}{m}. These 21 maps form the \emph{controlled
+suite}. To put error bars on the main trends, the maps are generated again with
+other seeds: the ten non-empty densities with four more seeds each (40 maps), the
+\SI{10}{m}, \SI{25}{m} and \SI{100}{m} maps with two more (6), and the U-shaped
+map with two more (2). The \SI{50}{m} map at 10\,\% density thus has five seeds,
+the other sizes and the U-shaped map three, and the empty and \SI{200}{m} maps
+one: 69 maps in all. The costmap is Nav2's static layer plus inflation (robot
+radius \SI{0.22}{m}, inflation radius \SI{0.7}{m}).
 
 For every map, 100 start--goal pairs at least \SI{3}{m} apart are drawn with a
 fixed seed from cells with cost below 210. Every pair is planned five times by
 every planner through Nav2's planner server; the time used is the median of the
-five as reported by the server. NavFn, Smac~2D and Theta\textsuperscript{*} run
-with their Nav2 defaults.
+five as reported by the server. \lcp{}'s path reuse is off, so all five are
+planned from scratch. NavFn, Smac~2D and Theta\textsuperscript{*} run with their
+Nav2 defaults and, in a separate run on the controlled suite
+(Section~\ref{sec:tuned}), with their cost terms switched off. All three are the
+release builds of the Nav2 Jazzy binary packages.
 
 Whether a pair has a route is decided from the map alone, not by any planner:
 cells within the inscribed radius of an obstacle are blocked, and a pair is
-routable if start and goal lie in the same 4-connected free region. A returned
-path counts as solved only if it touches no cell with cost 253 or more, that is,
-no cell on which the robot's body would be in contact with an obstacle.
+routable if start and goal lie in the same 4-connected free region (which is
+the connectivity of \lcp{}'s 8-connected searches without corner cutting). A
+returned path counts as solved only if it touches no cell with cost 253 or more,
+that is, no cell on which the robot's body would be in contact with an obstacle.
 
 \subsection{Ablations}
 
 Each design choice is varied alone, the others at their defaults, on eight maps:
 \SI{50}{m} maps at 10, 20 and 30\,\% density, with U-shaped obstacles and with
-\SI{1.2}{m} corridors, and three indoor maps (a maze, a house and an event
-venue), 100 pairs each.
+\SI{1.2}{m} corridors, and three indoor maps at \SI{5}{cm} resolution (a maze of
+$20\times25$\,m, a house of $19\times11$\,m and an event venue of $20\times20$\,m,
+drawn by the author as typical indoor layouts, with no particular source), 100 pairs each, every pair planned three
+times.
 
 \subsection{Driving}
 
-A simulated TurtleBot3 Waffle drives a fixed sequence of 15 goals in Nav2's
-sandbox world in Gazebo, with the full Nav2 stack (AMCL, behaviour tree, recovery
-behaviours) and either Regulated Pure Pursuit or MPPI as the path follower; only
-the global planner changes between runs. Goals are drawn with a fixed seed from
+A simulated TurtleBot3 Waffle~\cite{turtlebot3} drives a fixed sequence of 15
+goals in Nav2's sandbox world in Gazebo~\cite{koenig2004gazebo}, with the full
+Nav2 stack (AMCL~\cite{dellaert1999mcl}, behaviour tree, recovery behaviours) and
+either Regulated Pure Pursuit~\cite{macenski2023rpp} or
+MPPI~\cite{williams2017mppi} as the path follower; only the global planner
+changes between runs. Goals are drawn with a fixed seed from
 cells at least \SI{0.3}{m} from obstacles. Runs are made one at a time on an
-otherwise idle machine; 10 runs per planner with Regulated Pure Pursuit and 5
-with MPPI.
+otherwise idle machine; 10 runs per planner with each follower (with MPPI, five
+on each of two days, the four planners interleaved).
 
 The same robot also drives 10 goals in six worlds built from generated maps
 (\SI{20}{m} square: open, 10, 20 and 30\,\% obstacle density, U-shaped
@@ -382,7 +424,7 @@ pose is the simulator's wheel odometry: with AMCL, the robot was mislocalised
 among the many identical cylinders, which is not what the test is meant to
 measure.
 
-All experiments ran on one laptop (Intel Core i7-13620H, \SI{15}{GB} RAM, Ubuntu
+All experiments ran on one laptop (Intel Core i7-13620H, \SI{16}{GB} RAM, Ubuntu
 24.04, ROS~2 Jazzy, Nav2 1.3.13), with \lcp{} compiled with optimisation.
 
 % ---------------------------------------------------------------------------
@@ -402,34 +444,44 @@ covers only the requests it solves itself.}
 
 \begin{table}[t]
 \centering
-\caption{\lcp{} against the fastest grid planner on \SI{50}{m} maps, mean $\pm$
-standard deviation over five seeds.}
+\caption{\lcp{} against the fastest grid planner on \SI{50}{m} maps. Median
+planning time: mean $\pm$ standard deviation over five seeds. Tail (95th
+percentile / slowest plan): solved requests of all five seeds pooled; NavFn has
+the lowest tail of the three grid planners at every density.}
 \label{tab:density}
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}rcccc@{}}
+\setlength{\tabcolsep}{2.5pt}
+\footnotesize
+\begin{tabular}{@{}rccccc c@{}}
 \toprule
-Density & \lcp{} (ms) & Fastest grid (ms) & Speed-up & Lazy only \\
+ & \multicolumn{3}{c}{Median (ms)} & & \multicolumn{2}{c}{p95 / max (ms)} \\
+\cmidrule(lr){2-4}\cmidrule(l){6-7}
+Density & \lcp{} & Fastest grid & Speed-up & Lazy only & \lcp{} & NavFn \\
 \midrule
-2.5\,\% & $0.16 \pm 0.01$ & $10.4 \pm 0.4$ & $66 \pm 4$ & 99\,\% \\
-10\,\%  & $0.39 \pm 0.05$ & $11.8 \pm 1.2$ & $31 \pm 3$ & 96\,\% \\
-20\,\%  & $1.53 \pm 0.36$ & $13.5 \pm 0.9$ & $9 \pm 2$  & 71\,\% \\
-30\,\%  & $3.63 \pm 0.25$ & $15.0 \pm 1.9$ & $4.1 \pm 0.5$ & 37\,\% \\
-40\,\%  & $5.76 \pm 1.16$ & $14.9 \pm 4.0$ & $2.6 \pm 0.4$ & 17\,\% \\
-45\,\%  & $4.55 \pm 0.85$ & $6.5 \pm 2.4$  & $1.5 \pm 0.4$ & 29\,\% \\
+2.5\,\% & $0.16 \pm 0.01$ & $10.4 \pm 0.4$ & $66 \pm 4$ & 99\,\% & 0.43 / 3.7 & 24 / 27 \\
+10\,\%  & $0.39 \pm 0.05$ & $11.8 \pm 1.2$ & $31 \pm 3$ & 96\,\% & 2.2 / 4.0  & 25 / 28 \\
+20\,\%  & $1.53 \pm 0.36$ & $13.5 \pm 0.9$ & $9 \pm 2$  & 71\,\% & 4.5 / 8.1  & 24 / 26 \\
+30\,\%  & $3.63 \pm 0.25$ & $15.0 \pm 1.9$ & $4.1 \pm 0.5$ & 37\,\% & 6.7 / 10 & 27 / 31 \\
+40\,\%  & $5.76 \pm 1.16$ & $14.9 \pm 4.0$ & $2.6 \pm 0.4$ & 17\,\% & 20 / 28  & 42 / 95 \\
+45\,\%  & $4.55 \pm 0.85$ & $6.5 \pm 2.4$  & $1.5 \pm 0.4$ & 29\,\% & 9.2 / 13 & 25 / 45 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Fig.~\ref{fig:time_density} and Table~\ref{tab:density} show the central result.
-The grid planners take 10 to \SI{17}{ms} regardless of density, because their cost
-is set by the area they explore. \lcp{} takes \SI{0.16}{ms} at 2.5\,\% density,
-66 times less, and its time rises with density as more corrections are needed and
-more requests go to the fallback. It remains faster than the fastest grid planner
-up to 45\,\%, the densest maps on which random start--goal pairs are still mostly
-connected; at 45\,\% only 9 to 40 of the 100 pairs per map have a route, so that
-row rests on few requests. The last column shows the share of requests the lazy
+The grid planners' times change little with density: the fastest of them takes 10
+to \SI{15}{ms} from 2.5 to 40\,\% (Smac~2D's median exceeds \SI{20}{ms} at 35\,\%,
+Fig.~\ref{fig:time_density}), because their cost is set by the area they explore;
+at 45\,\% they are faster, \SI{6.5}{ms}, because the few routable pairs lie in small
+connected regions. \lcp{} takes \SI{0.16}{ms} at 2.5\,\% density, 66 times less,
+and its time rises with density as more corrections are needed and more requests
+go to the fallback. It remains faster than the fastest grid planner up to 45\,\%,
+the densest maps on which random start--goal pairs are still mostly connected; at
+45\,\% only 9 to 40 of the 100 pairs per map have a route, so that row rests on
+few requests. The ``lazy only'' column shows the share of requests the lazy
 correction solves without the fallback: almost all at low density, about a third
-at 30\,\%.
+at 30\,\%. The fallback gives \lcp{} a heavier tail than its median suggests, but
+its 95th percentile stays below NavFn's on every density, and below NavFn's
+\emph{median} up to 30\,\%.
 
 \subsection{Planning time against map size}
 
@@ -442,11 +494,14 @@ density (five seeds at \SI{50}{m}, three at the other sizes, one at \SI{200}{m})
 \end{figure}
 
 The advantage grows with the size of the map (Fig.~\ref{fig:time_size}):
-$8 \pm 0.4$ times at \SI{10}{m}, $16 \pm 3$ at \SI{25}{m}, $31 \pm 3$ at
+$8.0 \pm 0.4$ times at \SI{10}{m}, $16 \pm 3$ at \SI{25}{m}, $31 \pm 3$ at
 \SI{50}{m} and $56 \pm 2$ at \SI{100}{m}. On the single \SI{200}{m} map \lcp{}
 plans in \SI{3.0}{ms} against \SI{286}{ms} for NavFn and \SI{221}{ms} for
-Theta\textsuperscript{*}; Smac~2D fails 42 of the 100 requests there by reaching
-its default iteration limit. \lcp{}'s time grows roughly with the length of the
+Theta\textsuperscript{*} (\SI{3.3}{ms} and \SI{304}{ms} for \lcp{} and NavFn in
+the separate run of Table~\ref{tab:outside}, which repeats the controlled suite;
+the two runs differ by up to 10\,\% on this map). Smac~2D fails 42 of the 100
+requests there by reaching its default iteration limit, so its point in
+Fig.~\ref{fig:time_size} covers only the 58 it solves. \lcp{}'s time grows roughly with the length of the
 path, the grid planners' with the area of the map.
 
 \subsection{Reliability}
@@ -454,12 +509,12 @@ path, the grid planners' with the area of the map.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{figures/clean_vs_density.pdf}
-\caption{Share of routable pairs solved with a path that touches no inflated
-obstacle cell, against obstacle density, \SI{50}{m} maps, five seeds.}
+\caption{Share of routable pairs solved with a path that does not enter the inscribed
+zone, against obstacle density, \SI{50}{m} maps, five seeds.}
 \label{fig:clean}
 \end{figure}
 
-Over all 69 maps \lcp{} solved every one of the 6{,}234 routable pairs with a clean
+Over all 69 maps \lcp{} solved every one of the \num{6234} routable pairs with a clean
 path and refused every one of the 666 pairs without a route.
 
 The grid planners return more paths that touch the inscribed zone as the density
@@ -478,20 +533,29 @@ cannot pass.
 
 \subsection{Obstacle shape and corridors}
 
-With concave U-shaped obstacles \lcp{} plans in $2.5 \pm 0.6$\,ms against
-\SI{13.6}{ms}, although the lazy search alone solves only $45 \pm 11$\,\% of the
-pairs there. Between \SI{4}{m} blocks it is 2.7 times faster than the fastest
+With concave U-shaped obstacles (three seeds) \lcp{} plans in
+$2.5 \pm 0.6$\,ms against $13.6 \pm 0.5$\,ms for NavFn, the fastest grid planner
+there, although the lazy search alone solves only $45 \pm 11$\,\% of the pairs. Between \SI{4}{m} blocks it is 2.7 times faster than the fastest
 grid planner with \SI{0.8}{m} corridors and 27 times with \SI{3}{m} corridors.
 
 \subsection{Worst case and path quality}
 
-The slowest \lcp{} plan over all 69 maps took \SI{28}{ms}, and refusing a request
-without a route at most \SI{63}{ms}. \lcp{} paths are 1 to 3\,\% shorter than
+Over all 69 maps, \lcp{}'s 95th-percentile planning time is \SI{6.9}{ms} and its
+slowest plan \SI{28}{ms}, against 95th percentiles of 48 to \SI{77}{ms} and
+slowest plans of 0.4 to \SI{0.8}{s} for the grid planners (on the \SI{200}{m}
+map). Refusing a request without a route took \lcp{} at most \SI{63}{ms}.
+\lcp{} paths are 1 to 3\,\% shorter than
 NavFn's and turn far less (4.4 against 20.7 radians of total heading change on the
 ablation maps), but they run closer to obstacles: the average costmap cost along
-the path is about 16 on the \SI{50}{m} base map against 0.4 for NavFn, which
-follows the cost gradient into the middle of free space. 2.3\,\% of \lcp{} paths
-keep a corner sharper than \SI{90}{\degree}.
+the path is about 16 on the \SI{50}{m} map at 10\,\% density against 0.4 for
+NavFn, which follows the cost gradient into the middle of free space. 2.3\,\% of
+\lcp{} paths keep a corner sharper than \SI{90}{\degree}.
+
+Requests that need the fallback are harder, not worse served. Over the 69 maps
+the lazy correction solved 4471 requests and the fallback 1763. The fallback's
+paths are as short relative to NavFn's as the lazy ones (median length ratio 0.96
+against 0.98) and their higher costmap cost (79 against 21) mirrors NavFn's on the
+same pairs (26 against 1.2): they are the pairs that run through clutter.
 
 \subsection{Ablations}
 \label{sec:ablations}
@@ -499,23 +563,30 @@ keep a corner sharper than \SI{90}{\degree}.
 \begin{table}[t]
 \centering
 \caption{Ablations on eight maps (704 routable pairs). ``Lazy only'': solved
-without the fallback. Time: mean over maps of the median planning time.}
+without the fallback. Time: mean over maps of the median planning time, with the
+fallback on. Each block is a separate run with its own default row; the default
+varies by about 3\,\% between runs, so smaller differences are noise. The first
+block's rows were measured together in one run.}
 \label{tab:ablation}
 \setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}llcc@{}}
 \toprule
 Choice & Variant & Lazy only & Time (ms) \\
 \midrule
-Side choice & $1/r^2$, side kept (default) & 489 & 1.23 \\
-            & $1/r$, side kept            & 489 & 1.16 \\
-            & nearest free side (probe)   & 449 & 0.84 \\
-            & $1/r^2$, may reverse        & 443 & 2.77 \\
+Side rule   & Coulomb $1/d^2$ (default)   & 489 & 1.21 \\
+            & nearest free side (probe)   & 449 & 0.81 \\
+            & fixed side (left first)     & 440 & 1.70 \\
 \midrule
-Margin $m$  & \SI{0}{m}                   & 305 & 1.58 \\
+Force law   & $1/d^2$, side kept (default) & 489 & 1.23 \\
+            & $1/d$, side kept            & 489 & 1.16 \\
+            & $1/d^2$, may reverse        & 443 & 2.77 \\
+\midrule
+Margin $\mu$ & \SI{0}{m}                   & 305 & 1.58 \\
             & \SI{0.5}{m} (default)       & 489 & 1.24 \\
             & \SI{1.0}{m}                 & 509 & 1.16 \\
 \midrule
-Budget $B$  & 25                          & 405 & 1.14 \\
+Budget $B$  & 10                          & 249 & 1.25 \\
+            & 25                          & 405 & 1.14 \\
             & 50 (default)                & 489 & 1.23 \\
             & 300                         & 601 & 1.62 \\
 \midrule
@@ -530,23 +601,40 @@ Table~\ref{tab:ablation} summarises the ablations. With the fallback on, every
 variant solves all 704 routable pairs, so the column ``lazy only'' measures how
 often the cheap path succeeds and the time shows what each choice costs.
 
-\emph{Side choice.} The Coulomb-like repulsion, with the first side kept, solves
-489 pairs without the fallback against 449 for the simpler rule of pushing towards
-whichever side reaches free space sooner. Letting the force reverse the waypoint
-at every step is worse than either and two to three times slower. The exponent
-matters little ($1/r$ and $1/r^2$ solve the same number). With the fallback on,
-the simple rule is the fastest overall, because each step is cheaper. The
-repulsion therefore improves how often the lazy correction succeeds by itself.
-Against a fixed side (always left first, with backtracking and the fallback
-unchanged) it makes the whole planner 1.7 to 2 times faster on most of the 21
-controlled maps (Section~\ref{sec:outside}).
+\emph{Side rule.} Choosing the side matters: pushing every waypoint to the left
+first, with backtracking and the fallback unchanged, solves 440 pairs without the
+fallback against 489 and makes the planner 1.4 times slower on the eight ablation
+maps (Table~\ref{tab:ablation}). On the 21 controlled maps (Section~\ref{sec:outside}) the fixed
+side is 1.7 to 2.5 times slower than the Coulomb rule on 9 maps (10 to 20\,\%
+density, the \SI{100}{m} and \SI{200}{m} maps, square obstacles, and corridors of
+\SI{1.2}{m} and wider), 1.0 to 1.4 times slower on 9 others (25 to 45\,\%
+density, U-shaped obstacles, \SI{0.8}{m} corridors, and the 5\,\% and \SI{25}{m}
+maps), equal on the empty map, and slightly faster on the 2.5\,\% and \SI{10}{m}
+maps, where there is almost nothing to choose. Between the two informed rules
+the trade-off is different. The probe leaves more requests to the fallback but is
+faster overall,
+because each step is cheaper, and its paths are as good: over the 704 pairs, the
+two rules' paths have the same median length, a median costmap cost of 40 and 42,
+and on the 72 pairs that the Coulomb rule solves lazily and the probe sends to the
+fallback, the probe's paths are no longer (median ratio 1.00) and only slightly
+more costly (43 against 40). The probe's 95th-percentile time is also lower
+(\SI{3.4}{ms} against \SI{5.1}{ms}). Both informed rules are clearly better than a
+fixed side, and neither dominates the other: the Coulomb rule solves more
+requests by local repair alone, which matters when the fallback is disabled or
+expensive (a large map, or an embedded processor), while the probe is the faster
+choice when the fallback is available. \lcp{} therefore offers both; the Coulomb
+rule is the default and the one all other results use. Letting the force
+reverse the waypoint at every step is worse than either and two to three times
+slower. The exponent matters little: $1/d$ ($p = 1$) solves the same number as
+$1/d^2$ and is about 6\,\% faster, within twice the run-to-run noise.
 
 \emph{Margin.} Pushing a waypoint past the obstacle edge is the strongest single
 lever: without it the lazy search solves 305 pairs, with \SI{0.5}{m} 489.
 
 \emph{Budget and fallback.} A larger budget lets the lazy search solve more by
 itself but makes the requests it loses slower; with the
-A\textsuperscript{*} fallback, budgets from 10 to 50 perform alike, and 300 raises
+A\textsuperscript{*} fallback, budgets from 10 to 50 take 1.14 to \SI{1.25}{ms},
+and 300 raises
 the slowest plan from \SI{8.9}{ms} to \SI{20.6}{ms}. An unweighted
 A\textsuperscript{*} in the fallback triples the 95th-percentile time compared
 with any weight from 2 upwards.
@@ -558,34 +646,89 @@ much more time, since the sum visits a number of cells that grows with $R^2$.
 paths with a corner over \SI{90}{\degree} from 178 to 50 of 704; three or more
 Chaikin passes bring it to 11.
 
-\emph{Clearance.} The clearance steps halve the average costmap cost along the
-path (78 to 39) for 3\,\% more length; the effect saturates at a comfort cost of
-60. Even so, \lcp{} paths stay closer to obstacles than NavFn's (39 against 15).
+\emph{Clearance.} Averaged over the eight ablation maps, the clearance steps
+halve the average costmap cost along the path (78 to 39) for 3\,\% more length;
+the effect saturates at a comfort cost of 60. Even so, \lcp{} paths stay closer
+to obstacles than NavFn's (39 against 15 on these maps; 16 against 0.4 on the
+\SI{50}{m} map at 10\,\% density alone, Section~\ref{sec:results}).
 Measured in metres from the map's obstacle cells, over the 641 pairs every
-planner solved, the clearance is lost by the lazy correction itself, not by the
-simplification: the margin keeps each inserted waypoint clear, but the segments
-joining it to its neighbours need only avoid the inscribed zone and graze the
-obstacles (median smallest clearance \SI{0.225}{m}, the robot radius being
-\SI{0.22}{m}; 30\,\% of the path nearer than \SI{0.5}{m}). The clearance step
-raises this to \SI{0.356}{m} and 6\,\%, close to Smac~2D (\SI{0.378}{m}) and
-Theta\textsuperscript{*} (\SI{0.399}{m}) and below NavFn (\SI{0.425}{m}).
+planner solved, the clearance is lost by the lazy correction itself, before the
+simplification (which therefore cannot be blamed for it): the margin keeps each
+inserted waypoint clear, but the segments joining it to its neighbours need only
+avoid the inscribed zone and graze the obstacles (median smallest clearance
+\SI{0.225}{m}, the robot radius being \SI{0.22}{m}; 30\,\% of the path nearer
+than \SI{0.5}{m}). The clearance step raises the median smallest clearance to
+\SI{0.356}{m} and reduces the share nearer than \SI{0.5}{m} to 6\,\%, close to
+Smac~2D (\SI{0.378}{m}) and Theta\textsuperscript{*} (\SI{0.399}{m}) and below
+NavFn (\SI{0.425}{m}).
+
+\subsection{Against tuned grid planners}
+\label{sec:tuned}
+
+\begin{table}[t]
+\centering
+\caption{Median planning time (ms) of the Nav2 grid planners with their cost terms
+switched off, on seven of the 21 controlled maps (one run, all planners on the same
+pairs). NavFn~A*: \texttt{use\_astar}; Smac~2D and Theta*: traversal-cost weight 0.
+Clean: share of the \num{1967} routable pairs of all 21 maps solved without entering
+the inscribed zone.}
+\label{tab:tuned}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Map & NavFn A* & Smac 2D & Theta* & Line, else A* & \lcp{} \\
+\midrule
+2.5\,\%          & 3.51 & 14.2 & 11.9 & 0.44 & \textbf{0.15} \\
+10\,\%           & 4.71 & 11.5 & 12.7 & 0.70 & \textbf{0.43} \\
+20\,\%           & 6.09 & 8.98 & 11.2 & \textbf{0.95} & 1.18 \\
+30\,\%           & 5.85 & 9.93 & 14.2 & \textbf{1.43} & 3.71 \\
+40\,\%           & 6.08 & 9.88 & 14.5 & \textbf{3.06} & 5.99 \\
+\SI{100}{m} map  & 16.6 & 48.5 & 49.9 & 2.20 & \textbf{0.84} \\
+\SI{200}{m} map  & 103  & 116  & 206  & 4.87 & \textbf{3.05} \\
+\midrule
+Clean            & 94\,\% & 48\,\% & 25\,\% & 100\,\% & 100\,\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+NavFn, Smac~2D and Theta\textsuperscript{*} optimise a traversal cost that rewards
+clearance, which weakens their heuristics; a fair comparison should also show them
+searching for short paths only. Table~\ref{tab:tuned} does so. NavFn with
+A\textsuperscript{*} instead of its wavefront is 1.1 to 4.3 times faster than
+default NavFn (about three times on most maps), keeps the same share of clean paths,
+and is the fastest grid planner on all 21 maps. Switching the cost term off makes
+Smac~2D faster than at its defaults (median 1.5 times) and Theta\textsuperscript{*}
+slightly faster (1.1 times), but both remain slower than NavFn with
+A\textsuperscript{*}, and their paths then graze obstacles: only half of Smac~2D's
+and a quarter of Theta\textsuperscript{*}'s stay out of the inscribed zone. Against
+NavFn with A\textsuperscript{*}, \lcp{} is 5 to 48 times faster up to 20\,\%
+density, 20 and 34 times on the \SI{100}{m} and \SI{200}{m} maps, 1.5 to 2 times at
+25 to 35\,\%, as fast at 40\,\%, and 14\,\% slower at 45\,\%; ``line, else
+A\textsuperscript{*}'' is 1.7 to 52 times faster on every map. Part of \lcp{}'s
+advantage over the default planners is therefore their objective, but most of it
+remains. In this run Smac~2D's cost multiplier could not be measured at its default
+alongside the zero setting, because Nav2 stores it in a variable shared by all Smac~2D
+instances in one planner server; its default times are taken from the run of
+Table~\ref{tab:outside}, on the same maps and pairs.
 
 \subsection{Against the straight-line heuristic and planners outside Nav2}
 \label{sec:outside}
 
 \begin{table}[t]
 \centering
-\caption{Median planning time (ms) on the controlled maps. ``Line, else A*'':
-\lcp{} with no correction budget, so the first blocked segment goes to its
-weighted A\textsuperscript{*} (weight 3) with the same post-processing. Anya and
-JPS (with post-smoothing) are the Java implementations of~\cite{harabor2016anya}
-and~\cite{harabor2011jps} timed on the same blocked grid and pairs, search only.}
+\caption{Median planning time (ms) on seven of the 21 controlled maps; the
+fastest per map in bold. ``Line, else A*'': \lcp{} with no correction budget, so
+when the straight line is blocked the whole request from $s$ to $g$ goes to its
+weighted A\textsuperscript{*} (weight 3), followed by the same post-processing.
+Anya and JPS (with post-smoothing) are the Java implementations~\cite{aapcode}
+of~\cite{harabor2016anya} and~\cite{harabor2011jps}, timed on the same blocked
+grid and pairs, search only, after one untimed warm-up run per query.}
 \label{tab:outside}
 \begin{tabular}{lrrrrr}
 \toprule
 Map & NavFn & Line, else A* & \lcp{} & Anya & JPS \\
 \midrule
-empty            & 11.0 & 0.07 & \textbf{0.07} & 0.19 & 1.50 \\
+empty            & 11.0 & \textbf{0.07} & \textbf{0.07} & 0.19 & 1.50 \\
 2.5\,\%          & 15.0 & 0.42 & 0.16 & \textbf{0.13} & 0.21 \\
 10\,\%           & 14.1 & 0.67 & 0.43 & 0.37 & \textbf{0.12} \\
 20\,\%           & 13.6 & 0.90 & 1.17 & 0.34 & \textbf{0.10} \\
@@ -599,7 +742,9 @@ empty            & 11.0 & 0.07 & \textbf{0.07} & 0.19 & 1.50 \\
 Table~\ref{tab:outside} separates the parts of \lcp{}'s speed. Checking the
 straight line and otherwise running \lcp{}'s weighted A\textsuperscript{*}, with
 the same post-processing, is already 4 to 65 times faster than NavFn and Smac~2D on
-every controlled map. The lazy correction adds a factor of 1.3 to 2.7 on sparse
+each of the 20 non-empty controlled maps (157 times faster than NavFn on the empty
+map, where no search is needed); the full table for all 21 maps is in the
+repository. The lazy correction adds a factor of 1.3 to 2.7 on sparse
 and large maps (2.6 at 2.5\,\% density, 2.7 on the \SI{100}{m} map) and in
 corridors of \SI{1.2}{m} and wider, but from 20\,\% density, with U-shaped
 obstacles and in \SI{0.8}{m} corridors it is slower than the heuristic, by up to
@@ -610,7 +755,7 @@ check \lcp{} is 7 to 31 times faster on open and large maps and on par at 40 to
 Outside Nav2, jump point search with post-smoothing is faster than \lcp{} on every
 map except the two emptiest, and Anya, which returns optimal paths, on every map
 except the empty one; on the \SI{200}{m} map Anya takes \SI{1.8}{ms} and JPS
-\SI{0.8}{ms} against \SI{3.0}{ms}. These times are from Java and cover the search
+\SI{0.8}{ms} against \SI{3.3}{ms}. These times are from Java and cover the search
 only, while \lcp{}'s include post-processing and building the ROS message (about
 \SI{0.07}{ms}, its time on the empty map), so they are indicative. \lcp{}'s paths
 are within 2.5\,\% of Anya's optimal length on open and large maps and 5 to 10\,\%
@@ -624,40 +769,66 @@ diagonally between blocked cells that touch at a corner, which the robot cannot.
 \begin{table}[t]
 \centering
 \caption{Driving in the sandbox world, 15 goals per run, mean $\pm$ standard
-deviation (RPP: Regulated Pure Pursuit, 10 runs; MPPI: 5 runs).}
+deviation, 10 runs per planner (RPP: Regulated Pure Pursuit). Time: simulated
+time for the whole run. \lcp{} with path reuse on (its default).}
 \label{tab:driving}
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}lcccc@{}}
+\setlength{\tabcolsep}{2pt}
+\footnotesize
+\begin{tabular}{@{}lcccccc@{}}
 \toprule
- & \multicolumn{2}{c}{RPP} & \multicolumn{2}{c}{MPPI} \\
-Planner & Goals & Recoveries & Goals & Recoveries \\
+ & \multicolumn{3}{c}{RPP} & \multicolumn{3}{c}{MPPI} \\
+\cmidrule(lr){2-4}\cmidrule(l){5-7}
+Planner & Goals & Recov. & Time (s) & Goals & Recov. & Time (s) \\
 \midrule
-\lcp{}  & $14.3 \pm 0.9$ & $35 \pm 21$ & $15.0 \pm 0.0$ & $0.0 \pm 0.0$ \\
-NavFn   & $14.7 \pm 0.5$ & $10 \pm 6$  & $15.0 \pm 0.0$ & $4.2 \pm 4.0$ \\
-Smac~2D & $11.4 \pm 1.3$ & $67 \pm 16$ & $14.8 \pm 0.4$ & $2.6 \pm 5.8$ \\
-Theta\textsuperscript{*} & $12.5 \pm 0.8$ & $53 \pm 16$ & $14.8 \pm 0.4$ & $8.4 \pm 11.6$ \\
+\lcp{}  & $14.3 \pm 0.9$ & $35 \pm 21$ & $208 \pm 29$ & $14.9 \pm 0.3$ & $1.2 \pm 3.8$ & $198 \pm 37$ \\
+NavFn   & $14.7 \pm 0.5$ & $10 \pm 6$  & $186 \pm 11$ & $15.0 \pm 0.0$ & $2.6 \pm 3.5$ & $233 \pm 33$ \\
+Smac~2D & $11.4 \pm 1.3$ & $67 \pm 16$ & $230 \pm 17$ & $14.9 \pm 0.3$ & $1.3 \pm 4.1$ & $202 \pm 35$ \\
+Theta\textsuperscript{*} & $12.5 \pm 0.8$ & $53 \pm 16$ & $226 \pm 19$ & $14.8 \pm 0.4$ & $8.2 \pm 10.8$ & $211 \pm 22$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Table~\ref{tab:driving} shows that the outcome depends on the path follower.
-With MPPI, \lcp{} reached all 15 goals in every run without a single recovery
-behaviour and in the shortest time (\SI{185}{s} against \SI{248}{s} for NavFn;
-recoveries and time differ significantly from NavFn and
-Theta\textsuperscript{*}, Mann--Whitney $p < 0.03$). With Regulated Pure Pursuit,
-\lcp{} reached as many goals as NavFn (difference not significant) and
-significantly more than Smac~2D and Theta\textsuperscript{*}, but triggered more
-recovery behaviours than NavFn (35 against 10 per run, $p = 0.003$). This follower
-stops whenever the path ahead passes within about \SI{0.3}{m} of an obstacle,
-and NavFn's paths, which follow the cost gradient, keep to the middle of the gaps
-between obstacles.
+Tests are two-sided Mann--Whitney U tests of \lcp{} against each other planner,
+with Holm's correction over the three comparisons per measure. With MPPI, every
+planner reached nearly all goals. \lcp{} needed fewer recoveries than
+Theta\textsuperscript{*} (1.2 against 8.2 per run, corrected $p = 0.008$) and
+finished sooner than NavFn and Theta\textsuperscript{*} (198 against 233 and
+\SI{211}{s}, corrected $p = 0.008$ and $0.012$), but its recoveries do not differ
+significantly from NavFn's or Smac~2D's. MPPI runs vary a lot: in five further
+\lcp{} runs made on their own (below), three had 12 to 15 recoveries. With
+Regulated Pure Pursuit, \lcp{} reached a similar
+number of goals to NavFn (14.3 against 14.7, not significant) and more than
+Smac~2D and Theta\textsuperscript{*} (corrected $p = 0.001$ and $0.004$), but
+triggered more recovery behaviours than NavFn (35 against 10 per run, corrected
+$p = 0.008$). This follower stops whenever the path ahead passes within about
+\SI{0.3}{m} of an obstacle, and NavFn's paths, which follow the cost gradient,
+keep to the middle of the gaps between obstacles.
+
+\emph{Path reuse.} Only \lcp{} keeps its previous path between replans
+(Section~\ref{sec:method}), and a stable path could by itself reduce recoveries.
+We therefore drove \lcp{} again with path reuse off, interleaved with new runs
+with it on (10 + 10 runs with Regulated Pure Pursuit, 5 + 5 with MPPI). Path
+reuse made no significant difference with either follower. With Regulated Pure
+Pursuit, \lcp{} without reuse reached $14.2 \pm 1.0$ goals with $43 \pm 18$
+recoveries, against $14.4 \pm 0.7$ and $36 \pm 18$ with it ($p = 0.40$ for
+recoveries); the new runs with reuse repeat those of Table~\ref{tab:driving}
+closely ($35 \pm 21$). With MPPI, \lcp{} without reuse reached all goals in every
+run with $1.4 \pm 2.6$ recoveries, against $8.0 \pm 7.4$ with reuse ($p = 0.27$).
+\lcp{}'s driving results therefore do not come from path reuse. Over all 15 MPPI
+runs of \lcp{} with its defaults (the ten of Table~\ref{tab:driving} and these
+five), it averaged 3.5 recoveries per run, against 2.6 for NavFn: with MPPI the
+planners other than Theta\textsuperscript{*} cannot be ranked on recoveries.
 
 In the generated worlds, every planner reached all goals without a recovery in
-open space, at 10\,\% density and with U-shaped obstacles, \lcp{} slightly the
-quickest. At 20\,\% density \lcp{} reached $8.3 \pm 0.6$ of 10 goals against
-10 for NavFn and Smac~2D and $7.7 \pm 0.6$ for Theta\textsuperscript{*}; in the
-\SI{1.2}{m} corridors $8.0 \pm 2.0$ against $9.3 \pm 0.6$, $4.7 \pm 1.5$ and
-$5.0 \pm 2.6$. At 30\,\% density all planners reached 6 to 7 of 10.
+open space, at 10\,\% density and with U-shaped obstacles; there \lcp{} was
+slightly the quickest. At 20\,\% density \lcp{} reached $8.3 \pm 0.6$ of 10 goals
+against 10 for NavFn and Smac~2D and $7.7 \pm 0.6$ for
+Theta\textsuperscript{*}; in the \SI{1.2}{m} corridors $8.0 \pm 2.0$ against
+$9.3 \pm 0.6$ for NavFn, $4.7 \pm 1.5$ for Smac~2D and $5.0 \pm 2.6$ for
+Theta\textsuperscript{*}. At 30\,\% density all planners reached 6 to 7 of 10. In
+these worlds \lcp{} thus did worse than NavFn in the two settings where paths
+must pass close to obstacles, consistent with its lower clearance.
 
 % ---------------------------------------------------------------------------
 \section{Discussion and limitations}
@@ -675,19 +846,24 @@ tested it.
 
 \emph{Faster planners exist outside Nav2.} Jump point search and Anya are faster
 than \lcp{} on binarised grids. \lcp{}'s case is practical: it works on the live
-costmap and its inflation, never returns a path through the inscribed zone, solves
-every routable pair, and is available as a Nav2 plugin; neither of the other two
-is. A fair comparison would wrap them as Nav2 planners, which we leave open.
+costmap and its inflation, never returns a path through the inscribed zone, and
+is available as a Nav2 plugin; neither of the other two is. Like Anya it solves
+every routable pair, which the Java JPS does not guarantee because it passes
+diagonally between touching cells. A fair comparison would wrap them as Nav2
+planners, which we leave open.
 
-\emph{Clearance.} \lcp{} keeps paths away from the obstacles it goes around but
-does not centre them in free space as NavFn does. With a follower that stops when
-the path ahead comes close to an obstacle, such as Regulated Pure Pursuit, this
-leads to more stops in cluttered spaces; with MPPI it does not, and \lcp{} drove
-best of the four planners.
+\emph{Clearance.} \lcp{}'s lazy paths graze the obstacles they go around; the
+clearance step moves them away again (median smallest clearance \SI{0.36}{m}
+against \SI{0.43}{m} for NavFn), but they are not centred in free space as
+NavFn's are, and on dense maps every planner is down to the robot radius. With a
+follower that stops when the path ahead comes close to an obstacle, such as
+Regulated Pure Pursuit, this leads to more stops in cluttered spaces; with MPPI,
+which plans its own motion around the global path, \lcp{} drove about as well as
+NavFn and Smac~2D, and finished sooner.
 
 \emph{Scope of the evidence.} All results are from generated maps, three indoor
 maps and simulation, with one costmap configuration, the other planners at their
-default settings, and one machine. In the generated worlds the robot localised
+default settings or with their cost terms off, and one machine. In the generated worlds the robot localised
 by odometry. The planner has not yet been tested on a real robot.
 
 \emph{Planning speed while driving.} With Nav2's default replanning rate of
@@ -699,9 +875,10 @@ replanning at \SI{1}{Hz} or \SI{5}{Hz} (two worlds, four planners, three runs
 each, repeated with AMCL and with wheel-odometry localisation: 96 runs), no
 planner was separated from the others on success or travel time: every planner
 reached 9 to 10 of 10 goals in most conditions, and the misses came from single
-runs that went wrong for every planner (15 of 96 runs; 9 of them for
-Theta\textsuperscript{*}), and the faster rate did not shorten the drive. With
-static clutter and \SI{5}{Hz} replanning the planner server used least CPU with
+runs that went wrong; failures of this kind occurred for every planner (15 of the
+96 runs, 9 of them with Theta\textsuperscript{*}). The faster rate did not
+shorten the drive. In the world with 10\,\% static obstacles as well as the moving
+cylinders, replanning at \SI{5}{Hz}, the planner server used least CPU with
 \lcp{} (\SI{19.2}{s} over the run against 22.3 to \SI{31.5}{s} with odometry,
 \SI{19.7}{s} against 20.0 to \SI{20.9}{s} with AMCL), but with three runs none of
 these differences is significant. The test also exposed a cost of the fallback:
@@ -713,14 +890,19 @@ goal is unreachable, but then in full.
 % ---------------------------------------------------------------------------
 \section{Conclusion}
 
-\lcp{} repairs the straight line instead of searching the grid. In open and
+\lcp{} checks the straight line on the costmap and, where it is blocked, tries a
+cheap local repair before a weighted A\textsuperscript{*} takes over. In open and
 moderately cluttered space this is one to two orders of magnitude faster than the
-Nav2 grid planners, and the gap grows with the size of the map; with a weighted
-A\textsuperscript{*} fallback it is complete on the costmap and never returns a
-path through an inflated obstacle cell. Most of the speed comes from the line
-check and the weighted A\textsuperscript{*}, with the lazy correction adding to it
-on sparse and large maps; dedicated grid planners such as jump point search are
-faster still but are not available in Nav2. Future work is validation on a real
+Nav2 grid planners, and the gap grows with the size of the map. Most of this speed
+comes from the line check and the weighted A\textsuperscript{*}; the repair adds a
+factor of 1.3 to 2.7 on sparse and large maps and costs time on dense ones.
+Switching the grid planners to short-path objectives narrows the gap, by about a
+factor of three for NavFn with A\textsuperscript{*}, but does not close it on sparse
+and large maps, and Smac~2D and Theta\textsuperscript{*} then lose most of their
+clean paths. The planner is resolution-complete
+on the costmap and never returns a path through the inscribed zone. Dedicated grid
+planners such as jump point search are faster still but are not available in
+Nav2. Future work is validation on a real
 robot, keeping the clearance margin along whole segments rather than only at the
 inserted waypoints, so that paths stay away from obstacles on dense maps,
 switching between the lazy correction and the grid search according to how
@@ -730,7 +912,7 @@ extension to 3D for exploration with aerial robots.
 \section*{Acknowledgment}
 The author thanks Dr.~Meysam Basiri (Institute for Systems and Robotics,
 Instituto Superior T{\'e}cnico, Universidade de Lisboa) for supervising this work
-and for proof-reading the manuscript. The author used Claude (Anthropic), an AI
+and for proofreading the manuscript. The author used Claude (Anthropic), an AI
 assistant, to help write benchmark and simulation scripts, run and summarise the
 experiments, and draft and edit parts of the text; all results were checked
 against the raw data, and the author takes full responsibility for the content.

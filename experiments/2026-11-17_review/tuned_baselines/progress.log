@@ -1,0 +1,38 @@
+[1/21] density_00 (112 s): Navfn 100/100 10.8ms, Navfn_astar 100/100 3.3ms, Smac2d 100/100 10.4ms, Smac2d_nocost 100/100 9.8ms, ThetaStar 100/100 11.3ms, ThetaStar_nocost 100/100 8.5ms, LCP 100/100 0.1ms, line_astar_w3 100/100 0.1ms
+[2/21] density_02 (119 s): Navfn 100/100 15.0ms, Navfn_astar 100/100 3.5ms, Smac2d 74/100 14.0ms, Smac2d_nocost 73/100 14.2ms, ThetaStar 100/100 11.3ms, ThetaStar_nocost 70/100 11.9ms, LCP 100/100 0.1ms, line_astar_w3 100/100 0.4ms
+[3/21] density_05 (123 s): Navfn 100/100 16.3ms, Navfn_astar 100/100 4.1ms, Smac2d 63/100 12.3ms, Smac2d_nocost 62/100 12.8ms, ThetaStar 99/100 12.5ms, ThetaStar_nocost 49/100 13.7ms, LCP 100/100 0.3ms, line_astar_w3 100/100 0.6ms
+[4/21] base (118 s): Navfn 100/100 14.0ms, Navfn_astar 100/100 4.7ms, Smac2d 51/100 11.0ms, Smac2d_nocost 51/100 11.5ms, ThetaStar 100/100 14.0ms, ThetaStar_nocost 22/100 12.7ms, LCP 100/100 0.4ms, line_astar_w3 100/100 0.7ms
+[5/21] density_15 (118 s): Navfn 99/99 16.0ms, Navfn_astar 99/99 5.8ms, Smac2d 46/99 9.5ms, Smac2d_nocost 45/99 9.4ms, ThetaStar 98/99 16.1ms, ThetaStar_nocost 11/99 12.0ms, LCP 99/99 0.7ms, line_astar_w3 99/99 0.8ms
+[6/21] density_20 (120 s): Navfn 94/94 15.5ms, Navfn_astar 93/94 6.1ms, Smac2d 31/94 9.0ms, Smac2d_nocost 30/94 9.0ms, ThetaStar 89/94 14.0ms, ThetaStar_nocost 7/94 11.2ms, LCP 94/94 1.2ms, line_astar_w3 94/94 0.9ms
+[7/21] density_25 (122 s): Navfn 81/81 12.8ms, Navfn_astar 79/81 5.9ms, Smac2d 28/81 8.2ms, Smac2d_nocost 27/81 8.3ms, ThetaStar 70/81 12.7ms, ThetaStar_nocost 5/81 12.7ms, LCP 81/81 2.9ms, line_astar_w3 81/81 1.1ms
+[8/21] density_30 (126 s): Navfn 84/84 13.9ms, Navfn_astar 82/84 5.9ms, Smac2d 31/84 10.0ms, Smac2d_nocost 30/84 9.9ms, ThetaStar 63/84 15.5ms, ThetaStar_nocost 4/84 14.2ms, LCP 84/84 3.7ms, line_astar_w3 84/84 1.4ms
+Traceback (most recent call last):
+  File "/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/benchmark/run_suite.py", line 174, in <module>
+    part = summarise(spec, rows)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/benchmark/run_suite.py", line 94, in summarise
+    'poses_median': round(median([float(r['poses']) for r in valid])),
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: cannot convert float NaN to integer
+[1/21] density_00 (0 s): Navfn 100/100 10.8ms, Navfn_astar 100/100 3.3ms, Smac2d 100/100 10.4ms, Smac2d_nocost 100/100 9.8ms, ThetaStar 100/100 11.3ms, ThetaStar_nocost 100/100 8.5ms, LCP 100/100 0.1ms, line_astar_w3 100/100 0.1ms
+[2/21] density_02 (0 s): Navfn 100/100 15.0ms, Navfn_astar 100/100 3.5ms, Smac2d 74/100 14.0ms, Smac2d_nocost 73/100 14.2ms, ThetaStar 100/100 11.3ms, ThetaStar_nocost 70/100 11.9ms, LCP 100/100 0.1ms, line_astar_w3 100/100 0.4ms
+[3/21] density_05 (0 s): Navfn 100/100 16.3ms, Navfn_astar 100/100 4.1ms, Smac2d 63/100 12.3ms, Smac2d_nocost 62/100 12.8ms, ThetaStar 99/100 12.5ms, ThetaStar_nocost 49/100 13.7ms, LCP 100/100 0.3ms, line_astar_w3 100/100 0.6ms
+[4/21] base (0 s): Navfn 100/100 14.0ms, Navfn_astar 100/100 4.7ms, Smac2d 51/100 11.0ms, Smac2d_nocost 51/100 11.5ms, ThetaStar 100/100 14.0ms, ThetaStar_nocost 22/100 12.7ms, LCP 100/100 0.4ms, line_astar_w3 100/100 0.7ms
+[5/21] density_15 (0 s): Navfn 99/99 16.0ms, Navfn_astar 99/99 5.8ms, Smac2d 46/99 9.5ms, Smac2d_nocost 45/99 9.4ms, ThetaStar 98/99 16.1ms, ThetaStar_nocost 11/99 12.0ms, LCP 99/99 0.7ms, line_astar_w3 99/99 0.8ms
+[6/21] density_20 (0 s): Navfn 94/94 15.5ms, Navfn_astar 93/94 6.1ms, Smac2d 31/94 9.0ms, Smac2d_nocost 30/94 9.0ms, ThetaStar 89/94 14.0ms, ThetaStar_nocost 7/94 11.2ms, LCP 94/94 1.2ms, line_astar_w3 94/94 0.9ms
+[7/21] density_25 (0 s): Navfn 81/81 12.8ms, Navfn_astar 79/81 5.9ms, Smac2d 28/81 8.2ms, Smac2d_nocost 27/81 8.3ms, ThetaStar 70/81 12.7ms, ThetaStar_nocost 5/81 12.7ms, LCP 81/81 2.9ms, line_astar_w3 81/81 1.1ms
+[8/21] density_30 (0 s): Navfn 84/84 13.9ms, Navfn_astar 82/84 5.9ms, Smac2d 31/84 10.0ms, Smac2d_nocost 30/84 9.9ms, ThetaStar 63/84 15.5ms, ThetaStar_nocost 4/84 14.2ms, LCP 84/84 3.7ms, line_astar_w3 84/84 1.4ms
+[9/21] density_35 (0 s): Navfn 57/57 16.7ms, Navfn_astar 50/57 6.1ms, Smac2d 13/57 10.6ms, Smac2d_nocost 13/57 10.6ms, ThetaStar 31/57 17.9ms, ThetaStar_nocost 0/57 15.6ms, LCP 57/57 4.0ms, line_astar_w3 57/57 1.7ms
+[10/21] density_40 (147 s): Navfn 52/52 21.7ms, Navfn_astar 38/52 6.1ms, Smac2d 9/52 9.6ms, Smac2d_nocost 9/52 9.9ms, ThetaStar 29/52 16.7ms, ThetaStar_nocost 0/52 14.5ms, LCP 52/52 6.0ms, line_astar_w3 52/52 3.1ms
+[11/21] density_45 (138 s): Navfn 15/15 17.0ms, Navfn_astar 12/15 5.8ms, Smac2d 1/15 7.5ms, Smac2d_nocost 1/15 7.6ms, ThetaStar 9/15 12.2ms, ThetaStar_nocost 0/15 9.7ms, LCP 15/15 6.7ms, line_astar_w3 15/15 3.5ms
+[12/21] size_010 (71 s): Navfn 100/100 0.8ms, Navfn_astar 100/100 0.3ms, Smac2d 77/100 1.0ms, Smac2d_nocost 77/100 0.9ms, ThetaStar 100/100 0.9ms, ThetaStar_nocost 73/100 0.5ms, LCP 100/100 0.1ms, line_astar_w3 100/100 0.1ms
+[13/21] size_025 (83 s): Navfn 100/100 4.1ms, Navfn_astar 100/100 1.3ms, Smac2d 58/100 3.6ms, Smac2d_nocost 57/100 4.0ms, ThetaStar 100/100 4.0ms, ThetaStar_nocost 41/100 3.1ms, LCP 100/100 0.2ms, line_astar_w3 100/100 0.3ms
+[14/21] size_100 (272 s): Navfn 100/100 54.3ms, Navfn_astar 100/100 16.6ms, Smac2d 60/100 48.4ms, Smac2d_nocost 60/100 48.5ms, ThetaStar 100/100 46.9ms, ThetaStar_nocost 13/100 49.9ms, LCP 100/100 0.8ms, line_astar_w3 100/100 2.2ms
+[15/21] size_200 (904 s): Navfn 100/100 330.2ms, Navfn_astar 100/100 103.5ms, Smac2d 28/100 111.9ms, Smac2d_nocost 28/100 116.1ms, ThetaStar 100/100 234.3ms, ThetaStar_nocost 5/100 206.4ms, LCP 100/100 3.0ms, line_astar_w3 100/100 4.9ms
+[16/21] shape_square (113 s): Navfn 100/100 13.7ms, Navfn_astar 100/100 4.2ms, Smac2d 45/100 7.6ms, Smac2d_nocost 44/100 7.4ms, ThetaStar 100/100 10.6ms, ThetaStar_nocost 20/100 9.5ms, LCP 100/100 0.3ms, line_astar_w3 100/100 0.7ms
+[17/21] shape_u (131 s): Navfn 93/93 13.5ms, Navfn_astar 92/93 5.6ms, Smac2d 31/93 12.8ms, Smac2d_nocost 30/93 12.5ms, ThetaStar 92/93 15.5ms, ThetaStar_nocost 15/93 22.1ms, LCP 93/93 2.7ms, line_astar_w3 93/93 1.0ms
+[18/21] corridor_0.8 (109 s): Navfn 99/99 4.2ms, Navfn_astar 99/99 3.8ms, Smac2d 45/99 4.5ms, Smac2d_nocost 45/99 4.6ms, ThetaStar 99/99 13.1ms, ThetaStar_nocost 8/99 10.5ms, LCP 99/99 1.5ms, line_astar_w3 99/99 0.8ms
+[19/21] corridor_1.2 (116 s): Navfn 100/100 7.4ms, Navfn_astar 100/100 4.7ms, Smac2d 55/100 5.9ms, Smac2d_nocost 55/100 5.7ms, ThetaStar 100/100 12.5ms, ThetaStar_nocost 11/100 13.5ms, LCP 100/100 0.7ms, line_astar_w3 100/100 0.8ms
+[20/21] corridor_2.0 (127 s): Navfn 100/100 7.5ms, Navfn_astar 100/100 4.2ms, Smac2d 54/100 9.7ms, Smac2d_nocost 53/100 9.8ms, ThetaStar 100/100 13.8ms, ThetaStar_nocost 12/100 22.6ms, LCP 100/100 0.6ms, line_astar_w3 100/100 0.8ms
+[21/21] corridor_3.0 (114 s): Navfn 100/100 8.9ms, Navfn_astar 100/100 3.8ms, Smac2d 45/100 9.0ms, Smac2d_nocost 44/100 8.6ms, ThetaStar 100/100 11.5ms, ThetaStar_nocost 20/100 13.6ms, LCP 100/100 0.4ms, line_astar_w3 100/100 0.6ms
+SUITE DONE

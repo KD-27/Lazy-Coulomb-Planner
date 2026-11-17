@@ -91,7 +91,11 @@ def summarise(spec, rows):
                 'max_cost': round(median([float(r['max_cost']) for r in valid]), 1),
                 'total_turn_rad': round(median([float(r['turn_rad']) for r in valid]), 3),
                 'sharp_corner_paths': sum(float(r['sharpest_deg']) > 90.0 for r in valid),
-                'poses_median': round(median([float(r['poses']) for r in valid])),
+                # No valid path at all (e.g. a planner that always grazes the inscribed
+                # zone on a dense map): the median is NaN and cannot be an int.
+                'poses_median': (
+                    round(median([float(r['poses']) for r in valid])) if valid else float('nan')
+                ),
                 # Clearance columns exist only in results from 2026-11-17 on.
                 'clear_min_m': round(
                     median([float(r['clear_min_m']) for r in valid if 'clear_min_m' in r]), 3),

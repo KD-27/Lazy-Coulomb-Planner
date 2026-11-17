@@ -1,0 +1,15 @@
+# Ablation (review): side rule in one run on the eight ablation maps: Coulomb 1/r^2 (default), fixed left side, nearest-free-side probe, each with and without the grid fallback, plus the lazy search alone at budget 10.
+pairs: 100
+repeats: 3
+planners_file: side_rule_planners.yaml
+planners: [Navfn, coulomb, fixed_left, probe, coulomb_lazy, fixed_left_lazy, probe_lazy, coulomb_lazy_b10]
+
+maps:
+  - {name: base,         group: generated, size: 50, shape: circle, density: 0.10}
+  - {name: density_20,   group: generated, size: 50, shape: circle, density: 0.20}
+  - {name: density_30,   group: generated, size: 50, shape: circle, density: 0.30}
+  - {name: shape_u,      group: generated, size: 50, shape: u,      density: 0.10}
+  - {name: corridor_1.2, group: generated, size: 50, shape: blocks, block: 4.0, corridor: 1.2}
+  - {name: maze,         group: indoor, file: maps/maze.yaml}
+  - {name: house,        group: indoor, file: maps/house.yaml}
+  - {name: event_venue,  group: indoor, file: maps/event_venue.yaml}

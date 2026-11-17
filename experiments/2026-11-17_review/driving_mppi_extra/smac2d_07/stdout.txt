@@ -1,0 +1,17 @@
+{'planner': 'smac2d', 'leg': 0, 'goal_x': 1.725, 'goal_y': -0.025, 'straight_m': 3.755, 'planned_m': 3.897, 'reached': 1, 'sim_time_s': 11.4, 'travelled_m': 4.02, 'min_scan_range_m': 0.372, 'recoveries': 0}
+{'planner': 'smac2d', 'leg': 1, 'goal_x': 0.325, 'goal_y': -0.725, 'straight_m': 1.565, 'planned_m': 1.621, 'reached': 1, 'sim_time_s': 11.05, 'travelled_m': 1.92, 'min_scan_range_m': 0.32, 'recoveries': 0}
+{'planner': 'smac2d', 'leg': 2, 'goal_x': -0.725, 'goal_y': 1.925, 'straight_m': 2.85, 'planned_m': 3.153, 'reached': 1, 'sim_time_s': 16.05, 'travelled_m': 3.483, 'min_scan_range_m': 0.269, 'recoveries': 0}
+{'planner': 'smac2d', 'leg': 3, 'goal_x': -0.225, 'goal_y': -1.875, 'straight_m': 3.833, 'planned_m': 3.899, 'reached': 1, 'sim_time_s': 12.7, 'travelled_m': 4.173, 'min_scan_range_m': 0.367, 'recoveries': 0}
+{'planner': 'smac2d', 'leg': 4, 'goal_x': -0.525, 'goal_y': 0.025, 'straight_m': 1.924, 'planned_m': 2.045, 'reached': 1, 'sim_time_s': 11.05, 'travelled_m': 2.232, 'min_scan_range_m': 0.361, 'recoveries': 0}
+{'planner': 'smac2d', 'leg': 5, 'goal_x': -0.925, 'goal_y': 1.725, 'straight_m': 1.746, 'planned_m': 1.907, 'reached': 1, 'sim_time_s': 10.25, 'travelled_m': 2.067, 'min_scan_range_m': 0.29, 'recoveries': 0}
+{'planner': 'smac2d', 'leg': 6, 'goal_x': 1.975, 'goal_y': -0.825, 'straight_m': 3.862, 'planned_m': 4.211, 'reached': 1, 'sim_time_s': 13.9, 'travelled_m': 4.203, 'min_scan_range_m': 0.268, 'recoveries': 0}
+{'planner': 'smac2d', 'leg': 7, 'goal_x': -0.975, 'goal_y': -1.925, 'straight_m': 3.148, 'planned_m': 3.372, 'reached': 1, 'sim_time_s': 14.8, 'travelled_m': 3.756, 'min_scan_range_m': 0.285, 'recoveries': 0}
+{'planner': 'smac2d', 'leg': 8, 'goal_x': -2.425, 'goal_y': 0.025, 'straight_m': 2.43, 'planned_m': 2.431, 'reached': 1, 'sim_time_s': 13.95, 'travelled_m': 2.782, 'min_scan_range_m': 0.264, 'recoveries': 0}
+{'planner': 'smac2d', 'leg': 9, 'goal_x': 1.725, 'goal_y': 1.325, 'straight_m': 4.349, 'planned_m': 4.678, 'reached': 1, 'sim_time_s': 15.95, 'travelled_m': 4.742, 'min_scan_range_m': 0.343, 'recoveries': 0}
+{'planner': 'smac2d', 'leg': 10, 'goal_x': -0.425, 'goal_y': 0.025, 'straight_m': 2.512, 'planned_m': 2.744, 'reached': 1, 'sim_time_s': 12.8, 'travelled_m': 3.068, 'min_scan_range_m': 0.3, 'recoveries': 0}
+{'planner': 'smac2d', 'leg': 11, 'goal_x': 0.825, 'goal_y': 2.125, 'straight_m': 2.444, 'planned_m': 2.821, 'reached': 1, 'sim_time_s': 9.45, 'travelled_m': 2.757, 'min_scan_range_m': 0.303, 'recoveries': 0}
+{'planner': 'smac2d', 'leg': 12, 'goal_x': -0.675, 'goal_y': 0.325, 'straight_m': 2.343, 'planned_m': 2.357, 'reached': 1, 'sim_time_s': 13.15, 'travelled_m': 2.606, 'min_scan_range_m': 0.285, 'recoveries': 0}
+{'planner': 'smac2d', 'leg': 13, 'goal_x': -1.475, 'goal_y': -1.425, 'straight_m': 1.924, 'planned_m': 2.231, 'reached': 1, 'sim_time_s': 11.85, 'travelled_m': 2.469, 'min_scan_range_m': 0.296, 'recoveries': 0}
+{'planner': 'smac2d', 'leg': 14, 'goal_x': 0.575, 'goal_y': -0.275, 'straight_m': 2.351, 'planned_m': 2.596, 'reached': 1, 'sim_time_s': 11.4, 'travelled_m': 2.583, 'min_scan_range_m': 0.236, 'recoveries': 0}
+
+smac2d: reached 15/15 goals, sim time 189.8 s, travelled 46.86 m, closest obstacle 0.236 m, recoveries 0
