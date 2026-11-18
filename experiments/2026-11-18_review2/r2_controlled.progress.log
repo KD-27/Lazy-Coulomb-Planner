@@ -1,0 +1,31 @@
+12:16:46 base done
+benchmark/anyangle/run_r2.sh: line 19: 90334 Aborted                 (core dumped) "$exe" --map_dir "$out/maps" --result_dir "$out/results" --names "$name" --algs R2 --num_expts "$repeats" > "$out/results/$name.log" 2>&1
+12:17:19 corridor_0p8 done
+12:17:20 corridor_1p2 done
+12:17:20 corridor_2p0 done
+12:17:20 corridor_3p0 done
+12:17:20 density_00 done
+12:17:20 density_02 done
+12:17:20 density_05 done
+12:17:20 density_15 done
+12:17:20 density_20 done
+12:17:20 density_25 done
+density_35: query 13 did not return within 20 s, dropped
+density_35: query 18 did not return within 20 s, dropped
+density_35: query 33 did not return within 20 s, dropped
+density_35: query 34 did not return within 20 s, dropped
+density_35: query 48 did not return within 20 s, dropped
+density_35: query 73 did not return within 20 s, dropped
+density_35: query 88 did not return within 20 s, dropped
+20:19:48 density_35 done
+density_40: query 58 did not return within 20 s, dropped
+density_40: query 71 did not return within 20 s, dropped
+20:20:32 density_40 done
+20:20:39 density_45 done
+20:20:39 shape_square done
+20:20:39 shape_u done
+20:20:40 size_010 done
+20:20:40 size_025 done
+20:20:40 size_100 done
+20:20:41 size_200 done
+R2 DONE

@@ -1,3 +1,8 @@
 2026-11-18 10:50:36 side_rule_controlled: start
 2026-11-18 11:06:51 run_suite exit 0
 2026-11-18 11:06:53 side_rule_controlled: done
+2026-11-18 12:16:45 r2_controlled: start
+2026-11-18 12:16:47 r2_controlled: done (exit 0)
+2026-11-18 12:17:19 r2_controlled: restart after dotted-name fix (base kept)
+2026-11-18 20:17:22 r2_controlled: resume with hang guard (run_r2_safe.py, 20 s); density_30 done by hand: 3 hung queries (47, 80, 86) dropped
+2026-11-18 20:20:41 r2_controlled: done (exit 0)

@@ -1,0 +1,510 @@
+=== runScenarios: density_45 ===
+density_45.R2 [     0 /    99 ]: ( 0.000310 min ) (  574, 415 ) to (  183,  38 ) $(     nan ) size(   0 ) elapsed( 18611572 ns ) --- Not solvable
+density_45.R2 [     1 /    99 ]: ( 0.000680 min ) (  629, 914 ) to (  246, 952 ) $(     nan ) size(   0 ) elapsed( 22156732 ns ) --- Not solvable
+density_45.R2 [     2 /    99 ]: ( 0.000686 min ) (  826, 709 ) to (  845, 399 ) $( 418.377504 ) size(  36 ) elapsed( 350520 ns )
+density_45.R2 [     3 /    99 ]: ( 0.000693 min ) (  292, 517 ) to (  496, 435 ) $( 454.354318 ) size(  44 ) elapsed( 411365 ns )
+density_45.R2 [     4 /    99 ]: ( 0.000957 min ) (  649,  26 ) to (  878, 165 ) $(     nan ) size(   0 ) elapsed( 15850738 ns ) --- Not solvable
+density_45.R2 [     5 /    99 ]: ( 0.001028 min ) (  890, 504 ) to (  544, 156 ) $(     nan ) size(   0 ) elapsed( 4269298 ns ) --- Not solvable
+density_45.R2 [     6 /    99 ]: ( 0.001105 min ) (  907, 577 ) to (  540, 354 ) $(     nan ) size(   0 ) elapsed( 4582844 ns ) --- Not solvable
+density_45.R2 [     7 /    99 ]: ( 0.001108 min ) (  204, 156 ) to (  985, 140 ) $(     nan ) size(   0 ) elapsed( 170479 ns ) --- Not solvable
+density_45.R2 [     8 /    99 ]: ( 0.001458 min ) (  648, 880 ) to (  904, 443 ) $(     nan ) size(   0 ) elapsed( 21010429 ns ) --- Not solvable
+density_45.R2 [     9 /    99 ]: ( 0.001505 min ) (  615, 985 ) to (  949, 154 ) $( 1239.222087 ) size(  90 ) elapsed( 2825385 ns )
+density_45.R2 [    10 /    99 ]: ( 0.001513 min ) (  520, 885 ) to (  347, 710 ) $( 503.794019 ) size(  37 ) elapsed( 452294 ns )
+density_45.R2 [    11 /    99 ]: ( 0.002021 min ) (  973, 149 ) to (  677, 614 ) $(     nan ) size(   0 ) elapsed( 30521967 ns ) --- Not solvable
+density_45.R2 [    12 /    99 ]: ( 0.002028 min ) (  541,  78 ) to (  498, 437 ) $( 601.946977 ) size(  35 ) elapsed( 411205 ns )
+density_45.R2 [    13 /    99 ]: ( 0.002508 min ) (  465, 507 ) to (  297, 942 ) $(     nan ) size(   0 ) elapsed( 28779512 ns ) --- Not solvable
+density_45.R2 [    14 /    99 ]: ( 0.002519 min ) (  949, 168 ) to (  663, 272 ) $( 508.155497 ) size(  42 ) elapsed( 673129 ns )
+density_45.R2 [    15 /    99 ]: ( 0.003091 min ) (  633, 245 ) to (   93, 347 ) $(     nan ) size(   0 ) elapsed( 34303574 ns ) --- Not solvable
+density_45.R2 [    16 /    99 ]: ( 0.003101 min ) (  320, 430 ) to (  434, 253 ) $( 396.668345 ) size(  41 ) elapsed( 582505 ns )
+density_45.R2 [    17 /    99 ]: ( 0.003105 min ) (  331, 882 ) to (  534,  46 ) $(     nan ) size(   0 ) elapsed( 261566 ns ) --- Not solvable
+density_45.R2 [    18 /    99 ]: ( 0.003116 min ) (  513, 602 ) to (  899, 284 ) $( 586.976180 ) size(  56 ) elapsed( 653866 ns )
+density_45.R2 [    19 /    99 ]: ( 0.003118 min ) (   75, 718 ) to (  740, 757 ) $(     nan ) size(   0 ) elapsed( 76722 ns ) --- Not solvable
+density_45.R2 [    20 /    99 ]: ( 0.003496 min ) (  607,  37 ) to (  858, 888 ) $(     nan ) size(   0 ) elapsed( 22721254 ns ) --- Not solvable
+density_45.R2 [    21 /    99 ]: ( 0.003961 min ) (  731, 225 ) to (  666, 587 ) $(     nan ) size(   0 ) elapsed( 27875214 ns ) --- Not solvable
+density_45.R2 [    22 /    99 ]: ( 0.003969 min ) (  445,  21 ) to (  825, 225 ) $(     nan ) size(   0 ) elapsed( 483543 ns ) --- Not solvable
+density_45.R2 [    23 /    99 ]: ( 0.004048 min ) (  849, 472 ) to (  296,  23 ) $(     nan ) size(   0 ) elapsed( 4720184 ns ) --- Not solvable
+density_45.R2 [    24 /    99 ]: ( 0.004632 min ) (  929, 302 ) to (  345, 936 ) $(     nan ) size(   0 ) elapsed( 35065025 ns ) --- Not solvable
+density_45.R2 [    25 /    99 ]: ( 0.004635 min ) (  562, 511 ) to (  774, 374 ) $( 276.130492 ) size(  24 ) elapsed( 177396 ns )
+density_45.R2 [    26 /    99 ]: ( 0.004672 min ) (  670, 487 ) to (  258, 430 ) $( 754.484351 ) size(  74 ) elapsed( 2197787 ns )
+density_45.R2 [    27 /    99 ]: ( 0.005469 min ) (  133, 478 ) to (  862, 406 ) $(     nan ) size(   0 ) elapsed( 47838713 ns ) --- Not solvable
+density_45.R2 [    28 /    99 ]: ( 0.005796 min ) (   78, 621 ) to (  345, 872 ) $(     nan ) size(   0 ) elapsed( 19617767 ns ) --- Not solvable
+density_45.R2 [    29 /    99 ]: ( 0.005797 min ) (  985, 710 ) to (  886, 534 ) $( 213.838317 ) size(   9 ) elapsed( 50082 ns )
+density_45.R2 [    30 /    99 ]: ( 0.006291 min ) (  300, 325 ) to (  230, 659 ) $(     nan ) size(   0 ) elapsed( 29604583 ns ) --- Not solvable
+density_45.R2 [    31 /    99 ]: ( 0.006292 min ) (  993, 979 ) to (  897,  88 ) $(     nan ) size(   0 ) elapsed( 39711 ns ) --- Not solvable
+density_45.R2 [    32 /    99 ]: ( 0.006294 min ) (   88, 171 ) to (  752, 839 ) $(     nan ) size(   0 ) elapsed( 163409 ns ) --- Not solvable
+density_45.R2 [    33 /    99 ]: ( 0.006355 min ) (  395, 607 ) to (  139, 604 ) $( 1352.738208 ) size( 109 ) elapsed( 3630275 ns )
+density_45.R2 [    34 /    99 ]: ( 0.006365 min ) (  650, 296 ) to (  348, 504 ) $( 640.160583 ) size(  49 ) elapsed( 626107 ns )
+density_45.R2 [    35 /    99 ]: ( 0.006430 min ) (  780, 499 ) to (  254, 936 ) $(     nan ) size(   0 ) elapsed( 3872127 ns ) --- Not solvable
+density_45.R2 [    36 /    99 ]: ( 0.006491 min ) (  528, 987 ) to (  287, 302 ) $( 1307.403191 ) size(  97 ) elapsed( 3664253 ns )
+density_45.R2 [    37 /    99 ]: ( 0.006853 min ) (  346, 713 ) to (   13, 811 ) $(     nan ) size(   0 ) elapsed( 21684051 ns ) --- Not solvable
+density_45.R2 [    38 /    99 ]: ( 0.006874 min ) (  384,  92 ) to (  538, 677 ) $(     nan ) size(   0 ) elapsed( 1270673 ns ) --- Not solvable
+density_45.R2 [    39 /    99 ]: ( 0.007346 min ) (  653, 932 ) to (  324, 673 ) $(     nan ) size(   0 ) elapsed( 28317346 ns ) --- Not solvable
+density_45.R2 [    40 /    99 ]: ( 0.007935 min ) (  562, 153 ) to (  418, 838 ) $(     nan ) size(   0 ) elapsed( 35331109 ns ) --- Not solvable
+density_45.R2 [    41 /    99 ]: ( 0.008278 min ) (  414, 665 ) to (  202, 698 ) $(     nan ) size(   0 ) elapsed( 20610224 ns ) --- Not solvable
+density_45.R2 [    42 /    99 ]: ( 0.008769 min ) (  678, 108 ) to (  127,  24 ) $(     nan ) size(   0 ) elapsed( 29447559 ns ) --- Not solvable
+density_45.R2 [    43 /    99 ]: ( 0.008771 min ) (  876, 883 ) to (   55, 534 ) $(     nan ) size(   0 ) elapsed( 68497 ns ) --- Not solvable
+density_45.R2 [    44 /    99 ]: ( 0.009111 min ) (  394, 564 ) to (  869, 881 ) $(     nan ) size(   0 ) elapsed( 20416151 ns ) --- Not solvable
+density_45.R2 [    45 /    99 ]: ( 0.009112 min ) (  624, 971 ) to (  747, 932 ) $( 152.199897 ) size(  14 ) elapsed( 54508 ns )
+density_45.R2 [    46 /    99 ]: ( 0.009128 min ) (  672,  12 ) to (  565, 519 ) $( 696.620978 ) size(  49 ) elapsed( 994152 ns )
+density_45.R2 [    47 /    99 ]: ( 0.009143 min ) (  853, 164 ) to (  140, 506 ) $(     nan ) size(   0 ) elapsed( 862130 ns ) --- Not solvable
+density_45.R2 [    48 /    99 ]: ( 0.009145 min ) (   85, 194 ) to (  165, 362 ) $(     nan ) size(   0 ) elapsed( 132415 ns ) --- Not solvable
+density_45.R2 [    49 /    99 ]: ( 0.009146 min ) (  112, 268 ) to (  135, 667 ) $(     nan ) size(   0 ) elapsed( 39587 ns ) --- Not solvable
+density_45.R2 [    50 /    99 ]: ( 0.009607 min ) (  819, 378 ) to (  342, 628 ) $(     nan ) size(   0 ) elapsed( 27693137 ns ) --- Not solvable
+density_45.R2 [    51 /    99 ]: ( 0.009614 min ) (   10, 527 ) to (   80,  18 ) $(     nan ) size(   0 ) elapsed( 398273 ns ) --- Not solvable
+density_45.R2 [    52 /    99 ]: ( 0.009623 min ) (  431, 204 ) to (  290, 523 ) $( 592.869299 ) size(  60 ) elapsed( 530369 ns )
+density_45.R2 [    53 /    99 ]: ( 0.010024 min ) (  378, 671 ) to (  221, 716 ) $(     nan ) size(   0 ) elapsed( 24036724 ns ) --- Not solvable
+density_45.R2 [    54 /    99 ]: ( 0.010616 min ) (  864, 342 ) to (  211, 915 ) $(     nan ) size(   0 ) elapsed( 35518025 ns ) --- Not solvable
+density_45.R2 [    55 /    99 ]: ( 0.010624 min ) (  666, 122 ) to (  650, 519 ) $( 496.406267 ) size(  41 ) elapsed( 512688 ns )
+density_45.R2 [    56 /    99 ]: ( 0.010699 min ) (  414, 344 ) to (  477, 896 ) $( 1075.855029 ) size(  80 ) elapsed( 4465142 ns )
+density_45.R2 [    57 /    99 ]: ( 0.010701 min ) (  597, 791 ) to (  490, 841 ) $( 202.378074 ) size(  18 ) elapsed( 103697 ns )
+density_45.R2 [    58 /    99 ]: ( 0.010701 min ) (  800, 864 ) to (  388, 588 ) $(     nan ) size(   0 ) elapsed( 41907 ns ) --- Not solvable
+density_45.R2 [    59 /    99 ]: ( 0.010710 min ) (  590, 389 ) to (  549,  84 ) $( 504.833376 ) size(  32 ) elapsed( 501469 ns )
+density_45.R2 [    60 /    99 ]: ( 0.011007 min ) (  474, 751 ) to (  796, 657 ) $(     nan ) size(   0 ) elapsed( 17804884 ns ) --- Not solvable
+density_45.R2 [    61 /    99 ]: ( 0.011094 min ) (  859, 793 ) to (  330,  60 ) $(     nan ) size(   0 ) elapsed( 5257355 ns ) --- Not solvable
+density_45.R2 [    62 /    99 ]: ( 0.011104 min ) (  503, 282 ) to (   92, 604 ) $( 636.059378 ) size(  46 ) elapsed( 605641 ns )
+density_45.R2 [    63 /    99 ]: ( 0.011109 min ) (   18, 528 ) to (  498, 825 ) $(     nan ) size(   0 ) elapsed( 279239 ns ) --- Not solvable
+density_45.R2 [    64 /    99 ]: ( 0.011601 min ) (  407, 556 ) to (  407,  49 ) $(     nan ) size(   0 ) elapsed( 29487175 ns ) --- Not solvable
+density_45.R2 [    65 /    99 ]: ( 0.011606 min ) (  765, 163 ) to (  792, 300 ) $(     nan ) size(   0 ) elapsed( 330763 ns ) --- Not solvable
+density_45.R2 [    66 /    99 ]: ( 0.011614 min ) (  391, 837 ) to (  127, 893 ) $(     nan ) size(   0 ) elapsed( 469266 ns ) --- Not solvable
+density_45.R2 [    67 /    99 ]: ( 0.011616 min ) (  659, 765 ) to (  869, 874 ) $(     nan ) size(   0 ) elapsed( 92297 ns ) --- Not solvable
+density_45.R2 [    68 /    99 ]: ( 0.012086 min ) (  256, 291 ) to (   27, 510 ) $(     nan ) size(   0 ) elapsed( 28222523 ns ) --- Not solvable
+density_45.R2 [    69 /    99 ]: ( 0.012169 min ) (  941, 484 ) to (  551, 759 ) $(     nan ) size(   0 ) elapsed( 4985457 ns ) --- Not solvable
+density_45.R2 [    70 /    99 ]: ( 0.012199 min ) (  632, 268 ) to (  463, 767 ) $( 851.396107 ) size(  68 ) elapsed( 1774245 ns )
+density_45.R2 [    71 /    99 ]: ( 0.012833 min ) (  716, 146 ) to (  340, 893 ) $(     nan ) size(   0 ) elapsed( 38045253 ns ) --- Not solvable
+density_45.R2 [    72 /    99 ]: ( 0.012928 min ) (  869, 821 ) to (  888,  84 ) $(     nan ) size(   0 ) elapsed( 5697358 ns ) --- Not solvable
+density_45.R2 [    73 /    99 ]: ( 0.013005 min ) (  847, 483 ) to (  699, 181 ) $(     nan ) size(   0 ) elapsed( 4613502 ns ) --- Not solvable
+density_45.R2 [    74 /    99 ]: ( 0.013060 min ) (  861, 399 ) to (  178, 838 ) $(     nan ) size(   0 ) elapsed( 3305837 ns ) --- Not solvable
+density_45.R2 [    75 /    99 ]: ( 0.013124 min ) (  908, 563 ) to (  512, 414 ) $(     nan ) size(   0 ) elapsed( 3817122 ns ) --- Not solvable
+density_45.R2 [    76 /    99 ]: ( 0.013127 min ) (  722, 208 ) to (  611, 396 ) $( 304.617620 ) size(  21 ) elapsed( 171683 ns )
+density_45.R2 [    77 /    99 ]: ( 0.013845 min ) (  500, 943 ) to (   56, 227 ) $(     nan ) size(   0 ) elapsed( 43088451 ns ) --- Not solvable
+density_45.R2 [    78 /    99 ]: ( 0.014414 min ) (  683, 487 ) to (  108,  49 ) $(     nan ) size(   0 ) elapsed( 34148833 ns ) --- Not solvable
+density_45.R2 [    79 /    99 ]: ( 0.014427 min ) (  884,  77 ) to (  601, 521 ) $(     nan ) size(   0 ) elapsed( 769046 ns ) --- Not solvable
+density_45.R2 [    80 /    99 ]: ( 0.014505 min ) (  932, 579 ) to (  722, 280 ) $(     nan ) size(   0 ) elapsed( 4694348 ns ) --- Not solvable
+density_45.R2 [    81 /    99 ]: ( 0.014578 min ) (  297, 308 ) to (  482, 499 ) $( 1129.449075 ) size(  88 ) elapsed( 4351142 ns )
+density_45.R2 [    82 /    99 ]: ( 0.014855 min ) (  295, 277 ) to (  441,  23 ) $(     nan ) size(   0 ) elapsed( 16600063 ns ) --- Not solvable
+density_45.R2 [    83 /    99 ]: ( 0.014889 min ) (  952, 254 ) to (  523, 866 ) $( 975.283903 ) size(  86 ) elapsed( 2074320 ns )
+density_45.R2 [    84 /    99 ]: ( 0.015243 min ) (  428, 422 ) to (  275, 152 ) $(     nan ) size(   0 ) elapsed( 21209605 ns ) --- Not solvable
+density_45.R2 [    85 /    99 ]: ( 0.015835 min ) (  489, 947 ) to (  874, 141 ) $(     nan ) size(   0 ) elapsed( 35549858 ns ) --- Not solvable
+density_45.R2 [    86 /    99 ]: ( 0.016222 min ) (  620, 377 ) to (  968, 398 ) $(     nan ) size(   0 ) elapsed( 23163263 ns ) --- Not solvable
+density_45.R2 [    87 /    99 ]: ( 0.016279 min ) (  764, 734 ) to (  499, 407 ) $(     nan ) size(   0 ) elapsed( 3414325 ns ) --- Not solvable
+density_45.R2 [    88 /    99 ]: ( 0.016778 min ) (  413, 659 ) to (   37, 423 ) $(     nan ) size(   0 ) elapsed( 29931620 ns ) --- Not solvable
+density_45.R2 [    89 /    99 ]: ( 0.016866 min ) (  766, 819 ) to (  421,  42 ) $(     nan ) size(   0 ) elapsed( 5276329 ns ) --- Not solvable
+density_45.R2 [    90 /    99 ]: ( 0.016871 min ) (  343, 889 ) to (  814, 448 ) $(     nan ) size(   0 ) elapsed( 327731 ns ) --- Not solvable
+density_45.R2 [    91 /    99 ]: ( 0.016908 min ) (  963, 165 ) to (  352, 470 ) $( 976.874090 ) size(  76 ) elapsed( 2213745 ns )
+density_45.R2 [    92 /    99 ]: ( 0.017399 min ) (  183, 480 ) to (  122, 937 ) $(     nan ) size(   0 ) elapsed( 29473957 ns ) --- Not solvable
+density_45.R2 [    93 /    99 ]: ( 0.017438 min ) (  964, 283 ) to (  202, 406 ) $( 953.949647 ) size(  76 ) elapsed( 2290747 ns )
+density_45.R2 [    94 /    99 ]: ( 0.017439 min ) (  913, 932 ) to (  706, 641 ) $(     nan ) size(   0 ) elapsed( 71427 ns ) --- Not solvable
+density_45.R2 [    95 /    99 ]: ( 0.017446 min ) (  346, 301 ) to (  620, 267 ) $( 431.176487 ) size(  30 ) elapsed( 399576 ns )
+density_45.R2 [    96 /    99 ]: ( 0.017465 min ) (  958, 177 ) to (  302, 293 ) $( 854.259636 ) size(  61 ) elapsed( 1190143 ns )
+density_45.R2 [    97 /    99 ]: ( 0.017520 min ) (  906, 565 ) to (  621, 653 ) $(     nan ) size(   0 ) elapsed( 3282879 ns ) --- Not solvable
+density_45.R2 [    98 /    99 ]: ( 0.018197 min ) (  188, 617 ) to (  769, 167 ) $(     nan ) size(   0 ) elapsed( 40629997 ns ) --- Not solvable
+density_45.R2 [    99 /    99 ]: ( 0.018624 min ) (  717, 145 ) to (  972, 955 ) $(     nan ) size(   0 ) elapsed( 25583145 ns ) --- Not solvable
+writeResults: Wrote results to '"/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-18_review2/r2_controlled/results/_work/density_45/res/density_45.R2.0.results"'
+=== runScenarios: density_45 ===
+density_45.R2 [     0 /    99 ]: ( 0.000286 min ) (  574, 415 ) to (  183,  38 ) $(     nan ) size(   0 ) elapsed( 17183398 ns ) --- Not solvable
+density_45.R2 [     1 /    99 ]: ( 0.000661 min ) (  629, 914 ) to (  246, 952 ) $(     nan ) size(   0 ) elapsed( 22455859 ns ) --- Not solvable
+density_45.R2 [     2 /    99 ]: ( 0.000667 min ) (  826, 709 ) to (  845, 399 ) $( 418.377504 ) size(  36 ) elapsed( 345272 ns )
+density_45.R2 [     3 /    99 ]: ( 0.000674 min ) (  292, 517 ) to (  496, 435 ) $( 454.354318 ) size(  44 ) elapsed( 414639 ns )
+density_45.R2 [     4 /    99 ]: ( 0.000937 min ) (  649,  26 ) to (  878, 165 ) $(     nan ) size(   0 ) elapsed( 15830927 ns ) --- Not solvable
+density_45.R2 [     5 /    99 ]: ( 0.001011 min ) (  890, 504 ) to (  544, 156 ) $(     nan ) size(   0 ) elapsed( 4386619 ns ) --- Not solvable
+density_45.R2 [     6 /    99 ]: ( 0.001088 min ) (  907, 577 ) to (  540, 354 ) $(     nan ) size(   0 ) elapsed( 4645246 ns ) --- Not solvable
+density_45.R2 [     7 /    99 ]: ( 0.001091 min ) (  204, 156 ) to (  985, 140 ) $(     nan ) size(   0 ) elapsed( 170008 ns ) --- Not solvable
+density_45.R2 [     8 /    99 ]: ( 0.001441 min ) (  648, 880 ) to (  904, 443 ) $(     nan ) size(   0 ) elapsed( 21004594 ns ) --- Not solvable
+density_45.R2 [     9 /    99 ]: ( 0.001476 min ) (  615, 985 ) to (  949, 154 ) $( 1239.222087 ) size(  90 ) elapsed( 2110014 ns )
+density_45.R2 [    10 /    99 ]: ( 0.001483 min ) (  520, 885 ) to (  347, 710 ) $( 503.794019 ) size(  37 ) elapsed( 406914 ns )
+density_45.R2 [    11 /    99 ]: ( 0.002019 min ) (  973, 149 ) to (  677, 614 ) $(     nan ) size(   0 ) elapsed( 32117127 ns ) --- Not solvable
+density_45.R2 [    12 /    99 ]: ( 0.002026 min ) (  541,  78 ) to (  498, 437 ) $( 601.946977 ) size(  35 ) elapsed( 424615 ns )
+density_45.R2 [    13 /    99 ]: ( 0.002516 min ) (  465, 507 ) to (  297, 942 ) $(     nan ) size(   0 ) elapsed( 29387936 ns ) --- Not solvable
+density_45.R2 [    14 /    99 ]: ( 0.002527 min ) (  949, 168 ) to (  663, 272 ) $( 508.155497 ) size(  42 ) elapsed( 693948 ns )
+density_45.R2 [    15 /    99 ]: ( 0.003104 min ) (  633, 245 ) to (   93, 347 ) $(     nan ) size(   0 ) elapsed( 34617493 ns ) --- Not solvable
+density_45.R2 [    16 /    99 ]: ( 0.003114 min ) (  320, 430 ) to (  434, 253 ) $( 396.668345 ) size(  41 ) elapsed( 593967 ns )
+density_45.R2 [    17 /    99 ]: ( 0.003119 min ) (  331, 882 ) to (  534,  46 ) $(     nan ) size(   0 ) elapsed( 261060 ns ) --- Not solvable
+density_45.R2 [    18 /    99 ]: ( 0.003130 min ) (  513, 602 ) to (  899, 284 ) $( 586.976180 ) size(  56 ) elapsed( 671697 ns )
+density_45.R2 [    19 /    99 ]: ( 0.003131 min ) (   75, 718 ) to (  740, 757 ) $(     nan ) size(   0 ) elapsed( 78411 ns ) --- Not solvable
+density_45.R2 [    20 /    99 ]: ( 0.003515 min ) (  607,  37 ) to (  858, 888 ) $(     nan ) size(   0 ) elapsed( 23003838 ns ) --- Not solvable
+density_45.R2 [    21 /    99 ]: ( 0.003985 min ) (  731, 225 ) to (  666, 587 ) $(     nan ) size(   0 ) elapsed( 28215054 ns ) --- Not solvable
+density_45.R2 [    22 /    99 ]: ( 0.003993 min ) (  445,  21 ) to (  825, 225 ) $(     nan ) size(   0 ) elapsed( 493920 ns ) --- Not solvable
+density_45.R2 [    23 /    99 ]: ( 0.004784 min ) (  849, 472 ) to (  296,  23 ) $(     nan ) size(   0 ) elapsed( 5327647 ns ) --- Not solvable
+density_45.R2 [    24 /    99 ]: ( 0.005388 min ) (  929, 302 ) to (  345, 936 ) $(     nan ) size(   0 ) elapsed( 36196409 ns ) --- Not solvable
+density_45.R2 [    25 /    99 ]: ( 0.005391 min ) (  562, 511 ) to (  774, 374 ) $( 276.130492 ) size(  24 ) elapsed( 202699 ns )
+density_45.R2 [    26 /    99 ]: ( 0.005428 min ) (  670, 487 ) to (  258, 430 ) $( 754.484351 ) size(  74 ) elapsed( 2223400 ns )
+density_45.R2 [    27 /    99 ]: ( 0.006242 min ) (  133, 478 ) to (  862, 406 ) $(     nan ) size(   0 ) elapsed( 48795419 ns ) --- Not solvable
+density_45.R2 [    28 /    99 ]: ( 0.006583 min ) (   78, 621 ) to (  345, 872 ) $(     nan ) size(   0 ) elapsed( 20430708 ns ) --- Not solvable
+density_45.R2 [    29 /    99 ]: ( 0.006584 min ) (  985, 710 ) to (  886, 534 ) $( 213.838317 ) size(   9 ) elapsed( 59843 ns )
+density_45.R2 [    30 /    99 ]: ( 0.007087 min ) (  300, 325 ) to (  230, 659 ) $(     nan ) size(   0 ) elapsed( 30193372 ns ) --- Not solvable
+density_45.R2 [    31 /    99 ]: ( 0.007088 min ) (  993, 979 ) to (  897,  88 ) $(     nan ) size(   0 ) elapsed( 40373 ns ) --- Not solvable
+density_45.R2 [    32 /    99 ]: ( 0.007091 min ) (   88, 171 ) to (  752, 839 ) $(     nan ) size(   0 ) elapsed( 164208 ns ) --- Not solvable
+density_45.R2 [    33 /    99 ]: ( 0.007151 min ) (  395, 607 ) to (  139, 604 ) $( 1352.738208 ) size( 109 ) elapsed( 3611795 ns )
+density_45.R2 [    34 /    99 ]: ( 0.007161 min ) (  650, 296 ) to (  348, 504 ) $( 640.160583 ) size(  49 ) elapsed( 622610 ns )
+density_45.R2 [    35 /    99 ]: ( 0.007226 min ) (  780, 499 ) to (  254, 936 ) $(     nan ) size(   0 ) elapsed( 3854982 ns ) --- Not solvable
+density_45.R2 [    36 /    99 ]: ( 0.007287 min ) (  528, 987 ) to (  287, 302 ) $( 1307.403191 ) size(  97 ) elapsed( 3670532 ns )
+density_45.R2 [    37 /    99 ]: ( 0.007647 min ) (  346, 713 ) to (   13, 811 ) $(     nan ) size(   0 ) elapsed( 21626001 ns ) --- Not solvable
+density_45.R2 [    38 /    99 ]: ( 0.007669 min ) (  384,  92 ) to (  538, 677 ) $(     nan ) size(   0 ) elapsed( 1273776 ns ) --- Not solvable
+density_45.R2 [    39 /    99 ]: ( 0.008141 min ) (  653, 932 ) to (  324, 673 ) $(     nan ) size(   0 ) elapsed( 28358532 ns ) --- Not solvable
+density_45.R2 [    40 /    99 ]: ( 0.008732 min ) (  562, 153 ) to (  418, 838 ) $(     nan ) size(   0 ) elapsed( 35411548 ns ) --- Not solvable
+density_45.R2 [    41 /    99 ]: ( 0.009079 min ) (  414, 665 ) to (  202, 698 ) $(     nan ) size(   0 ) elapsed( 20820892 ns ) --- Not solvable
+density_45.R2 [    42 /    99 ]: ( 0.009570 min ) (  678, 108 ) to (  127,  24 ) $(     nan ) size(   0 ) elapsed( 29457003 ns ) --- Not solvable
+density_45.R2 [    43 /    99 ]: ( 0.009571 min ) (  876, 883 ) to (   55, 534 ) $(     nan ) size(   0 ) elapsed( 68552 ns ) --- Not solvable
+density_45.R2 [    44 /    99 ]: ( 0.009909 min ) (  394, 564 ) to (  869, 881 ) $(     nan ) size(   0 ) elapsed( 20279002 ns ) --- Not solvable
+density_45.R2 [    45 /    99 ]: ( 0.009910 min ) (  624, 971 ) to (  747, 932 ) $( 152.199897 ) size(  14 ) elapsed( 55283 ns )
+density_45.R2 [    46 /    99 ]: ( 0.009927 min ) (  672,  12 ) to (  565, 519 ) $( 696.620978 ) size(  49 ) elapsed( 1005014 ns )
+density_45.R2 [    47 /    99 ]: ( 0.009941 min ) (  853, 164 ) to (  140, 506 ) $(     nan ) size(   0 ) elapsed( 867429 ns ) --- Not solvable
+density_45.R2 [    48 /    99 ]: ( 0.009944 min ) (   85, 194 ) to (  165, 362 ) $(     nan ) size(   0 ) elapsed( 131838 ns ) --- Not solvable
+density_45.R2 [    49 /    99 ]: ( 0.009944 min ) (  112, 268 ) to (  135, 667 ) $(     nan ) size(   0 ) elapsed( 40053 ns ) --- Not solvable
+density_45.R2 [    50 /    99 ]: ( 0.010409 min ) (  819, 378 ) to (  342, 628 ) $(     nan ) size(   0 ) elapsed( 27867727 ns ) --- Not solvable
+density_45.R2 [    51 /    99 ]: ( 0.010416 min ) (   10, 527 ) to (   80,  18 ) $(     nan ) size(   0 ) elapsed( 399936 ns ) --- Not solvable
+density_45.R2 [    52 /    99 ]: ( 0.010425 min ) (  431, 204 ) to (  290, 523 ) $( 592.869299 ) size(  60 ) elapsed( 535175 ns )
+density_45.R2 [    53 /    99 ]: ( 0.010827 min ) (  378, 671 ) to (  221, 716 ) $(     nan ) size(   0 ) elapsed( 24115778 ns ) --- Not solvable
+density_45.R2 [    54 /    99 ]: ( 0.011424 min ) (  864, 342 ) to (  211, 915 ) $(     nan ) size(   0 ) elapsed( 35860273 ns ) --- Not solvable
+density_45.R2 [    55 /    99 ]: ( 0.011433 min ) (  666, 122 ) to (  650, 519 ) $( 496.406267 ) size(  41 ) elapsed( 524938 ns )
+density_45.R2 [    56 /    99 ]: ( 0.011508 min ) (  414, 344 ) to (  477, 896 ) $( 1075.855029 ) size(  80 ) elapsed( 4502985 ns )
+density_45.R2 [    57 /    99 ]: ( 0.011510 min ) (  597, 791 ) to (  490, 841 ) $( 202.378074 ) size(  18 ) elapsed( 102288 ns )
+density_45.R2 [    58 /    99 ]: ( 0.011511 min ) (  800, 864 ) to (  388, 588 ) $(     nan ) size(   0 ) elapsed( 43588 ns ) --- Not solvable
+density_45.R2 [    59 /    99 ]: ( 0.011519 min ) (  590, 389 ) to (  549,  84 ) $( 504.833376 ) size(  32 ) elapsed( 507215 ns )
+density_45.R2 [    60 /    99 ]: ( 0.011817 min ) (  474, 751 ) to (  796, 657 ) $(     nan ) size(   0 ) elapsed( 17860143 ns ) --- Not solvable
+density_45.R2 [    61 /    99 ]: ( 0.011905 min ) (  859, 793 ) to (  330,  60 ) $(     nan ) size(   0 ) elapsed( 5276388 ns ) --- Not solvable
+density_45.R2 [    62 /    99 ]: ( 0.011915 min ) (  503, 282 ) to (   92, 604 ) $( 636.059378 ) size(  46 ) elapsed( 622870 ns )
+density_45.R2 [    63 /    99 ]: ( 0.011920 min ) (   18, 528 ) to (  498, 825 ) $(     nan ) size(   0 ) elapsed( 280001 ns ) --- Not solvable
+density_45.R2 [    64 /    99 ]: ( 0.012416 min ) (  407, 556 ) to (  407,  49 ) $(     nan ) size(   0 ) elapsed( 29730269 ns ) --- Not solvable
+density_45.R2 [    65 /    99 ]: ( 0.012421 min ) (  765, 163 ) to (  792, 300 ) $(     nan ) size(   0 ) elapsed( 328276 ns ) --- Not solvable
+density_45.R2 [    66 /    99 ]: ( 0.012429 min ) (  391, 837 ) to (  127, 893 ) $(     nan ) size(   0 ) elapsed( 476626 ns ) --- Not solvable
+density_45.R2 [    67 /    99 ]: ( 0.012431 min ) (  659, 765 ) to (  869, 874 ) $(     nan ) size(   0 ) elapsed( 92906 ns ) --- Not solvable
+density_45.R2 [    68 /    99 ]: ( 0.012896 min ) (  256, 291 ) to (   27, 510 ) $(     nan ) size(   0 ) elapsed( 27889439 ns ) --- Not solvable
+density_45.R2 [    69 /    99 ]: ( 0.012978 min ) (  941, 484 ) to (  551, 759 ) $(     nan ) size(   0 ) elapsed( 4943354 ns ) --- Not solvable
+density_45.R2 [    70 /    99 ]: ( 0.013008 min ) (  632, 268 ) to (  463, 767 ) $( 851.396107 ) size(  68 ) elapsed( 1812071 ns )
+density_45.R2 [    71 /    99 ]: ( 0.013653 min ) (  716, 146 ) to (  340, 893 ) $(     nan ) size(   0 ) elapsed( 38690402 ns ) --- Not solvable
+density_45.R2 [    72 /    99 ]: ( 0.013749 min ) (  869, 821 ) to (  888,  84 ) $(     nan ) size(   0 ) elapsed( 5750874 ns ) --- Not solvable
+density_45.R2 [    73 /    99 ]: ( 0.013827 min ) (  847, 483 ) to (  699, 181 ) $(     nan ) size(   0 ) elapsed( 4661978 ns ) --- Not solvable
+density_45.R2 [    74 /    99 ]: ( 0.013883 min ) (  861, 399 ) to (  178, 838 ) $(     nan ) size(   0 ) elapsed( 3327826 ns ) --- Not solvable
+density_45.R2 [    75 /    99 ]: ( 0.013947 min ) (  908, 563 ) to (  512, 414 ) $(     nan ) size(   0 ) elapsed( 3861835 ns ) --- Not solvable
+density_45.R2 [    76 /    99 ]: ( 0.013950 min ) (  722, 208 ) to (  611, 396 ) $( 304.617620 ) size(  21 ) elapsed( 165263 ns )
+density_45.R2 [    77 /    99 ]: ( 0.014678 min ) (  500, 943 ) to (   56, 227 ) $(     nan ) size(   0 ) elapsed( 43690904 ns ) --- Not solvable
+density_45.R2 [    78 /    99 ]: ( 0.015255 min ) (  683, 487 ) to (  108,  49 ) $(     nan ) size(   0 ) elapsed( 34614400 ns ) --- Not solvable
+density_45.R2 [    79 /    99 ]: ( 0.015268 min ) (  884,  77 ) to (  601, 521 ) $(     nan ) size(   0 ) elapsed( 765954 ns ) --- Not solvable
+density_45.R2 [    80 /    99 ]: ( 0.015347 min ) (  932, 579 ) to (  722, 280 ) $(     nan ) size(   0 ) elapsed( 4749194 ns ) --- Not solvable
+density_45.R2 [    81 /    99 ]: ( 0.015421 min ) (  297, 308 ) to (  482, 499 ) $( 1129.449075 ) size(  88 ) elapsed( 4423503 ns )
+density_45.R2 [    82 /    99 ]: ( 0.015703 min ) (  295, 277 ) to (  441,  23 ) $(     nan ) size(   0 ) elapsed( 16929022 ns ) --- Not solvable
+density_45.R2 [    83 /    99 ]: ( 0.015738 min ) (  952, 254 ) to (  523, 866 ) $( 975.283903 ) size(  86 ) elapsed( 2091571 ns )
+density_45.R2 [    84 /    99 ]: ( 0.016096 min ) (  428, 422 ) to (  275, 152 ) $(     nan ) size(   0 ) elapsed( 21455930 ns ) --- Not solvable
+density_45.R2 [    85 /    99 ]: ( 0.016697 min ) (  489, 947 ) to (  874, 141 ) $(     nan ) size(   0 ) elapsed( 36059787 ns ) --- Not solvable
+density_45.R2 [    86 /    99 ]: ( 0.017088 min ) (  620, 377 ) to (  968, 398 ) $(     nan ) size(   0 ) elapsed( 23480189 ns ) --- Not solvable
+density_45.R2 [    87 /    99 ]: ( 0.017146 min ) (  764, 734 ) to (  499, 407 ) $(     nan ) size(   0 ) elapsed( 3460148 ns ) --- Not solvable
+density_45.R2 [    88 /    99 ]: ( 0.017652 min ) (  413, 659 ) to (   37, 423 ) $(     nan ) size(   0 ) elapsed( 30383017 ns ) --- Not solvable
+density_45.R2 [    89 /    99 ]: ( 0.017741 min ) (  766, 819 ) to (  421,  42 ) $(     nan ) size(   0 ) elapsed( 5330733 ns ) --- Not solvable
+density_45.R2 [    90 /    99 ]: ( 0.017747 min ) (  343, 889 ) to (  814, 448 ) $(     nan ) size(   0 ) elapsed( 325625 ns ) --- Not solvable
+density_45.R2 [    91 /    99 ]: ( 0.017784 min ) (  963, 165 ) to (  352, 470 ) $( 976.874090 ) size(  76 ) elapsed( 2239268 ns )
+density_45.R2 [    92 /    99 ]: ( 0.018284 min ) (  183, 480 ) to (  122, 937 ) $(     nan ) size(   0 ) elapsed( 30000707 ns ) --- Not solvable
+density_45.R2 [    93 /    99 ]: ( 0.018323 min ) (  964, 283 ) to (  202, 406 ) $( 953.949647 ) size(  76 ) elapsed( 2319822 ns )
+density_45.R2 [    94 /    99 ]: ( 0.018324 min ) (  913, 932 ) to (  706, 641 ) $(     nan ) size(   0 ) elapsed( 69981 ns ) --- Not solvable
+density_45.R2 [    95 /    99 ]: ( 0.018331 min ) (  346, 301 ) to (  620, 267 ) $( 431.176487 ) size(  30 ) elapsed( 393390 ns )
+density_45.R2 [    96 /    99 ]: ( 0.018351 min ) (  958, 177 ) to (  302, 293 ) $( 854.259636 ) size(  61 ) elapsed( 1201620 ns )
+density_45.R2 [    97 /    99 ]: ( 0.018406 min ) (  906, 565 ) to (  621, 653 ) $(     nan ) size(   0 ) elapsed( 3288435 ns ) --- Not solvable
+density_45.R2 [    98 /    99 ]: ( 0.019080 min ) (  188, 617 ) to (  769, 167 ) $(     nan ) size(   0 ) elapsed( 40473238 ns ) --- Not solvable
+density_45.R2 [    99 /    99 ]: ( 0.019508 min ) (  717, 145 ) to (  972, 955 ) $(     nan ) size(   0 ) elapsed( 25671115 ns ) --- Not solvable
+writeResults: Wrote results to '"/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-18_review2/r2_controlled/results/_work/density_45/res/density_45.R2.1.results"'
+=== runScenarios: density_45 ===
+density_45.R2 [     0 /    99 ]: ( 0.000288 min ) (  574, 415 ) to (  183,  38 ) $(     nan ) size(   0 ) elapsed( 17275771 ns ) --- Not solvable
+density_45.R2 [     1 /    99 ]: ( 0.000660 min ) (  629, 914 ) to (  246, 952 ) $(     nan ) size(   0 ) elapsed( 22307253 ns ) --- Not solvable
+density_45.R2 [     2 /    99 ]: ( 0.000666 min ) (  826, 709 ) to (  845, 399 ) $( 418.377504 ) size(  36 ) elapsed( 347266 ns )
+density_45.R2 [     3 /    99 ]: ( 0.000673 min ) (  292, 517 ) to (  496, 435 ) $( 454.354318 ) size(  44 ) elapsed( 411867 ns )
+density_45.R2 [     4 /    99 ]: ( 0.000936 min ) (  649,  26 ) to (  878, 165 ) $(     nan ) size(   0 ) elapsed( 15822641 ns ) --- Not solvable
+density_45.R2 [     5 /    99 ]: ( 0.001008 min ) (  890, 504 ) to (  544, 156 ) $(     nan ) size(   0 ) elapsed( 4274461 ns ) --- Not solvable
+density_45.R2 [     6 /    99 ]: ( 0.001084 min ) (  907, 577 ) to (  540, 354 ) $(     nan ) size(   0 ) elapsed( 4578762 ns ) --- Not solvable
+density_45.R2 [     7 /    99 ]: ( 0.001087 min ) (  204, 156 ) to (  985, 140 ) $(     nan ) size(   0 ) elapsed( 169485 ns ) --- Not solvable
+density_45.R2 [     8 /    99 ]: ( 0.001433 min ) (  648, 880 ) to (  904, 443 ) $(     nan ) size(   0 ) elapsed( 20775442 ns ) --- Not solvable
+density_45.R2 [     9 /    99 ]: ( 0.001468 min ) (  615, 985 ) to (  949, 154 ) $( 1239.222087 ) size(  90 ) elapsed( 2103790 ns )
+density_45.R2 [    10 /    99 ]: ( 0.001475 min ) (  520, 885 ) to (  347, 710 ) $( 503.794019 ) size(  37 ) elapsed( 404343 ns )
+density_45.R2 [    11 /    99 ]: ( 0.002008 min ) (  973, 149 ) to (  677, 614 ) $(     nan ) size(   0 ) elapsed( 31942328 ns ) --- Not solvable
+density_45.R2 [    12 /    99 ]: ( 0.002015 min ) (  541,  78 ) to (  498, 437 ) $( 601.946977 ) size(  35 ) elapsed( 420349 ns )
+density_45.R2 [    13 /    99 ]: ( 0.002502 min ) (  465, 507 ) to (  297, 942 ) $(     nan ) size(   0 ) elapsed( 29250890 ns ) --- Not solvable
+density_45.R2 [    14 /    99 ]: ( 0.002514 min ) (  949, 168 ) to (  663, 272 ) $( 508.155497 ) size(  42 ) elapsed( 686579 ns )
+density_45.R2 [    15 /    99 ]: ( 0.003092 min ) (  633, 245 ) to (   93, 347 ) $(     nan ) size(   0 ) elapsed( 34667242 ns ) --- Not solvable
+density_45.R2 [    16 /    99 ]: ( 0.003102 min ) (  320, 430 ) to (  434, 253 ) $( 396.668345 ) size(  41 ) elapsed( 595840 ns )
+density_45.R2 [    17 /    99 ]: ( 0.003106 min ) (  331, 882 ) to (  534,  46 ) $(     nan ) size(   0 ) elapsed( 260677 ns ) --- Not solvable
+density_45.R2 [    18 /    99 ]: ( 0.003117 min ) (  513, 602 ) to (  899, 284 ) $( 586.976180 ) size(  56 ) elapsed( 665791 ns )
+density_45.R2 [    19 /    99 ]: ( 0.003119 min ) (   75, 718 ) to (  740, 757 ) $(     nan ) size(   0 ) elapsed( 80741 ns ) --- Not solvable
+density_45.R2 [    20 /    99 ]: ( 0.003502 min ) (  607,  37 ) to (  858, 888 ) $(     nan ) size(   0 ) elapsed( 23007696 ns ) --- Not solvable
+density_45.R2 [    21 /    99 ]: ( 0.003974 min ) (  731, 225 ) to (  666, 587 ) $(     nan ) size(   0 ) elapsed( 28335465 ns ) --- Not solvable
+density_45.R2 [    22 /    99 ]: ( 0.003984 min ) (  445,  21 ) to (  825, 225 ) $(     nan ) size(   0 ) elapsed( 541197 ns ) --- Not solvable
+density_45.R2 [    23 /    99 ]: ( 0.004063 min ) (  849, 472 ) to (  296,  23 ) $(     nan ) size(   0 ) elapsed( 4791611 ns ) --- Not solvable
+density_45.R2 [    24 /    99 ]: ( 0.004649 min ) (  929, 302 ) to (  345, 936 ) $(     nan ) size(   0 ) elapsed( 35145805 ns ) --- Not solvable
+density_45.R2 [    25 /    99 ]: ( 0.004652 min ) (  562, 511 ) to (  774, 374 ) $( 276.130492 ) size(  24 ) elapsed( 184124 ns )
+density_45.R2 [    26 /    99 ]: ( 0.004689 min ) (  670, 487 ) to (  258, 430 ) $( 754.484351 ) size(  74 ) elapsed( 2202924 ns )
+density_45.R2 [    27 /    99 ]: ( 0.005490 min ) (  133, 478 ) to (  862, 406 ) $(     nan ) size(   0 ) elapsed( 48040427 ns ) --- Not solvable
+density_45.R2 [    28 /    99 ]: ( 0.005819 min ) (   78, 621 ) to (  345, 872 ) $(     nan ) size(   0 ) elapsed( 19713360 ns ) --- Not solvable
+density_45.R2 [    29 /    99 ]: ( 0.005819 min ) (  985, 710 ) to (  886, 534 ) $( 213.838317 ) size(   9 ) elapsed( 49848 ns )
+density_45.R2 [    30 /    99 ]: ( 0.006314 min ) (  300, 325 ) to (  230, 659 ) $(     nan ) size(   0 ) elapsed( 29659244 ns ) --- Not solvable
+density_45.R2 [    31 /    99 ]: ( 0.006315 min ) (  993, 979 ) to (  897,  88 ) $(     nan ) size(   0 ) elapsed( 39880 ns ) --- Not solvable
+density_45.R2 [    32 /    99 ]: ( 0.006317 min ) (   88, 171 ) to (  752, 839 ) $(     nan ) size(   0 ) elapsed( 164691 ns ) --- Not solvable
+density_45.R2 [    33 /    99 ]: ( 0.006378 min ) (  395, 607 ) to (  139, 604 ) $( 1352.738208 ) size( 109 ) elapsed( 3618275 ns )
+density_45.R2 [    34 /    99 ]: ( 0.006388 min ) (  650, 296 ) to (  348, 504 ) $( 640.160583 ) size(  49 ) elapsed( 613230 ns )
+density_45.R2 [    35 /    99 ]: ( 0.006452 min ) (  780, 499 ) to (  254, 936 ) $(     nan ) size(   0 ) elapsed( 3859889 ns ) --- Not solvable
+density_45.R2 [    36 /    99 ]: ( 0.006514 min ) (  528, 987 ) to (  287, 302 ) $( 1307.403191 ) size(  97 ) elapsed( 3671828 ns )
+density_45.R2 [    37 /    99 ]: ( 0.006874 min ) (  346, 713 ) to (   13, 811 ) $(     nan ) size(   0 ) elapsed( 21631098 ns ) --- Not solvable
+density_45.R2 [    38 /    99 ]: ( 0.006896 min ) (  384,  92 ) to (  538, 677 ) $(     nan ) size(   0 ) elapsed( 1271288 ns ) --- Not solvable
+density_45.R2 [    39 /    99 ]: ( 0.007366 min ) (  653, 932 ) to (  324, 673 ) $(     nan ) size(   0 ) elapsed( 28246544 ns ) --- Not solvable
+density_45.R2 [    40 /    99 ]: ( 0.007944 min ) (  562, 153 ) to (  418, 838 ) $(     nan ) size(   0 ) elapsed( 34628544 ns ) --- Not solvable
+density_45.R2 [    41 /    99 ]: ( 0.008286 min ) (  414, 665 ) to (  202, 698 ) $(     nan ) size(   0 ) elapsed( 20559104 ns ) --- Not solvable
+density_45.R2 [    42 /    99 ]: ( 0.008771 min ) (  678, 108 ) to (  127,  24 ) $(     nan ) size(   0 ) elapsed( 29104204 ns ) --- Not solvable
+density_45.R2 [    43 /    99 ]: ( 0.008773 min ) (  876, 883 ) to (   55, 534 ) $(     nan ) size(   0 ) elapsed( 68058 ns ) --- Not solvable
+density_45.R2 [    44 /    99 ]: ( 0.009109 min ) (  394, 564 ) to (  869, 881 ) $(     nan ) size(   0 ) elapsed( 20207337 ns ) --- Not solvable
+density_45.R2 [    45 /    99 ]: ( 0.009110 min ) (  624, 971 ) to (  747, 932 ) $( 152.199897 ) size(  14 ) elapsed( 53764 ns )
+density_45.R2 [    46 /    99 ]: ( 0.009127 min ) (  672,  12 ) to (  565, 519 ) $( 696.620978 ) size(  49 ) elapsed( 1001345 ns )
+density_45.R2 [    47 /    99 ]: ( 0.009142 min ) (  853, 164 ) to (  140, 506 ) $(     nan ) size(   0 ) elapsed( 877581 ns ) --- Not solvable
+density_45.R2 [    48 /    99 ]: ( 0.009144 min ) (   85, 194 ) to (  165, 362 ) $(     nan ) size(   0 ) elapsed( 132604 ns ) --- Not solvable
+density_45.R2 [    49 /    99 ]: ( 0.009145 min ) (  112, 268 ) to (  135, 667 ) $(     nan ) size(   0 ) elapsed( 39396 ns ) --- Not solvable
+density_45.R2 [    50 /    99 ]: ( 0.009605 min ) (  819, 378 ) to (  342, 628 ) $(     nan ) size(   0 ) elapsed( 27628720 ns ) --- Not solvable
+density_45.R2 [    51 /    99 ]: ( 0.009612 min ) (   10, 527 ) to (   80,  18 ) $(     nan ) size(   0 ) elapsed( 398191 ns ) --- Not solvable
+density_45.R2 [    52 /    99 ]: ( 0.009621 min ) (  431, 204 ) to (  290, 523 ) $( 592.869299 ) size(  60 ) elapsed( 537971 ns )
+density_45.R2 [    53 /    99 ]: ( 0.010020 min ) (  378, 671 ) to (  221, 716 ) $(     nan ) size(   0 ) elapsed( 23928332 ns ) --- Not solvable
+density_45.R2 [    54 /    99 ]: ( 0.010612 min ) (  864, 342 ) to (  211, 915 ) $(     nan ) size(   0 ) elapsed( 35504126 ns ) --- Not solvable
+density_45.R2 [    55 /    99 ]: ( 0.010620 min ) (  666, 122 ) to (  650, 519 ) $( 496.406267 ) size(  41 ) elapsed( 507014 ns )
+density_45.R2 [    56 /    99 ]: ( 0.010694 min ) (  414, 344 ) to (  477, 896 ) $( 1075.855029 ) size(  80 ) elapsed( 4427900 ns )
+density_45.R2 [    57 /    99 ]: ( 0.010696 min ) (  597, 791 ) to (  490, 841 ) $( 202.378074 ) size(  18 ) elapsed( 100253 ns )
+density_45.R2 [    58 /    99 ]: ( 0.010697 min ) (  800, 864 ) to (  388, 588 ) $(     nan ) size(   0 ) elapsed( 42842 ns ) --- Not solvable
+density_45.R2 [    59 /    99 ]: ( 0.010705 min ) (  590, 389 ) to (  549,  84 ) $( 504.833376 ) size(  32 ) elapsed( 507558 ns )
+density_45.R2 [    60 /    99 ]: ( 0.011002 min ) (  474, 751 ) to (  796, 657 ) $(     nan ) size(   0 ) elapsed( 17809364 ns ) --- Not solvable
+density_45.R2 [    61 /    99 ]: ( 0.011089 min ) (  859, 793 ) to (  330,  60 ) $(     nan ) size(   0 ) elapsed( 5223256 ns ) --- Not solvable
+density_45.R2 [    62 /    99 ]: ( 0.011099 min ) (  503, 282 ) to (   92, 604 ) $( 636.059378 ) size(  46 ) elapsed( 607355 ns )
+density_45.R2 [    63 /    99 ]: ( 0.011104 min ) (   18, 528 ) to (  498, 825 ) $(     nan ) size(   0 ) elapsed( 282725 ns ) --- Not solvable
+density_45.R2 [    64 /    99 ]: ( 0.011595 min ) (  407, 556 ) to (  407,  49 ) $(     nan ) size(   0 ) elapsed( 29450802 ns ) --- Not solvable
+density_45.R2 [    65 /    99 ]: ( 0.011601 min ) (  765, 163 ) to (  792, 300 ) $(     nan ) size(   0 ) elapsed( 331986 ns ) --- Not solvable
+density_45.R2 [    66 /    99 ]: ( 0.011609 min ) (  391, 837 ) to (  127, 893 ) $(     nan ) size(   0 ) elapsed( 475673 ns ) --- Not solvable
+density_45.R2 [    67 /    99 ]: ( 0.011610 min ) (  659, 765 ) to (  869, 874 ) $(     nan ) size(   0 ) elapsed( 91771 ns ) --- Not solvable
+density_45.R2 [    68 /    99 ]: ( 0.012083 min ) (  256, 291 ) to (   27, 510 ) $(     nan ) size(   0 ) elapsed( 28388271 ns ) --- Not solvable
+density_45.R2 [    69 /    99 ]: ( 0.012167 min ) (  941, 484 ) to (  551, 759 ) $(     nan ) size(   0 ) elapsed( 5008786 ns ) --- Not solvable
+density_45.R2 [    70 /    99 ]: ( 0.012197 min ) (  632, 268 ) to (  463, 767 ) $( 851.396107 ) size(  68 ) elapsed( 1820461 ns )
+density_45.R2 [    71 /    99 ]: ( 0.012836 min ) (  716, 146 ) to (  340, 893 ) $(     nan ) size(   0 ) elapsed( 38311001 ns ) --- Not solvable
+density_45.R2 [    72 /    99 ]: ( 0.012932 min ) (  869, 821 ) to (  888,  84 ) $(     nan ) size(   0 ) elapsed( 5774672 ns ) --- Not solvable
+density_45.R2 [    73 /    99 ]: ( 0.013011 min ) (  847, 483 ) to (  699, 181 ) $(     nan ) size(   0 ) elapsed( 4719389 ns ) --- Not solvable
+density_45.R2 [    74 /    99 ]: ( 0.013067 min ) (  861, 399 ) to (  178, 838 ) $(     nan ) size(   0 ) elapsed( 3377621 ns ) --- Not solvable
+density_45.R2 [    75 /    99 ]: ( 0.013132 min ) (  908, 563 ) to (  512, 414 ) $(     nan ) size(   0 ) elapsed( 3868626 ns ) --- Not solvable
+density_45.R2 [    76 /    99 ]: ( 0.013135 min ) (  722, 208 ) to (  611, 396 ) $( 304.617620 ) size(  21 ) elapsed( 168599 ns )
+density_45.R2 [    77 /    99 ]: ( 0.013857 min ) (  500, 943 ) to (   56, 227 ) $(     nan ) size(   0 ) elapsed( 43333421 ns ) --- Not solvable
+density_45.R2 [    78 /    99 ]: ( 0.014436 min ) (  683, 487 ) to (  108,  49 ) $(     nan ) size(   0 ) elapsed( 34746478 ns ) --- Not solvable
+density_45.R2 [    79 /    99 ]: ( 0.014449 min ) (  884,  77 ) to (  601, 521 ) $(     nan ) size(   0 ) elapsed( 762298 ns ) --- Not solvable
+density_45.R2 [    80 /    99 ]: ( 0.014528 min ) (  932, 579 ) to (  722, 280 ) $(     nan ) size(   0 ) elapsed( 4736036 ns ) --- Not solvable
+density_45.R2 [    81 /    99 ]: ( 0.014601 min ) (  297, 308 ) to (  482, 499 ) $( 1129.449075 ) size(  88 ) elapsed( 4373724 ns )
+density_45.R2 [    82 /    99 ]: ( 0.014879 min ) (  295, 277 ) to (  441,  23 ) $(     nan ) size(   0 ) elapsed( 16671177 ns ) --- Not solvable
+density_45.R2 [    83 /    99 ]: ( 0.014913 min ) (  952, 254 ) to (  523, 866 ) $( 975.283903 ) size(  86 ) elapsed( 2079917 ns )
+density_45.R2 [    84 /    99 ]: ( 0.015269 min ) (  428, 422 ) to (  275, 152 ) $(     nan ) size(   0 ) elapsed( 21321145 ns ) --- Not solvable
+density_45.R2 [    85 /    99 ]: ( 0.015870 min ) (  489, 947 ) to (  874, 141 ) $(     nan ) size(   0 ) elapsed( 36051669 ns ) --- Not solvable
+density_45.R2 [    86 /    99 ]: ( 0.016258 min ) (  620, 377 ) to (  968, 398 ) $(     nan ) size(   0 ) elapsed( 23315062 ns ) --- Not solvable
+density_45.R2 [    87 /    99 ]: ( 0.016316 min ) (  764, 734 ) to (  499, 407 ) $(     nan ) size(   0 ) elapsed( 3461584 ns ) --- Not solvable
+density_45.R2 [    88 /    99 ]: ( 0.016820 min ) (  413, 659 ) to (   37, 423 ) $(     nan ) size(   0 ) elapsed( 30225061 ns ) --- Not solvable
+density_45.R2 [    89 /    99 ]: ( 0.016908 min ) (  766, 819 ) to (  421,  42 ) $(     nan ) size(   0 ) elapsed( 5265941 ns ) --- Not solvable
+density_45.R2 [    90 /    99 ]: ( 0.016913 min ) (  343, 889 ) to (  814, 448 ) $(     nan ) size(   0 ) elapsed( 326480 ns ) --- Not solvable
+density_45.R2 [    91 /    99 ]: ( 0.016951 min ) (  963, 165 ) to (  352, 470 ) $( 976.874090 ) size(  76 ) elapsed( 2222140 ns )
+density_45.R2 [    92 /    99 ]: ( 0.017447 min ) (  183, 480 ) to (  122, 937 ) $(     nan ) size(   0 ) elapsed( 29788466 ns ) --- Not solvable
+density_45.R2 [    93 /    99 ]: ( 0.017485 min ) (  964, 283 ) to (  202, 406 ) $( 953.949647 ) size(  76 ) elapsed( 2294934 ns )
+density_45.R2 [    94 /    99 ]: ( 0.017487 min ) (  913, 932 ) to (  706, 641 ) $(     nan ) size(   0 ) elapsed( 69628 ns ) --- Not solvable
+density_45.R2 [    95 /    99 ]: ( 0.017493 min ) (  346, 301 ) to (  620, 267 ) $( 431.176487 ) size(  30 ) elapsed( 394408 ns )
+density_45.R2 [    96 /    99 ]: ( 0.017513 min ) (  958, 177 ) to (  302, 293 ) $( 854.259636 ) size(  61 ) elapsed( 1199012 ns )
+density_45.R2 [    97 /    99 ]: ( 0.017568 min ) (  906, 565 ) to (  621, 653 ) $(     nan ) size(   0 ) elapsed( 3288529 ns ) --- Not solvable
+density_45.R2 [    98 /    99 ]: ( 0.018240 min ) (  188, 617 ) to (  769, 167 ) $(     nan ) size(   0 ) elapsed( 40318469 ns ) --- Not solvable
+density_45.R2 [    99 /    99 ]: ( 0.018668 min ) (  717, 145 ) to (  972, 955 ) $(     nan ) size(   0 ) elapsed( 25687615 ns ) --- Not solvable
+writeResults: Wrote results to '"/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-18_review2/r2_controlled/results/_work/density_45/res/density_45.R2.2.results"'
+=== runScenarios: density_45 ===
+density_45.R2 [     0 /    99 ]: ( 0.000297 min ) (  574, 415 ) to (  183,  38 ) $(     nan ) size(   0 ) elapsed( 17827215 ns ) --- Not solvable
+density_45.R2 [     1 /    99 ]: ( 0.000656 min ) (  629, 914 ) to (  246, 952 ) $(     nan ) size(   0 ) elapsed( 21517629 ns ) --- Not solvable
+density_45.R2 [     2 /    99 ]: ( 0.000662 min ) (  826, 709 ) to (  845, 399 ) $( 418.377504 ) size(  36 ) elapsed( 339614 ns )
+density_45.R2 [     3 /    99 ]: ( 0.000668 min ) (  292, 517 ) to (  496, 435 ) $( 454.354318 ) size(  44 ) elapsed( 405045 ns )
+density_45.R2 [     4 /    99 ]: ( 0.000929 min ) (  649,  26 ) to (  878, 165 ) $(     nan ) size(   0 ) elapsed( 15634571 ns ) --- Not solvable
+density_45.R2 [     5 /    99 ]: ( 0.001000 min ) (  890, 504 ) to (  544, 156 ) $(     nan ) size(   0 ) elapsed( 4275083 ns ) --- Not solvable
+density_45.R2 [     6 /    99 ]: ( 0.001077 min ) (  907, 577 ) to (  540, 354 ) $(     nan ) size(   0 ) elapsed( 4594051 ns ) --- Not solvable
+density_45.R2 [     7 /    99 ]: ( 0.001080 min ) (  204, 156 ) to (  985, 140 ) $(     nan ) size(   0 ) elapsed( 176145 ns ) --- Not solvable
+density_45.R2 [     8 /    99 ]: ( 0.001433 min ) (  648, 880 ) to (  904, 443 ) $(     nan ) size(   0 ) elapsed( 21197437 ns ) --- Not solvable
+density_45.R2 [     9 /    99 ]: ( 0.001469 min ) (  615, 985 ) to (  949, 154 ) $( 1239.222087 ) size(  90 ) elapsed( 2136500 ns )
+density_45.R2 [    10 /    99 ]: ( 0.001476 min ) (  520, 885 ) to (  347, 710 ) $( 503.794019 ) size(  37 ) elapsed( 434417 ns )
+density_45.R2 [    11 /    99 ]: ( 0.002011 min ) (  973, 149 ) to (  677, 614 ) $(     nan ) size(   0 ) elapsed( 32093945 ns ) --- Not solvable
+density_45.R2 [    12 /    99 ]: ( 0.002019 min ) (  541,  78 ) to (  498, 437 ) $( 601.946977 ) size(  35 ) elapsed( 425785 ns )
+density_45.R2 [    13 /    99 ]: ( 0.002508 min ) (  465, 507 ) to (  297, 942 ) $(     nan ) size(   0 ) elapsed( 29394196 ns ) --- Not solvable
+density_45.R2 [    14 /    99 ]: ( 0.002520 min ) (  949, 168 ) to (  663, 272 ) $( 508.155497 ) size(  42 ) elapsed( 691077 ns )
+density_45.R2 [    15 /    99 ]: ( 0.003095 min ) (  633, 245 ) to (   93, 347 ) $(     nan ) size(   0 ) elapsed( 34469441 ns ) --- Not solvable
+density_45.R2 [    16 /    99 ]: ( 0.003105 min ) (  320, 430 ) to (  434, 253 ) $( 396.668345 ) size(  41 ) elapsed( 590571 ns )
+density_45.R2 [    17 /    99 ]: ( 0.003109 min ) (  331, 882 ) to (  534,  46 ) $(     nan ) size(   0 ) elapsed( 260951 ns ) --- Not solvable
+density_45.R2 [    18 /    99 ]: ( 0.003120 min ) (  513, 602 ) to (  899, 284 ) $( 586.976180 ) size(  56 ) elapsed( 664880 ns )
+density_45.R2 [    19 /    99 ]: ( 0.003122 min ) (   75, 718 ) to (  740, 757 ) $(     nan ) size(   0 ) elapsed( 79825 ns ) --- Not solvable
+density_45.R2 [    20 /    99 ]: ( 0.003500 min ) (  607,  37 ) to (  858, 888 ) $(     nan ) size(   0 ) elapsed( 22701657 ns ) --- Not solvable
+density_45.R2 [    21 /    99 ]: ( 0.003972 min ) (  731, 225 ) to (  666, 587 ) $(     nan ) size(   0 ) elapsed( 28335866 ns ) --- Not solvable
+density_45.R2 [    22 /    99 ]: ( 0.003981 min ) (  445,  21 ) to (  825, 225 ) $(     nan ) size(   0 ) elapsed( 495737 ns ) --- Not solvable
+density_45.R2 [    23 /    99 ]: ( 0.004060 min ) (  849, 472 ) to (  296,  23 ) $(     nan ) size(   0 ) elapsed( 4755996 ns ) --- Not solvable
+density_45.R2 [    24 /    99 ]: ( 0.004645 min ) (  929, 302 ) to (  345, 936 ) $(     nan ) size(   0 ) elapsed( 35110465 ns ) --- Not solvable
+density_45.R2 [    25 /    99 ]: ( 0.004648 min ) (  562, 511 ) to (  774, 374 ) $( 276.130492 ) size(  24 ) elapsed( 176836 ns )
+density_45.R2 [    26 /    99 ]: ( 0.004685 min ) (  670, 487 ) to (  258, 430 ) $( 754.484351 ) size(  74 ) elapsed( 2212980 ns )
+density_45.R2 [    27 /    99 ]: ( 0.005486 min ) (  133, 478 ) to (  862, 406 ) $(     nan ) size(   0 ) elapsed( 48038732 ns ) --- Not solvable
+density_45.R2 [    28 /    99 ]: ( 0.005814 min ) (   78, 621 ) to (  345, 872 ) $(     nan ) size(   0 ) elapsed( 19693683 ns ) --- Not solvable
+density_45.R2 [    29 /    99 ]: ( 0.005815 min ) (  985, 710 ) to (  886, 534 ) $( 213.838317 ) size(   9 ) elapsed( 50583 ns )
+density_45.R2 [    30 /    99 ]: ( 0.006314 min ) (  300, 325 ) to (  230, 659 ) $(     nan ) size(   0 ) elapsed( 29961048 ns ) --- Not solvable
+density_45.R2 [    31 /    99 ]: ( 0.006315 min ) (  993, 979 ) to (  897,  88 ) $(     nan ) size(   0 ) elapsed( 40076 ns ) --- Not solvable
+density_45.R2 [    32 /    99 ]: ( 0.006318 min ) (   88, 171 ) to (  752, 839 ) $(     nan ) size(   0 ) elapsed( 162999 ns ) --- Not solvable
+density_45.R2 [    33 /    99 ]: ( 0.006379 min ) (  395, 607 ) to (  139, 604 ) $( 1352.738208 ) size( 109 ) elapsed( 3666908 ns )
+density_45.R2 [    34 /    99 ]: ( 0.006389 min ) (  650, 296 ) to (  348, 504 ) $( 640.160583 ) size(  49 ) elapsed( 621876 ns )
+density_45.R2 [    35 /    99 ]: ( 0.006454 min ) (  780, 499 ) to (  254, 936 ) $(     nan ) size(   0 ) elapsed( 3878087 ns ) --- Not solvable
+density_45.R2 [    36 /    99 ]: ( 0.006516 min ) (  528, 987 ) to (  287, 302 ) $( 1307.403191 ) size(  97 ) elapsed( 3718980 ns )
+density_45.R2 [    37 /    99 ]: ( 0.006878 min ) (  346, 713 ) to (   13, 811 ) $(     nan ) size(   0 ) elapsed( 21689997 ns ) --- Not solvable
+density_45.R2 [    38 /    99 ]: ( 0.006899 min ) (  384,  92 ) to (  538, 677 ) $(     nan ) size(   0 ) elapsed( 1267460 ns ) --- Not solvable
+density_45.R2 [    39 /    99 ]: ( 0.007373 min ) (  653, 932 ) to (  324, 673 ) $(     nan ) size(   0 ) elapsed( 28448211 ns ) --- Not solvable
+density_45.R2 [    40 /    99 ]: ( 0.007952 min ) (  562, 153 ) to (  418, 838 ) $(     nan ) size(   0 ) elapsed( 34697837 ns ) --- Not solvable
+density_45.R2 [    41 /    99 ]: ( 0.008295 min ) (  414, 665 ) to (  202, 698 ) $(     nan ) size(   0 ) elapsed( 20614301 ns ) --- Not solvable
+density_45.R2 [    42 /    99 ]: ( 0.008785 min ) (  678, 108 ) to (  127,  24 ) $(     nan ) size(   0 ) elapsed( 29379071 ns ) --- Not solvable
+density_45.R2 [    43 /    99 ]: ( 0.008786 min ) (  876, 883 ) to (   55, 534 ) $(     nan ) size(   0 ) elapsed( 69294 ns ) --- Not solvable
+density_45.R2 [    44 /    99 ]: ( 0.009125 min ) (  394, 564 ) to (  869, 881 ) $(     nan ) size(   0 ) elapsed( 20315589 ns ) --- Not solvable
+density_45.R2 [    45 /    99 ]: ( 0.009126 min ) (  624, 971 ) to (  747, 932 ) $( 152.199897 ) size(  14 ) elapsed( 55246 ns )
+density_45.R2 [    46 /    99 ]: ( 0.009143 min ) (  672,  12 ) to (  565, 519 ) $( 696.620978 ) size(  49 ) elapsed( 1006074 ns )
+density_45.R2 [    47 /    99 ]: ( 0.009157 min ) (  853, 164 ) to (  140, 506 ) $(     nan ) size(   0 ) elapsed( 868637 ns ) --- Not solvable
+density_45.R2 [    48 /    99 ]: ( 0.009159 min ) (   85, 194 ) to (  165, 362 ) $(     nan ) size(   0 ) elapsed( 132148 ns ) --- Not solvable
+density_45.R2 [    49 /    99 ]: ( 0.009160 min ) (  112, 268 ) to (  135, 667 ) $(     nan ) size(   0 ) elapsed( 39441 ns ) --- Not solvable
+density_45.R2 [    50 /    99 ]: ( 0.009621 min ) (  819, 378 ) to (  342, 628 ) $(     nan ) size(   0 ) elapsed( 27636871 ns ) --- Not solvable
+density_45.R2 [    51 /    99 ]: ( 0.009628 min ) (   10, 527 ) to (   80,  18 ) $(     nan ) size(   0 ) elapsed( 402560 ns ) --- Not solvable
+density_45.R2 [    52 /    99 ]: ( 0.009637 min ) (  431, 204 ) to (  290, 523 ) $( 592.869299 ) size(  60 ) elapsed( 538056 ns )
+density_45.R2 [    53 /    99 ]: ( 0.010035 min ) (  378, 671 ) to (  221, 716 ) $(     nan ) size(   0 ) elapsed( 23907691 ns ) --- Not solvable
+density_45.R2 [    54 /    99 ]: ( 0.010629 min ) (  864, 342 ) to (  211, 915 ) $(     nan ) size(   0 ) elapsed( 35642494 ns ) --- Not solvable
+density_45.R2 [    55 /    99 ]: ( 0.010638 min ) (  666, 122 ) to (  650, 519 ) $( 496.406267 ) size(  41 ) elapsed( 506578 ns )
+density_45.R2 [    56 /    99 ]: ( 0.010712 min ) (  414, 344 ) to (  477, 896 ) $( 1075.855029 ) size(  80 ) elapsed( 4461395 ns )
+density_45.R2 [    57 /    99 ]: ( 0.010714 min ) (  597, 791 ) to (  490, 841 ) $( 202.378074 ) size(  18 ) elapsed( 99343 ns )
+density_45.R2 [    58 /    99 ]: ( 0.010715 min ) (  800, 864 ) to (  388, 588 ) $(     nan ) size(   0 ) elapsed( 42309 ns ) --- Not solvable
+density_45.R2 [    59 /    99 ]: ( 0.010723 min ) (  590, 389 ) to (  549,  84 ) $( 504.833376 ) size(  32 ) elapsed( 508272 ns )
+density_45.R2 [    60 /    99 ]: ( 0.011020 min ) (  474, 751 ) to (  796, 657 ) $(     nan ) size(   0 ) elapsed( 17794881 ns ) --- Not solvable
+density_45.R2 [    61 /    99 ]: ( 0.011107 min ) (  859, 793 ) to (  330,  60 ) $(     nan ) size(   0 ) elapsed( 5231016 ns ) --- Not solvable
+density_45.R2 [    62 /    99 ]: ( 0.011117 min ) (  503, 282 ) to (   92, 604 ) $( 636.059378 ) size(  46 ) elapsed( 610749 ns )
+density_45.R2 [    63 /    99 ]: ( 0.011122 min ) (   18, 528 ) to (  498, 825 ) $(     nan ) size(   0 ) elapsed( 287927 ns ) --- Not solvable
+density_45.R2 [    64 /    99 ]: ( 0.011614 min ) (  407, 556 ) to (  407,  49 ) $(     nan ) size(   0 ) elapsed( 29485975 ns ) --- Not solvable
+density_45.R2 [    65 /    99 ]: ( 0.011619 min ) (  765, 163 ) to (  792, 300 ) $(     nan ) size(   0 ) elapsed( 331707 ns ) --- Not solvable
+density_45.R2 [    66 /    99 ]: ( 0.011627 min ) (  391, 837 ) to (  127, 893 ) $(     nan ) size(   0 ) elapsed( 479755 ns ) --- Not solvable
+density_45.R2 [    67 /    99 ]: ( 0.011629 min ) (  659, 765 ) to (  869, 874 ) $(     nan ) size(   0 ) elapsed( 93610 ns ) --- Not solvable
+density_45.R2 [    68 /    99 ]: ( 0.012091 min ) (  256, 291 ) to (   27, 510 ) $(     nan ) size(   0 ) elapsed( 27710645 ns ) --- Not solvable
+density_45.R2 [    69 /    99 ]: ( 0.012174 min ) (  941, 484 ) to (  551, 759 ) $(     nan ) size(   0 ) elapsed( 4966904 ns ) --- Not solvable
+density_45.R2 [    70 /    99 ]: ( 0.012203 min ) (  632, 268 ) to (  463, 767 ) $( 851.396107 ) size(  68 ) elapsed( 1780849 ns )
+density_45.R2 [    71 /    99 ]: ( 0.012845 min ) (  716, 146 ) to (  340, 893 ) $(     nan ) size(   0 ) elapsed( 38498046 ns ) --- Not solvable
+density_45.R2 [    72 /    99 ]: ( 0.012941 min ) (  869, 821 ) to (  888,  84 ) $(     nan ) size(   0 ) elapsed( 5747035 ns ) --- Not solvable
+density_45.R2 [    73 /    99 ]: ( 0.013018 min ) (  847, 483 ) to (  699, 181 ) $(     nan ) size(   0 ) elapsed( 4628714 ns ) --- Not solvable
+density_45.R2 [    74 /    99 ]: ( 0.013074 min ) (  861, 399 ) to (  178, 838 ) $(     nan ) size(   0 ) elapsed( 3354070 ns ) --- Not solvable
+density_45.R2 [    75 /    99 ]: ( 0.013138 min ) (  908, 563 ) to (  512, 414 ) $(     nan ) size(   0 ) elapsed( 3844766 ns ) --- Not solvable
+density_45.R2 [    76 /    99 ]: ( 0.013141 min ) (  722, 208 ) to (  611, 396 ) $( 304.617620 ) size(  21 ) elapsed( 165838 ns )
+density_45.R2 [    77 /    99 ]: ( 0.013867 min ) (  500, 943 ) to (   56, 227 ) $(     nan ) size(   0 ) elapsed( 43584104 ns ) --- Not solvable
+density_45.R2 [    78 /    99 ]: ( 0.014430 min ) (  683, 487 ) to (  108,  49 ) $(     nan ) size(   0 ) elapsed( 33746553 ns ) --- Not solvable
+density_45.R2 [    79 /    99 ]: ( 0.014443 min ) (  884,  77 ) to (  601, 521 ) $(     nan ) size(   0 ) elapsed( 768492 ns ) --- Not solvable
+density_45.R2 [    80 /    99 ]: ( 0.014522 min ) (  932, 579 ) to (  722, 280 ) $(     nan ) size(   0 ) elapsed( 4757377 ns ) --- Not solvable
+density_45.R2 [    81 /    99 ]: ( 0.014595 min ) (  297, 308 ) to (  482, 499 ) $( 1129.449075 ) size(  88 ) elapsed( 4386893 ns )
+density_45.R2 [    82 /    99 ]: ( 0.014871 min ) (  295, 277 ) to (  441,  23 ) $(     nan ) size(   0 ) elapsed( 16505212 ns ) --- Not solvable
+density_45.R2 [    83 /    99 ]: ( 0.014905 min ) (  952, 254 ) to (  523, 866 ) $( 975.283903 ) size(  86 ) elapsed( 2070742 ns )
+density_45.R2 [    84 /    99 ]: ( 0.015257 min ) (  428, 422 ) to (  275, 152 ) $(     nan ) size(   0 ) elapsed( 21113809 ns ) --- Not solvable
+density_45.R2 [    85 /    99 ]: ( 0.015856 min ) (  489, 947 ) to (  874, 141 ) $(     nan ) size(   0 ) elapsed( 35921783 ns ) --- Not solvable
+density_45.R2 [    86 /    99 ]: ( 0.016245 min ) (  620, 377 ) to (  968, 398 ) $(     nan ) size(   0 ) elapsed( 23354290 ns ) --- Not solvable
+density_45.R2 [    87 /    99 ]: ( 0.016303 min ) (  764, 734 ) to (  499, 407 ) $(     nan ) size(   0 ) elapsed( 3475924 ns ) --- Not solvable
+density_45.R2 [    88 /    99 ]: ( 0.016807 min ) (  413, 659 ) to (   37, 423 ) $(     nan ) size(   0 ) elapsed( 30231059 ns ) --- Not solvable
+density_45.R2 [    89 /    99 ]: ( 0.016896 min ) (  766, 819 ) to (  421,  42 ) $(     nan ) size(   0 ) elapsed( 5323126 ns ) --- Not solvable
+density_45.R2 [    90 /    99 ]: ( 0.016901 min ) (  343, 889 ) to (  814, 448 ) $(     nan ) size(   0 ) elapsed( 326112 ns ) --- Not solvable
+density_45.R2 [    91 /    99 ]: ( 0.016939 min ) (  963, 165 ) to (  352, 470 ) $( 976.874090 ) size(  76 ) elapsed( 2230558 ns )
+density_45.R2 [    92 /    99 ]: ( 0.017436 min ) (  183, 480 ) to (  122, 937 ) $(     nan ) size(   0 ) elapsed( 29841042 ns ) --- Not solvable
+density_45.R2 [    93 /    99 ]: ( 0.017475 min ) (  964, 283 ) to (  202, 406 ) $( 953.949647 ) size(  76 ) elapsed( 2309019 ns )
+density_45.R2 [    94 /    99 ]: ( 0.017476 min ) (  913, 932 ) to (  706, 641 ) $(     nan ) size(   0 ) elapsed( 69856 ns ) --- Not solvable
+density_45.R2 [    95 /    99 ]: ( 0.017482 min ) (  346, 301 ) to (  620, 267 ) $( 431.176487 ) size(  30 ) elapsed( 395191 ns )
+density_45.R2 [    96 /    99 ]: ( 0.017502 min ) (  958, 177 ) to (  302, 293 ) $( 854.259636 ) size(  61 ) elapsed( 1200158 ns )
+density_45.R2 [    97 /    99 ]: ( 0.017557 min ) (  906, 565 ) to (  621, 653 ) $(     nan ) size(   0 ) elapsed( 3286856 ns ) --- Not solvable
+density_45.R2 [    98 /    99 ]: ( 0.018236 min ) (  188, 617 ) to (  769, 167 ) $(     nan ) size(   0 ) elapsed( 40738290 ns ) --- Not solvable
+density_45.R2 [    99 /    99 ]: ( 0.018666 min ) (  717, 145 ) to (  972, 955 ) $(     nan ) size(   0 ) elapsed( 25781006 ns ) --- Not solvable
+writeResults: Wrote results to '"/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-18_review2/r2_controlled/results/_work/density_45/res/density_45.R2.3.results"'
+=== runScenarios: density_45 ===
+density_45.R2 [     0 /    99 ]: ( 0.000297 min ) (  574, 415 ) to (  183,  38 ) $(     nan ) size(   0 ) elapsed( 17823091 ns ) --- Not solvable
+density_45.R2 [     1 /    99 ]: ( 0.000655 min ) (  629, 914 ) to (  246, 952 ) $(     nan ) size(   0 ) elapsed( 21451717 ns ) --- Not solvable
+density_45.R2 [     2 /    99 ]: ( 0.000661 min ) (  826, 709 ) to (  845, 399 ) $( 418.377504 ) size(  36 ) elapsed( 344528 ns )
+density_45.R2 [     3 /    99 ]: ( 0.000667 min ) (  292, 517 ) to (  496, 435 ) $( 454.354318 ) size(  44 ) elapsed( 407286 ns )
+density_45.R2 [     4 /    99 ]: ( 0.000928 min ) (  649,  26 ) to (  878, 165 ) $(     nan ) size(   0 ) elapsed( 15648505 ns ) --- Not solvable
+density_45.R2 [     5 /    99 ]: ( 0.001000 min ) (  890, 504 ) to (  544, 156 ) $(     nan ) size(   0 ) elapsed( 4289248 ns ) --- Not solvable
+density_45.R2 [     6 /    99 ]: ( 0.001077 min ) (  907, 577 ) to (  540, 354 ) $(     nan ) size(   0 ) elapsed( 4603512 ns ) --- Not solvable
+density_45.R2 [     7 /    99 ]: ( 0.001080 min ) (  204, 156 ) to (  985, 140 ) $(     nan ) size(   0 ) elapsed( 171450 ns ) --- Not solvable
+density_45.R2 [     8 /    99 ]: ( 0.001430 min ) (  648, 880 ) to (  904, 443 ) $(     nan ) size(   0 ) elapsed( 21032995 ns ) --- Not solvable
+density_45.R2 [     9 /    99 ]: ( 0.001465 min ) (  615, 985 ) to (  949, 154 ) $( 1239.222087 ) size(  90 ) elapsed( 2084768 ns )
+density_45.R2 [    10 /    99 ]: ( 0.001472 min ) (  520, 885 ) to (  347, 710 ) $( 503.794019 ) size(  37 ) elapsed( 403768 ns )
+density_45.R2 [    11 /    99 ]: ( 0.002006 min ) (  973, 149 ) to (  677, 614 ) $(     nan ) size(   0 ) elapsed( 32046720 ns ) --- Not solvable
+density_45.R2 [    12 /    99 ]: ( 0.002013 min ) (  541,  78 ) to (  498, 437 ) $( 601.946977 ) size(  35 ) elapsed( 427090 ns )
+density_45.R2 [    13 /    99 ]: ( 0.002502 min ) (  465, 507 ) to (  297, 942 ) $(     nan ) size(   0 ) elapsed( 29329010 ns ) --- Not solvable
+density_45.R2 [    14 /    99 ]: ( 0.002514 min ) (  949, 168 ) to (  663, 272 ) $( 508.155497 ) size(  42 ) elapsed( 695687 ns )
+density_45.R2 [    15 /    99 ]: ( 0.003092 min ) (  633, 245 ) to (   93, 347 ) $(     nan ) size(   0 ) elapsed( 34675054 ns ) --- Not solvable
+density_45.R2 [    16 /    99 ]: ( 0.003102 min ) (  320, 430 ) to (  434, 253 ) $( 396.668345 ) size(  41 ) elapsed( 608938 ns )
+density_45.R2 [    17 /    99 ]: ( 0.003106 min ) (  331, 882 ) to (  534,  46 ) $(     nan ) size(   0 ) elapsed( 261158 ns ) --- Not solvable
+density_45.R2 [    18 /    99 ]: ( 0.003117 min ) (  513, 602 ) to (  899, 284 ) $( 586.976180 ) size(  56 ) elapsed( 668123 ns )
+density_45.R2 [    19 /    99 ]: ( 0.003119 min ) (   75, 718 ) to (  740, 757 ) $(     nan ) size(   0 ) elapsed( 78601 ns ) --- Not solvable
+density_45.R2 [    20 /    99 ]: ( 0.003499 min ) (  607,  37 ) to (  858, 888 ) $(     nan ) size(   0 ) elapsed( 22787597 ns ) --- Not solvable
+density_45.R2 [    21 /    99 ]: ( 0.003971 min ) (  731, 225 ) to (  666, 587 ) $(     nan ) size(   0 ) elapsed( 28348416 ns ) --- Not solvable
+density_45.R2 [    22 /    99 ]: ( 0.003979 min ) (  445,  21 ) to (  825, 225 ) $(     nan ) size(   0 ) elapsed( 492240 ns ) --- Not solvable
+density_45.R2 [    23 /    99 ]: ( 0.004059 min ) (  849, 472 ) to (  296,  23 ) $(     nan ) size(   0 ) elapsed( 4744412 ns ) --- Not solvable
+density_45.R2 [    24 /    99 ]: ( 0.004652 min ) (  929, 302 ) to (  345, 936 ) $(     nan ) size(   0 ) elapsed( 35592012 ns ) --- Not solvable
+density_45.R2 [    25 /    99 ]: ( 0.004655 min ) (  562, 511 ) to (  774, 374 ) $( 276.130492 ) size(  24 ) elapsed( 175433 ns )
+density_45.R2 [    26 /    99 ]: ( 0.004692 min ) (  670, 487 ) to (  258, 430 ) $( 754.484351 ) size(  74 ) elapsed( 2221593 ns )
+density_45.R2 [    27 /    99 ]: ( 0.005492 min ) (  133, 478 ) to (  862, 406 ) $(     nan ) size(   0 ) elapsed( 48029283 ns ) --- Not solvable
+density_45.R2 [    28 /    99 ]: ( 0.005834 min ) (   78, 621 ) to (  345, 872 ) $(     nan ) size(   0 ) elapsed( 20483542 ns ) --- Not solvable
+density_45.R2 [    29 /    99 ]: ( 0.005835 min ) (  985, 710 ) to (  886, 534 ) $( 213.838317 ) size(   9 ) elapsed( 55741 ns )
+density_45.R2 [    30 /    99 ]: ( 0.006329 min ) (  300, 325 ) to (  230, 659 ) $(     nan ) size(   0 ) elapsed( 29642784 ns ) --- Not solvable
+density_45.R2 [    31 /    99 ]: ( 0.006330 min ) (  993, 979 ) to (  897,  88 ) $(     nan ) size(   0 ) elapsed( 39913 ns ) --- Not solvable
+density_45.R2 [    32 /    99 ]: ( 0.006333 min ) (   88, 171 ) to (  752, 839 ) $(     nan ) size(   0 ) elapsed( 163681 ns ) --- Not solvable
+density_45.R2 [    33 /    99 ]: ( 0.006393 min ) (  395, 607 ) to (  139, 604 ) $( 1352.738208 ) size( 109 ) elapsed( 3637152 ns )
+density_45.R2 [    34 /    99 ]: ( 0.006404 min ) (  650, 296 ) to (  348, 504 ) $( 640.160583 ) size(  49 ) elapsed( 620003 ns )
+density_45.R2 [    35 /    99 ]: ( 0.006468 min ) (  780, 499 ) to (  254, 936 ) $(     nan ) size(   0 ) elapsed( 3874518 ns ) --- Not solvable
+density_45.R2 [    36 /    99 ]: ( 0.006530 min ) (  528, 987 ) to (  287, 302 ) $( 1307.403191 ) size(  97 ) elapsed( 3679012 ns )
+density_45.R2 [    37 /    99 ]: ( 0.006892 min ) (  346, 713 ) to (   13, 811 ) $(     nan ) size(   0 ) elapsed( 21708328 ns ) --- Not solvable
+density_45.R2 [    38 /    99 ]: ( 0.006913 min ) (  384,  92 ) to (  538, 677 ) $(     nan ) size(   0 ) elapsed( 1269889 ns ) --- Not solvable
+density_45.R2 [    39 /    99 ]: ( 0.007385 min ) (  653, 932 ) to (  324, 673 ) $(     nan ) size(   0 ) elapsed( 28307559 ns ) --- Not solvable
+density_45.R2 [    40 /    99 ]: ( 0.007975 min ) (  562, 153 ) to (  418, 838 ) $(     nan ) size(   0 ) elapsed( 35400330 ns ) --- Not solvable
+density_45.R2 [    41 /    99 ]: ( 0.008318 min ) (  414, 665 ) to (  202, 698 ) $(     nan ) size(   0 ) elapsed( 20590879 ns ) --- Not solvable
+density_45.R2 [    42 /    99 ]: ( 0.008809 min ) (  678, 108 ) to (  127,  24 ) $(     nan ) size(   0 ) elapsed( 29465517 ns ) --- Not solvable
+density_45.R2 [    43 /    99 ]: ( 0.008811 min ) (  876, 883 ) to (   55, 534 ) $(     nan ) size(   0 ) elapsed( 70013 ns ) --- Not solvable
+density_45.R2 [    44 /    99 ]: ( 0.009148 min ) (  394, 564 ) to (  869, 881 ) $(     nan ) size(   0 ) elapsed( 20261073 ns ) --- Not solvable
+density_45.R2 [    45 /    99 ]: ( 0.009149 min ) (  624, 971 ) to (  747, 932 ) $( 152.199897 ) size(  14 ) elapsed( 55062 ns )
+density_45.R2 [    46 /    99 ]: ( 0.009166 min ) (  672,  12 ) to (  565, 519 ) $( 696.620978 ) size(  49 ) elapsed( 1002580 ns )
+density_45.R2 [    47 /    99 ]: ( 0.009180 min ) (  853, 164 ) to (  140, 506 ) $(     nan ) size(   0 ) elapsed( 865564 ns ) --- Not solvable
+density_45.R2 [    48 /    99 ]: ( 0.009183 min ) (   85, 194 ) to (  165, 362 ) $(     nan ) size(   0 ) elapsed( 131526 ns ) --- Not solvable
+density_45.R2 [    49 /    99 ]: ( 0.009183 min ) (  112, 268 ) to (  135, 667 ) $(     nan ) size(   0 ) elapsed( 39335 ns ) --- Not solvable
+density_45.R2 [    50 /    99 ]: ( 0.009645 min ) (  819, 378 ) to (  342, 628 ) $(     nan ) size(   0 ) elapsed( 27709597 ns ) --- Not solvable
+density_45.R2 [    51 /    99 ]: ( 0.009652 min ) (   10, 527 ) to (   80,  18 ) $(     nan ) size(   0 ) elapsed( 396779 ns ) --- Not solvable
+density_45.R2 [    52 /    99 ]: ( 0.009661 min ) (  431, 204 ) to (  290, 523 ) $( 592.869299 ) size(  60 ) elapsed( 531198 ns )
+density_45.R2 [    53 /    99 ]: ( 0.010060 min ) (  378, 671 ) to (  221, 716 ) $(     nan ) size(   0 ) elapsed( 23948970 ns ) --- Not solvable
+density_45.R2 [    54 /    99 ]: ( 0.010658 min ) (  864, 342 ) to (  211, 915 ) $(     nan ) size(   0 ) elapsed( 35896347 ns ) --- Not solvable
+density_45.R2 [    55 /    99 ]: ( 0.010667 min ) (  666, 122 ) to (  650, 519 ) $( 496.406267 ) size(  41 ) elapsed( 524605 ns )
+density_45.R2 [    56 /    99 ]: ( 0.010742 min ) (  414, 344 ) to (  477, 896 ) $( 1075.855029 ) size(  80 ) elapsed( 4474053 ns )
+density_45.R2 [    57 /    99 ]: ( 0.010744 min ) (  597, 791 ) to (  490, 841 ) $( 202.378074 ) size(  18 ) elapsed( 102269 ns )
+density_45.R2 [    58 /    99 ]: ( 0.010744 min ) (  800, 864 ) to (  388, 588 ) $(     nan ) size(   0 ) elapsed( 43950 ns ) --- Not solvable
+density_45.R2 [    59 /    99 ]: ( 0.010753 min ) (  590, 389 ) to (  549,  84 ) $( 504.833376 ) size(  32 ) elapsed( 507962 ns )
+density_45.R2 [    60 /    99 ]: ( 0.011051 min ) (  474, 751 ) to (  796, 657 ) $(     nan ) size(   0 ) elapsed( 17861301 ns ) --- Not solvable
+density_45.R2 [    61 /    99 ]: ( 0.011139 min ) (  859, 793 ) to (  330,  60 ) $(     nan ) size(   0 ) elapsed( 5285416 ns ) --- Not solvable
+density_45.R2 [    62 /    99 ]: ( 0.011149 min ) (  503, 282 ) to (   92, 604 ) $( 636.059378 ) size(  46 ) elapsed( 613319 ns )
+density_45.R2 [    63 /    99 ]: ( 0.011154 min ) (   18, 528 ) to (  498, 825 ) $(     nan ) size(   0 ) elapsed( 280711 ns ) --- Not solvable
+density_45.R2 [    64 /    99 ]: ( 0.011647 min ) (  407, 556 ) to (  407,  49 ) $(     nan ) size(   0 ) elapsed( 29560140 ns ) --- Not solvable
+density_45.R2 [    65 /    99 ]: ( 0.011652 min ) (  765, 163 ) to (  792, 300 ) $(     nan ) size(   0 ) elapsed( 330080 ns ) --- Not solvable
+density_45.R2 [    66 /    99 ]: ( 0.011660 min ) (  391, 837 ) to (  127, 893 ) $(     nan ) size(   0 ) elapsed( 476408 ns ) --- Not solvable
+density_45.R2 [    67 /    99 ]: ( 0.011662 min ) (  659, 765 ) to (  869, 874 ) $(     nan ) size(   0 ) elapsed( 92435 ns ) --- Not solvable
+density_45.R2 [    68 /    99 ]: ( 0.012126 min ) (  256, 291 ) to (   27, 510 ) $(     nan ) size(   0 ) elapsed( 27849557 ns ) --- Not solvable
+density_45.R2 [    69 /    99 ]: ( 0.012208 min ) (  941, 484 ) to (  551, 759 ) $(     nan ) size(   0 ) elapsed( 4926951 ns ) --- Not solvable
+density_45.R2 [    70 /    99 ]: ( 0.012238 min ) (  632, 268 ) to (  463, 767 ) $( 851.396107 ) size(  68 ) elapsed( 1806068 ns )
+density_45.R2 [    71 /    99 ]: ( 0.012879 min ) (  716, 146 ) to (  340, 893 ) $(     nan ) size(   0 ) elapsed( 38449825 ns ) --- Not solvable
+density_45.R2 [    72 /    99 ]: ( 0.012974 min ) (  869, 821 ) to (  888,  84 ) $(     nan ) size(   0 ) elapsed( 5710233 ns ) --- Not solvable
+density_45.R2 [    73 /    99 ]: ( 0.013052 min ) (  847, 483 ) to (  699, 181 ) $(     nan ) size(   0 ) elapsed( 4641794 ns ) --- Not solvable
+density_45.R2 [    74 /    99 ]: ( 0.013108 min ) (  861, 399 ) to (  178, 838 ) $(     nan ) size(   0 ) elapsed( 3341482 ns ) --- Not solvable
+density_45.R2 [    75 /    99 ]: ( 0.013172 min ) (  908, 563 ) to (  512, 414 ) $(     nan ) size(   0 ) elapsed( 3862286 ns ) --- Not solvable
+density_45.R2 [    76 /    99 ]: ( 0.013175 min ) (  722, 208 ) to (  611, 396 ) $( 304.617620 ) size(  21 ) elapsed( 165595 ns )
+density_45.R2 [    77 /    99 ]: ( 0.013900 min ) (  500, 943 ) to (   56, 227 ) $(     nan ) size(   0 ) elapsed( 43516812 ns ) --- Not solvable
+density_45.R2 [    78 /    99 ]: ( 0.014470 min ) (  683, 487 ) to (  108,  49 ) $(     nan ) size(   0 ) elapsed( 34177047 ns ) --- Not solvable
+density_45.R2 [    79 /    99 ]: ( 0.014483 min ) (  884,  77 ) to (  601, 521 ) $(     nan ) size(   0 ) elapsed( 781303 ns ) --- Not solvable
+density_45.R2 [    80 /    99 ]: ( 0.014562 min ) (  932, 579 ) to (  722, 280 ) $(     nan ) size(   0 ) elapsed( 4756880 ns ) --- Not solvable
+density_45.R2 [    81 /    99 ]: ( 0.014636 min ) (  297, 308 ) to (  482, 499 ) $( 1129.449075 ) size(  88 ) elapsed( 4394528 ns )
+density_45.R2 [    82 /    99 ]: ( 0.014911 min ) (  295, 277 ) to (  441,  23 ) $(     nan ) size(   0 ) elapsed( 16523971 ns ) --- Not solvable
+density_45.R2 [    83 /    99 ]: ( 0.014946 min ) (  952, 254 ) to (  523, 866 ) $( 975.283903 ) size(  86 ) elapsed( 2088983 ns )
+density_45.R2 [    84 /    99 ]: ( 0.015302 min ) (  428, 422 ) to (  275, 152 ) $(     nan ) size(   0 ) elapsed( 21333764 ns ) --- Not solvable
+density_45.R2 [    85 /    99 ]: ( 0.015906 min ) (  489, 947 ) to (  874, 141 ) $(     nan ) size(   0 ) elapsed( 36242336 ns ) --- Not solvable
+density_45.R2 [    86 /    99 ]: ( 0.016299 min ) (  620, 377 ) to (  968, 398 ) $(     nan ) size(   0 ) elapsed( 23615721 ns ) --- Not solvable
+density_45.R2 [    87 /    99 ]: ( 0.016357 min ) (  764, 734 ) to (  499, 407 ) $(     nan ) size(   0 ) elapsed( 3464736 ns ) --- Not solvable
+density_45.R2 [    88 /    99 ]: ( 0.016864 min ) (  413, 659 ) to (   37, 423 ) $(     nan ) size(   0 ) elapsed( 30427407 ns ) --- Not solvable
+density_45.R2 [    89 /    99 ]: ( 0.016952 min ) (  766, 819 ) to (  421,  42 ) $(     nan ) size(   0 ) elapsed( 5278335 ns ) --- Not solvable
+density_45.R2 [    90 /    99 ]: ( 0.016958 min ) (  343, 889 ) to (  814, 448 ) $(     nan ) size(   0 ) elapsed( 324620 ns ) --- Not solvable
+density_45.R2 [    91 /    99 ]: ( 0.016995 min ) (  963, 165 ) to (  352, 470 ) $( 976.874090 ) size(  76 ) elapsed( 2226508 ns )
+density_45.R2 [    92 /    99 ]: ( 0.017496 min ) (  183, 480 ) to (  122, 937 ) $(     nan ) size(   0 ) elapsed( 30066964 ns ) --- Not solvable
+density_45.R2 [    93 /    99 ]: ( 0.017534 min ) (  964, 283 ) to (  202, 406 ) $( 953.949647 ) size(  76 ) elapsed( 2291134 ns )
+density_45.R2 [    94 /    99 ]: ( 0.017536 min ) (  913, 932 ) to (  706, 641 ) $(     nan ) size(   0 ) elapsed( 70078 ns ) --- Not solvable
+density_45.R2 [    95 /    99 ]: ( 0.017542 min ) (  346, 301 ) to (  620, 267 ) $( 431.176487 ) size(  30 ) elapsed( 397047 ns )
+density_45.R2 [    96 /    99 ]: ( 0.017563 min ) (  958, 177 ) to (  302, 293 ) $( 854.259636 ) size(  61 ) elapsed( 1225937 ns )
+density_45.R2 [    97 /    99 ]: ( 0.017618 min ) (  906, 565 ) to (  621, 653 ) $(     nan ) size(   0 ) elapsed( 3307895 ns ) --- Not solvable
+density_45.R2 [    98 /    99 ]: ( 0.018298 min ) (  188, 617 ) to (  769, 167 ) $(     nan ) size(   0 ) elapsed( 40777060 ns ) --- Not solvable
+density_45.R2 [    99 /    99 ]: ( 0.018734 min ) (  717, 145 ) to (  972, 955 ) $(     nan ) size(   0 ) elapsed( 26169406 ns ) --- Not solvable
+writeResults: Wrote results to '"/home/dhanushka/lcp_jazzy_ws/src/lazy_coulomb_planner/experiments/2026-11-18_review2/r2_controlled/results/_work/density_45/res/density_45.R2.4.results"'

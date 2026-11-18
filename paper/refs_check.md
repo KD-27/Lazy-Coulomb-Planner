@@ -23,3 +23,23 @@ Checked and left as they are:
 
 Not checked: whether each sentence that cites a paper states its content correctly (that needs
 the papers themselves).
+
+## Second check: does each citing sentence describe its source? (18 November 2026)
+
+After an external review that read the sources. Confirmed and fixed:
+- Smac [macenski2024smac]: only 2D-A* takes over a second on the warehouse map (1358 ms; Hybrid-A*
+  290 ms, State Lattice 473 ms, arXiv 2401.13078v2). Text now says "for Smac 2D". Volume 1,
+  pages 81-85 and the DOI are on Crossref, so the entry stays.
+- R2/R2+ work on binary occupancy grids, not polygons (only RayScan uses polygons): reworded.
+- R2 has a public C++ implementation (github.com/LaiYanKai/2D, no licence file, last push
+  May 2024); R2+ code is not published. "No public implementation" claim corrected; new
+  entry `r2code`.
+- EGO-Planner picks the push direction from an A* guiding path per colliding segment
+  (arXiv 2008.08835): added.
+- jps3d DMPlanner searches again in a region around the JPS path; it does not move the path:
+  reworded.
+- Amanatides-Woo: the four-cell corner rule is our extension: "extended so that".
+- Nav2's Theta* is Lazy Theta*-P (Nav2 README): `nash2010lazy` added (Crossref checked).
+- AMCL: `fox2003kld` added (Crossref checked). TEB: original `rosmann2012teb` added next to the
+  2017 multi-topology paper; not on Crossref or dblp, so its pages are not given and still
+  need checking against the ROBOTIK 2012 proceedings.
