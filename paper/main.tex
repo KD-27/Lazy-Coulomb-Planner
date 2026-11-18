@@ -36,7 +36,9 @@
 \author{
 \IEEEauthorblockN{Kaveesha Dhananjaya}
 \IEEEauthorblockA{Senior Robotics Engineer, Hype Insight Global\\New South Wales, Australia\\kaveeshadhananjaya2002@gmail.com}
-% Single author. The supervisor will proof-read at the end (acknowledgement).
+\and
+\IEEEauthorblockN{Meysam Basiri}
+\IEEEauthorblockA{Institute for Systems and Robotics\\Instituto Superior T{\'e}cnico, Universidade de Lisboa\\Lisbon, Portugal}
 }
 
 \maketitle
@@ -413,7 +415,7 @@ Each design choice is varied alone, the others at their defaults, on eight maps:
 \SI{50}{m} maps at 10, 20 and 30\,\% density, with U-shaped obstacles and with
 \SI{1.2}{m} corridors, and three indoor maps at \SI{5}{cm} resolution (a maze of
 $20\times25$\,m, a house of $19\times11$\,m and an event venue of $20\times20$\,m,
-drawn by the author as typical indoor layouts, with no particular source), 100 pairs each, every pair planned three
+drawn by the first author as typical indoor layouts, with no particular source), 100 pairs each, every pair planned three
 times.
 
 \subsection{Driving}
@@ -950,14 +952,6 @@ inserted waypoints, so that paths stay away from obstacles on dense maps,
 switching between the lazy correction and the grid search according to how
 cluttered the map is, tests with denser and faster moving obstacles, and an
 extension to 3D for exploration with aerial robots.
-
-\section*{Acknowledgment}
-The author thanks Dr.~Meysam Basiri (Institute for Systems and Robotics,
-Instituto Superior T{\'e}cnico, Universidade de Lisboa) for supervising this work
-and for proofreading the manuscript. The author used Claude (Anthropic), an AI
-assistant, to help write benchmark and simulation scripts, run and summarise the
-experiments, and draft and edit parts of the text; all results were checked
-against the raw data, and the author takes full responsibility for the content.
 
 \bibliographystyle{IEEEtran}
 \bibliography{refs}
