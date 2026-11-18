@@ -1,0 +1,22 @@
+[1/21] density_00 (38 s): Navfn 100/100 11.5ms, coulomb 100/100 0.1ms, probe 100/100 0.1ms, coulomb_lazy 100/100 0.1ms, probe_lazy 100/100 0.1ms
+[2/21] density_02 (40 s): Navfn 100/100 14.7ms, coulomb 100/100 0.2ms, probe 100/100 0.1ms, coulomb_lazy 99/100 0.2ms, probe_lazy 99/100 0.1ms
+[3/21] density_05 (41 s): Navfn 100/100 15.9ms, coulomb 100/100 0.3ms, probe 100/100 0.2ms, coulomb_lazy 99/100 0.3ms, probe_lazy 97/100 0.2ms
+[4/21] base (41 s): Navfn 100/100 15.0ms, coulomb 100/100 0.4ms, probe 100/100 0.4ms, coulomb_lazy 97/100 0.4ms, probe_lazy 93/100 0.3ms
+[5/21] density_15 (41 s): Navfn 99/99 16.0ms, coulomb 99/99 0.6ms, probe 99/99 0.4ms, coulomb_lazy 89/99 0.6ms, probe_lazy 88/99 0.4ms
+[6/21] density_20 (41 s): Navfn 94/94 14.3ms, coulomb 94/94 1.3ms, probe 94/94 0.7ms, coulomb_lazy 71/94 0.7ms, probe_lazy 71/94 0.5ms
+[7/21] density_25 (41 s): Navfn 81/81 13.0ms, coulomb 81/81 2.6ms, probe 81/81 1.4ms, coulomb_lazy 41/81 0.9ms, probe_lazy 48/81 0.5ms
+[8/21] density_30 (40 s): Navfn 84/84 14.3ms, coulomb 84/84 3.6ms, probe 84/84 2.1ms, coulomb_lazy 33/84 1.0ms, probe_lazy 24/84 0.5ms
+[9/21] density_35 (43 s): Navfn 57/57 16.6ms, coulomb 57/57 4.5ms, probe 57/57 2.6ms, coulomb_lazy 11/57 1.6ms, probe_lazy 11/57 0.5ms
+[10/21] density_40 (45 s): Navfn 53/53 19.3ms, coulomb 53/53 6.0ms, probe 53/53 3.7ms, coulomb_lazy 11/53 0.9ms, probe_lazy 13/53 0.7ms
+[11/21] density_45 (43 s): Navfn 15/15 15.7ms, coulomb 15/15 6.0ms, probe 15/15 3.3ms, coulomb_lazy 4/15 1.2ms, probe_lazy 2/15 1.0ms
+[12/21] size_010 (31 s): Navfn 100/100 0.8ms, coulomb 100/100 0.1ms, probe 100/100 0.1ms, coulomb_lazy 100/100 0.1ms, probe_lazy 100/100 0.1ms
+[13/21] size_025 (34 s): Navfn 100/100 4.3ms, coulomb 100/100 0.2ms, probe 100/100 0.1ms, coulomb_lazy 98/100 0.2ms, probe_lazy 97/100 0.2ms
+[14/21] size_100 (59 s): Navfn 100/100 55.0ms, coulomb 100/100 0.8ms, probe 100/100 0.5ms, coulomb_lazy 98/100 0.8ms, probe_lazy 96/100 0.5ms
+[15/21] size_200 (153 s): Navfn 100/100 303.8ms, coulomb 100/100 3.6ms, probe 100/100 3.1ms, coulomb_lazy 73/100 2.7ms, probe_lazy 65/100 2.3ms
+[16/21] shape_square (40 s): Navfn 100/100 14.1ms, coulomb 100/100 0.4ms, probe 100/100 0.3ms, coulomb_lazy 100/100 0.3ms, probe_lazy 98/100 0.3ms
+[17/21] shape_u (41 s): Navfn 93/93 14.0ms, coulomb 93/93 2.9ms, probe 93/93 1.8ms, coulomb_lazy 40/93 0.6ms, probe_lazy 29/93 0.2ms
+[18/21] corridor_0.8 (39 s): Navfn 99/99 4.5ms, coulomb 99/99 1.6ms, probe 99/99 1.1ms, coulomb_lazy 63/99 1.3ms, probe_lazy 62/99 0.5ms
+[19/21] corridor_1.2 (40 s): Navfn 100/100 7.5ms, coulomb 100/100 0.6ms, probe 100/100 0.4ms, coulomb_lazy 87/100 0.6ms, probe_lazy 87/100 0.3ms
+[20/21] corridor_2.0 (41 s): Navfn 100/100 7.8ms, coulomb 100/100 0.5ms, probe 100/100 0.3ms, coulomb_lazy 97/100 0.5ms, probe_lazy 97/100 0.3ms
+[21/21] corridor_3.0 (39 s): Navfn 100/100 9.6ms, coulomb 100/100 0.4ms, probe 100/100 0.2ms, coulomb_lazy 100/100 0.3ms, probe_lazy 100/100 0.2ms
+SUITE DONE
